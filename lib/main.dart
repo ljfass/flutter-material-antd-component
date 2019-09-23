@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import './material/wingblank.dart';
 import './material/navbar.dart';
+import './material/checkbox/checkbox.dart' as AntCheckbox;
+import './material/checkbox/checkboxItem.dart';
+import './material//popover.dart';
 
 void main() => runApp(MyApp());
 
@@ -41,29 +43,53 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.symmetric(vertical: 15.0),
           child: Column(
             children: <Widget>[
-              NavBar(
-                onLeftClick: () {
-                  print('i love you');
-                },
-                mode: 'dark',
-                icon: Icons.chevron_left,
-                leftContent: "Back",
-                rightContent: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      Icons.search,
-                    ),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.more_horiz,
-                    ),
-                    onPressed: () {},
-                  )
-                ],
-                title: 'NavBar',
-              )
+              Popover(),
+              // NavBar(
+              //   onLeftClick: () {
+              //     print('i love you');
+              //   },
+              //   mode: 'dark',
+              //   icon: Icons.chevron_left,
+              //   leftContent: "Back",
+              //   rightContent: <Widget>[
+              //     IconButton(
+              //       icon: Icon(
+              //         Icons.search,
+              //       ),
+              //       onPressed: () {},
+              //     ),
+              //     IconButton(
+              //       icon: Icon(
+              //         Icons.more_horiz,
+              //       ),
+              //       onPressed: () {},
+              //     )
+              //   ],
+              //   title: 'NavBar',
+              // ),
+              // SizedBox(
+              //   height: 20.0,
+              // ),
+              // AntCheckbox.Checkbox(
+              //   checked: true,
+              //   onChange: (value) {},
+              // ),
+              // CheckboxItem(
+              //   disabled: true,
+              //   defaultChecked: true,
+              //   checked: true,
+              //   title: '有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗',
+              //   onChange: (value) {},
+              // ),
+              // CheckboxItem(
+              //   title: '有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗',
+              //   onChange: (value) {},
+              // ),
+              // CheckboxItem(
+              //   title: 'Undergradute',
+              //   subTitle: 'Auxiliary text',
+              //   onChange: (value) {},
+              // )
             ],
           ),
         ),

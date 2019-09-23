@@ -50,26 +50,29 @@ class _PopoverState extends State<Popover> {
                 });
                 showLoaderOverlay(context);
                 final newEntry = OverlayEntry(builder: (context) {
-                  return MaterialApp(
-                    home: AbsorbPointer(
-                      child: SafeArea(
-                        child: MaterialApp(
-                          home: Center(
-                            child: Stack(
-                              children: <Widget>[
-                                Positioned(
-                                  left: dx,
-                                  top: dy,
-                                  child: Container(
-                                    decoration:
-                                        BoxDecoration(color: Colors.white),
-                                    width: 160,
-                                    height: 60,
-                                    child: Text('???'),
+                  return AbsorbPointer(
+                    child: SafeArea(
+                      child: Material(
+                        child: Center(
+                          child: Stack(
+                            children: <Widget>[
+                              Positioned(
+                                left: dx,
+                                top: dy,
+                                child: Container(
+                                  decoration:
+                                      BoxDecoration(color: Colors.white),
+                                  width: 160,
+                                  height: 60,
+                                  child: IconButton(
+                                    icon: Icon(Icons.satellite),
+                                    onPressed: () {
+                                      print('button');
+                                    },
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
@@ -81,7 +84,7 @@ class _PopoverState extends State<Popover> {
                     _key.currentContext.findRenderObject();
                 final positionRed = renderBoxRed.localToGlobal(Offset.zero);
                 setState(() {
-                  this.dx = positionRed.dx;
+                  this.dx = positionRed.dx + 20;
                   this.dy = positionRed.dy;
                 });
               },

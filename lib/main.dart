@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import './material/navbar.dart';
 import './material/checkbox/checkbox.dart' as AntCheckbox;
 import './material/checkbox/checkboxItem.dart';
-import './material//popover.dart';
+import './material/popover.dart';
+import './material/menu.dart';
 
 void main() => runApp(MyApp());
 
@@ -43,53 +44,80 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.symmetric(vertical: 15.0),
           child: Column(
             children: <Widget>[
-              Popover(),
-              // NavBar(
-              //   onLeftClick: () {
-              //     print('i love you');
-              //   },
-              //   mode: 'dark',
-              //   icon: Icons.chevron_left,
-              //   leftContent: "Back",
-              //   rightContent: <Widget>[
-              //     IconButton(
-              //       icon: Icon(
-              //         Icons.search,
-              //       ),
-              //       onPressed: () {},
-              //     ),
-              //     IconButton(
-              //       icon: Icon(
-              //         Icons.more_horiz,
-              //       ),
-              //       onPressed: () {},
-              //     )
-              //   ],
-              //   title: 'NavBar',
-              // ),
-              // SizedBox(
-              //   height: 20.0,
-              // ),
-              // AntCheckbox.Checkbox(
-              //   checked: true,
-              //   onChange: (value) {},
-              // ),
-              // CheckboxItem(
-              //   disabled: true,
-              //   defaultChecked: true,
-              //   checked: true,
-              //   title: '有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗',
-              //   onChange: (value) {},
-              // ),
-              // CheckboxItem(
-              //   title: '有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗有吗',
-              //   onChange: (value) {},
-              // ),
-              // CheckboxItem(
-              //   title: 'Undergradute',
-              //   subTitle: 'Auxiliary text',
-              //   onChange: (value) {},
-              // )
+              NavBar(
+                icon: Icons.menu,
+                leftContent: 'Menu',
+                onLeftClick: () {},
+                title: 'Here is title',
+              ),
+              Menu(
+                multiSelect: true,
+                level: 2,
+                data: [
+                  {
+                    'value': '1',
+                    'label': 'food',
+                    'children': [
+                      {'value': 'sdf1sf', 'label': 'asdfsdf'},
+                      {'value': 'sdf2sf', 'label': 'hxcvxcv'},
+                      {'value': 'sdf3sf', 'label': 'asdfsdf'},
+                      {'value': 'sdf4sf', 'label': 'hxcvxcv'},
+                      {'value': 'sdf5sf', 'label': 'asdfsdf'},
+                      {'value': 'sd6fsf', 'label': 'hxcvxcv'},
+                      {'value': 'sdf7sf', 'label': 'asdfsdf'},
+                      {'value': 'sdf8sf', 'label': 'hxcvxcv'},
+                      {'value': 'sdf9sf', 'label': 'asdfsdf'},
+                      {'value': 'sdf20sf', 'label': 'hxcvxcv'},
+                      {'value': 'sdf11sf', 'label': 'asdfsdf'},
+                      {'value': 'sdfs12f', 'label': 'hxcvxcv'},
+                    ]
+                  },
+                  {
+                    'value': '2',
+                    'label': 'market',
+                    'isLeaf': false,
+                    'children': [
+                      {'value': 'sdfsf', 'label': 'wertr'},
+                      {'value': 'sdfsf', 'label': 'jghjgj'}
+                    ]
+                  },
+                  {
+                    'value': '3',
+                    'label': 'love',
+                  },
+                  {
+                    'value': '3',
+                    'label': 'love',
+                  },
+                  {
+                    'value': '3',
+                    'label': 'love',
+                  },
+                  {
+                    'value': '3',
+                    'label': 'love',
+                  },
+                  {
+                    'value': '3',
+                    'label': 'love',
+                  },
+                  {
+                    'value': '3',
+                    'label': 'love',
+                  },
+                  {
+                    'value': '3',
+                    'label': 'love',
+                  },
+                  {
+                    'value': '3',
+                    'label': 'love',
+                  },
+                ],
+                onChange: (value) {
+                  print(value);
+                },
+              )
             ],
           ),
         ),

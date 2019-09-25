@@ -51,25 +51,41 @@ class _MyHomePageState extends State<MyHomePage> {
                 title: 'Here is title',
               ),
               Menu(
+                value: [
+                  '1',
+                  '2',
+                  ['5', '6'],
+                  '1',
+                  ['1', '2'],
+                ],
                 multiSelect: true,
+                onOk: () {
+                  print('ok button');
+                },
+                onCancel: () {
+                  print('cancel button');
+                },
                 level: 2,
                 data: [
                   {
                     'value': '1',
                     'label': 'food',
                     'children': [
-                      {'value': 'sdf1sf', 'label': 'asdfsdf'},
-                      {'value': 'sdf2sf', 'label': 'hxcvxcv'},
-                      {'value': 'sdf3sf', 'label': 'asdfsdf'},
-                      {'value': 'sdf4sf', 'label': 'hxcvxcv'},
-                      {'value': 'sdf5sf', 'label': 'asdfsdf'},
-                      {'value': 'sd6fsf', 'label': 'hxcvxcv'},
-                      {'value': 'sdf7sf', 'label': 'asdfsdf'},
-                      {'value': 'sdf8sf', 'label': 'hxcvxcv'},
-                      {'value': 'sdf9sf', 'label': 'asdfsdf'},
-                      {'value': 'sdf20sf', 'label': 'hxcvxcv'},
-                      {'value': 'sdf11sf', 'label': 'asdfsdf'},
-                      {'value': 'sdfs12f', 'label': 'hxcvxcv'},
+                      {'value': '1', 'label': '1'},
+                      {'value': '2', 'label': '2'},
+                      {'value': '3', 'label': '3'},
+                      {'value': '4', 'label': '4'},
+                      {'value': '5', 'label': '5'},
+                      {'value': '6', 'label': '6'},
+                      {'value': '7', 'label': '7'},
+                      {'value': '8', 'label': '8'},
+                      {'value': '9', 'label': '9'},
+                      {'value': '10', 'label': '10'},
+                      {'value': '11', 'label': '11'},
+                      {
+                        'value': '12',
+                        'label': '12',
+                      },
                     ]
                   },
                   {
@@ -77,41 +93,69 @@ class _MyHomePageState extends State<MyHomePage> {
                     'label': 'market',
                     'isLeaf': false,
                     'children': [
-                      {'value': 'sdfsf', 'label': 'wertr'},
-                      {'value': 'sdfsf', 'label': 'jghjgj'}
+                      {'value': '1', 'label': '1'},
+                      {'value': '2', 'label': '2'}
                     ]
                   },
                   {
                     'value': '3',
-                    'label': 'love',
+                    'label': 'love1',
+                    'children': [
+                      {'value': '1', 'label': '1'},
+                      {'value': '2', 'label': '2'}
+                    ]
                   },
                   {
-                    'value': '3',
-                    'label': 'love',
+                    'value': '4',
+                    'label': 'love2',
+                    'children': [
+                      {'value': '1', 'label': '1'},
+                      {'value': '2', 'label': '2'}
+                    ]
                   },
                   {
-                    'value': '3',
-                    'label': 'love',
+                    'value': '5',
+                    'label': 'love3',
+                    'children': [
+                      {'value': '1', 'label': '1'},
+                      {'value': '2', 'label': '2'}
+                    ]
                   },
                   {
-                    'value': '3',
-                    'label': 'love',
+                    'value': '6',
+                    'label': 'love4',
+                    'children': [
+                      {'value': '1', 'label': '1'},
+                      {'value': '2', 'label': '2'}
+                    ]
                   },
                   {
-                    'value': '3',
-                    'label': 'love',
+                    'value': '7',
+                    'label': 'love5',
+                    'children': [
+                      {'value': '1', 'label': '1'},
+                      {'value': '2', 'label': '2'}
+                    ]
                   },
                   {
-                    'value': '3',
-                    'label': 'love',
+                    'value': '8',
+                    'label': 'love6',
+                    'children': [
+                      {'value': '1', 'label': '1'},
+                      {'value': '2', 'label': '2'}
+                    ]
                   },
                   {
-                    'value': '3',
-                    'label': 'love',
+                    'value': '9',
+                    'label': 'love7',
+                    'children': [
+                      {'value': '1', 'label': '1'},
+                      {'value': '2', 'label': '2'}
+                    ]
                   },
                   {
-                    'value': '3',
-                    'label': 'love',
+                    'value': '10',
+                    'label': 'love8',
                   },
                 ],
                 onChange: (value) {

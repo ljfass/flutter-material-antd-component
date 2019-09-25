@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './checkbox/checkbox.dart' as AntCheckbox;
+import '../checkbox/checkbox.dart' as AntCheckbox;
 
 class Menu extends StatefulWidget {
   Menu(

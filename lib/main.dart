@@ -3,7 +3,7 @@ import './material/navbar/navbar.dart';
 import './material/checkbox/checkbox.dart' as AntCheckbox;
 import './material/checkbox/checkboxItem.dart';
 import './material/popover.dart';
-import './material/menu.dart';
+import './material/menu/menu.dart';
 
 void main() => runApp(MyApp());
 

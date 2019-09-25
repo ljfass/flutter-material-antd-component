@@ -92,25 +92,29 @@ class _CheckboxState extends State<Checkbox> {
               });
               widget.onChange(_checked);
             },
-      child: Stack(
+      child: Row(
         children: <Widget>[
-          Container(
-            width: 20.0,
-            height: 20.0,
-            decoration: boxDecoration,
-          ),
-          Positioned(
-            top: 3.0,
-            right: 7.0,
-            child: RotationTransition(
-              turns: AlwaysStoppedAnimation(45 / 360),
-              child: Container(
-                width: 5.0,
-                height: 11.0,
-                decoration: checkDecoration,
-                child: Container(),
+          Stack(
+            children: <Widget>[
+              Container(
+                width: 20.0,
+                height: 20.0,
+                decoration: boxDecoration,
               ),
-            ),
+              Positioned(
+                top: 3.0,
+                right: 7.0,
+                child: RotationTransition(
+                  turns: AlwaysStoppedAnimation(45 / 360),
+                  child: Container(
+                    width: 5.0,
+                    height: 11.0,
+                    decoration: checkDecoration,
+                    child: Container(),
+                  ),
+                ),
+              )
+            ],
           )
         ],
       ),

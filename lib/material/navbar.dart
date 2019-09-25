@@ -56,19 +56,25 @@ class NavBar extends StatelessWidget {
       );
     } else {
       return InkWell(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Icon(this.icon),
-            Text(
-              this.leftContent,
-              style: TextStyle(
-                  fontSize: 16.0,
-                  color: this.mode == 'light'
-                      ? Theme.of(context).primaryColor
-                      : Colors.white),
-            )
-          ],
+        child: Padding(
+          padding: EdgeInsets.only(left: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Icon(this.icon),
+              SizedBox(
+                width: 5.0,
+              ),
+              Text(
+                this.leftContent,
+                style: TextStyle(
+                    fontSize: 16.0,
+                    color: this.mode == 'light'
+                        ? Theme.of(context).primaryColor
+                        : Colors.white),
+              )
+            ],
+          ),
         ),
         onTap: this.onLeftClick,
       );

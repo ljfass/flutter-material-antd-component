@@ -32,8 +32,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _checked = false;
-
+  int value;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,34 +41,41 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Container(
-            // height: 44.0,
             width: MediaQuery.of(context).size.width,
-            // padding: EdgeInsets.symmetric(horizontal: 15.0),
-            // child: AntRadio.Radio(
-            //   checked: _checked,
-            //   disabled: true,
-            //   onChange: (bool value) {
-            //     setState(() {
-            //       _checked = !_checked;
-            //     });
-            //   },
-            // ),
-            child: Column(
-              children: <Widget>[
-                RadioItem(
-                  title: 'Radio',
-                  checked: true,
-                  disabled: false,
-                  onChange: (bool value) {},
-                ),
-                RadioItem(
-                  title: 'Radio',
-                  checked: true,
-                  disabled: false,
-                  onChange: (bool value) {},
-                )
-              ],
-            )
+            decoration: BoxDecoration(color: Colors.grey[200]),
+            padding: EdgeInsets.symmetric(vertical: 20.0),
+            child: RadioItem(data: [
+              {
+                'title': 'doctor',
+                'disabled': false,
+                'checked': this.value == 1,
+                'subTitle': 'details',
+                'onChange': () {
+                  setState(() {
+                    value = 1;
+                  });
+                }
+              },
+              {
+                'title': 'doctor',
+                'disabled': false,
+                'checked': this.value == 2,
+                'onChange': () {
+                  setState(() {
+                    value = 2;
+                  });
+                }
+              },
+              {
+                'title': 'doctor',
+                'checked': this.value == 3,
+                'onChange': () {
+                  setState(() {
+                    value = 3;
+                  });
+                }
+              },
+            ])
 
             // child: Menu(
             //   value: [

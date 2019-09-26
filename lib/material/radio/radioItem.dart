@@ -1,115 +1,125 @@
 import 'package:flutter/material.dart';
 
 class RadioItem extends StatefulWidget {
-  RadioItem(
-      {Key key,
-      @required this.title,
-      @required this.data,
-      this.defaultChecked,
-      this.checked = false,
-      this.disabled = false,
-      this.onChange,
-      this.subTitle})
-      : assert((data is List || data != null)),
-        assert(title != null),
-        assert(onChange != null),
+  RadioItem({
+    Key key,
+    @required this.data,
+  })  : assert((data is List || data != null)),
         super(key: key);
-  final List<Map<String, String>> data;
-  final String title;
-  final String subTitle;
-  final bool defaultChecked;
-  final bool checked;
-  final bool disabled;
-  final ValueChanged<bool> onChange;
+  final List<Map<String, dynamic>> data;
 
   @override
   _RadioItemState createState() => _RadioItemState();
 }
 
 class _RadioItemState extends State<RadioItem> {
-  bool _checked = false;
+  List<Map<String, dynamic>> _data = [];
 
   @override
   void initState() {
     super.initState();
-    if (widget.checked == null && widget.defaultChecked == null) {
-      setState(() {
-        _checked = false;
-      });
-    } else if (widget.defaultChecked != null) {
-      setState(() {
-        _checked = widget.defaultChecked;
-      });
-    } else {
-      setState(() {
-        _checked = widget.checked;
-      });
-    }
   }
 
   List<Widget> buildContent() {
     List<Widget> _widgetList = [];
-    widget.data.asMap().forEach((int index, Map<String, String> radio) {
+    this._data.asMap().forEach((int index, Map<String, dynamic> radio) {
       _widgetList.add(InkWell(
         splashColor: Colors.transparent,
-        onTap: widget.disabled == true
+        onTap: radio['disabled'] == true
             ? null
             : () {
-                setState(() {
-                  _checked = !this._checked;
-                });
+                radio['onChange']();
               },
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 44.0),
-          child: Container(
-            padding: EdgeInsets.only(left: 15.0),
-            child: Container(
-              padding: EdgeInsets.only(right: 15.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Stack(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 11.0),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                  widget.title,
+        child: radio['subTitle'] != null
+            ? Container(
+                padding: EdgeInsets.only(left: 15.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(
+                              color: Color(0XFFDDDDDD), width: 0.5))),
+                  padding: EdgeInsets.symmetric(vertical: 7.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.centerLeft,
+                              child: Text(radio['title'],
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      color: widget.disabled == true
+                                      color: radio['disabled'] == true
                                           ? Color(0XFFBBBBBB)
-                                          : Colors.black),
-                                ),
+                                          : Colors.black)),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: 15.0),
+                            child: CheckItem(
+                              disabled: radio['disabled'],
+                              checked: radio['checked'],
+                            ),
+                          )
+                        ],
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        margin: EdgeInsets.only(top: 6.0),
+                        child: Text(radio['subTitle'],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                height: 1.5,
+                                color: Color(0xff888888),
+                                fontSize: 15.0)),
+                      )
+                    ],
+                  ),
+                ))
+            : Container(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.only(left: 15.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        height: 44.0,
+                        decoration: BoxDecoration(
+                            border: index == this._data.length - 1
+                                ? null
+                                : Border(
+                                    bottom: BorderSide(
+                                        color: Color(0XFFDDDDDD), width: 0.5))),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                radio['title'],
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: radio['disabled'] == true
+                                        ? Color(0XFFBBBBBB)
+                                        : Colors.black),
                               ),
-                              CheckItem(
-                                disabled: widget.disabled,
-                                checked: _checked,
-                              )
-                            ],
-                          ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: 15.0),
+                              child: CheckItem(
+                                disabled: radio['disabled'],
+                                checked: radio['checked'],
+                              ),
+                            )
+                          ],
                         ),
-                        Positioned(
-                          left: 0.0,
-                          right: 0.0,
-                          bottom: 0.0,
-                          child: Divider(
-                            height: 1.0,
-                            color: Color(0XFFDDDDDD),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
+                      ),
+                    )
+                  ],
+                )),
       ));
     });
     return _widgetList;
@@ -117,29 +127,81 @@ class _RadioItemState extends State<RadioItem> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: buildContent(),
+    _data.clear();
+    widget.data.asMap().forEach((int index, Map<String, dynamic> value) {
+      if (value['checked'] == null && value['defaultChecked'] == null) {
+        _data.add({
+          'defaultChecked': null,
+          'checked': false,
+          'title': value['title'],
+          'subTitle': value['subTitle'] != null ? value['subTitle'] : null,
+          'disabled': value['disabled'] != null ? value['disabled'] : false,
+          'onChange': value['onChange'] != null ? value['onChange'] : null
+        });
+      } else if (value['defaultChecked'] != null) {
+        _data.add({
+          'defaultChecked': value['defaultChecked'],
+          'checked': value['checked'] != null ? value['checked'] : false,
+          'title': value['title'],
+          'subTitle': value['subTitle'] != null ? value['subTitle'] : null,
+          'disabled': value['disabled'] != null ? value['disabled'] : false,
+          'onChange': value['onChange'] != null ? value['onChange'] : null
+        });
+      } else {
+        _data.add({
+          'defaultChecked':
+              value['defaultChecked'] != null ? value['defaultChecked'] : null,
+          'checked': value['checked'],
+          'title': value['title'],
+          'subTitle': value['subTitle'] != null ? value['subTitle'] : null,
+          'disabled': value['disabled'] != null ? value['disabled'] : false,
+          'onChange': value['onChange'] != null ? value['onChange'] : null
+        });
+      }
+    });
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+              top: BorderSide(color: Color(0XFFDDDDDD), width: 0.5),
+              bottom: BorderSide(color: Color(0XFFDDDDDD), width: 0.5))),
+      child: SingleChildScrollView(
+        child: Column(
+          children: buildContent(),
+        ),
       ),
     );
   }
 }
 
 class CheckItem extends StatelessWidget {
-  CheckItem({Key key, this.checked = false, this.disabled = false})
+  CheckItem(
+      {Key key,
+      this.checked = false,
+      this.defaultChecked,
+      this.disabled = false})
       : super(key: key);
   final bool checked;
+  final bool defaultChecked;
   final bool disabled;
 
   @override
   Widget build(BuildContext context) {
+    print(checked);
     BoxDecoration boxDecoration = this.disabled == true
-        ? BoxDecoration(
-            border: Border(
-                top: BorderSide(width: 0.0, color: Colors.transparent),
-                right: BorderSide(width: 1.5, color: Color(0XFFBBBBBB)),
-                bottom: BorderSide(width: 1.5, color: Color(0XFFBBBBBB)),
-                left: BorderSide(width: 0.0, color: Colors.transparent)))
+        ? this.checked == true
+            ? BoxDecoration(
+                border: Border(
+                    top: BorderSide(width: 0.0, color: Colors.transparent),
+                    right: BorderSide(width: 1.5, color: Color(0XFFBBBBBB)),
+                    bottom: BorderSide(width: 1.5, color: Color(0XFFBBBBBB)),
+                    left: BorderSide(width: 0.0, color: Colors.transparent)))
+            : BoxDecoration(
+                border: Border(
+                    top: BorderSide(width: 0.0, color: Colors.transparent),
+                    right: BorderSide(width: 1.5, color: Colors.transparent),
+                    bottom: BorderSide(width: 1.5, color: Colors.transparent),
+                    left: BorderSide(width: 0.0, color: Colors.transparent)))
         : this.checked
             ? BoxDecoration(
                 border: Border(

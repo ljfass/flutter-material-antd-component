@@ -187,7 +187,6 @@ class CheckItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(checked);
     BoxDecoration boxDecoration = this.disabled == true
         ? this.checked == true
             ? BoxDecoration(

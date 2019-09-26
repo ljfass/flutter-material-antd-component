@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import './material/menu/menu.dart';
 import './material/radio/radioItem.dart';
 import './material/card/card.dart' as AntCard;
+import './material/button/button.dart';
 
 void main() => runApp(MyApp());
 
@@ -44,33 +45,38 @@ class _MyHomePageState extends State<MyHomePage> {
         // height: 200.0,
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-        // decoration: BoxDecoration(color: Colors.grey[200]),
-        // child: Card(
-        //   color: Colors.white,
-        //   borderOnForeground: false,
-        //   elevation: 0.0,
-        //   child: Text('data'),
-        // )
-        child: AntCard.Card(
-          full: true,
-          headerTitle: Text(
-            'This is title',
-            style: TextStyle(color: Colors.black),
-          ),
-          headerExtra: 'this is extra',
-          headerThumb:
-              'https://gw.alipayobjects.com/zos/rmsportal/MRhHctKOineMbKAZslML.jpg',
-          body: Column(
-            children: <Widget>[
-              Text('Th is content of `Card`'),
-              Text('Th is content of `Card`'),
-              Text('Th is content of `Card`'),
-              Text('Th is content of `Card`')
-            ],
-          ),
-          footerContent: 'footerContent',
-          footerExtra: 'footerExtra',
-          height: 170.0,
+        child: Column(
+          children: <Widget>[
+            // Container(
+            //   child: OutlineButton(
+            //     onPressed: () {},
+            //     textColor: Colors.black,
+            //     highlightColor: Color(0xffdddddd),
+            //     highlightedBorderColor: Color(0xffdddddd),
+            //     child: Text('Default'),
+            //     color: Colors.red,
+            //     borderSide: BorderSide(color: Color(0XFFDDDDDD), width: 0.5),
+            //   ),
+            // ),
+            // RaisedButton(
+            //   onPressed: () {},
+            //   textColor: Colors.white,
+            //   color: Colors.red,
+            // ),
+            Button(
+              buttonText: 'default',
+              loading: true,
+              disabled: false,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Button(
+              buttonText: 'default',
+              loading: false,
+              disabled: true,
+            )
+          ],
         ),
       ),
     );

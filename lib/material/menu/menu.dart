@@ -242,7 +242,7 @@ class _MenuState extends State<Menu> {
                   Positioned(
                     left: 0.0,
                     right: 0.0,
-                    bottom: 0.0,
+                    bottom: -4.0,
                     child: MultiSelectButtonContainer(
                       onOk: widget.onOk,
                       onCancel: widget.onCancel,
@@ -477,7 +477,7 @@ class _MenuState extends State<Menu> {
                   Positioned(
                     left: 0.0,
                     right: 0.0,
-                    bottom: 0.0,
+                    bottom: -4.0,
                     child: MultiSelectButtonContainer(
                       onOk: widget.onOk,
                       onCancel: widget.onCancel,
@@ -807,12 +807,17 @@ class MultiSelectButtonContainer extends StatelessWidget {
           child: Button(
             onClick: this.onCancel,
             buttonText: '取消',
+            radius: 0.0,
           ),
         ),
         Expanded(
             flex: 5,
-            child:
-                Button(onClick: this.onOk, buttonText: '确定', type: 'primary'))
+            child: Button(
+              onClick: this.onOk,
+              buttonText: '确定',
+              type: 'primary',
+              radius: 0.0,
+            ))
       ],
     );
   }

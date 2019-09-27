@@ -9,12 +9,10 @@ class Card<T> extends StatelessWidget {
       this.headerExtra,
       this.body,
       this.footerContent,
-      this.footerExtra,
-      this.height})
+      this.footerExtra})
       : assert((body == null) || (body != null && body is Widget)),
         super(key: key);
   final bool full;
-  final double height;
   final T headerTitle;
   final T headerThumb;
   final T headerExtra;
@@ -174,18 +172,19 @@ class Card<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: this.height == null ? 134.0 : this.height,
-      padding: EdgeInsets.only(bottom: 6.0),
-      decoration: this.full == true
-          ? BoxDecoration(
-              border: Border(
-                  top: BorderSide(color: Color(0XFFDDDDDD), width: 0.5),
-                  bottom: BorderSide(color: Color(0XFFDDDDDD), width: 0.5)))
-          : BoxDecoration(
-              border: Border.all(color: Color(0XFFDDDDDD), width: 0.5),
-              borderRadius: BorderRadius.all(Radius.circular(5.0))),
-      child: buildWrapper(),
+    return SizedBox(
+      child: Container(
+        padding: EdgeInsets.only(bottom: 16.0),
+        decoration: this.full == true
+            ? BoxDecoration(
+                border: Border(
+                    top: BorderSide(color: Color(0XFFDDDDDD), width: 0.5),
+                    bottom: BorderSide(color: Color(0XFFDDDDDD), width: 0.5)))
+            : BoxDecoration(
+                border: Border.all(color: Color(0XFFDDDDDD), width: 0.5),
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+        child: buildWrapper(),
+      ),
     );
   }
 }

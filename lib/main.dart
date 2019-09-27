@@ -6,6 +6,7 @@ import './material/menu/menu.dart';
 import './material/radio/radioItem.dart';
 import './material/card/card.dart' as AntCard;
 import './material/button/button.dart';
+import './material/badge/badge.dart';
 
 void main() => runApp(MyApp());
 
@@ -42,125 +43,65 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Container(
-        width: MediaQuery.of(context).size.width,
-        // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Menu(
-                value: [
-                  '1',
-                  '2',
-                  ['5', '6'],
-                  '1',
-                  ['1', '2'],
-                ],
-                multiSelect: true,
-                onOk: () {
-                  print('ok button');
-                },
-                onCancel: () {
-                  print('cancel button');
-                },
-                level: 2,
-                data: [
-                  {
-                    'value': '1',
-                    'label': 'food',
-                    'children': [
-                      {'value': '1', 'label': '1'},
-                      {'value': '2', 'label': '2'},
-                      {'value': '3', 'label': '3'},
-                      {'value': '4', 'label': '4'},
-                      {'value': '5', 'label': '5'},
-                      {'value': '6', 'label': '6'},
-                      {'value': '7', 'label': '7'},
-                      {'value': '8', 'label': '8'},
-                      {'value': '9', 'label': '9'},
-                      {'value': '10', 'label': '10'},
-                      {'value': '11', 'label': '11'},
-                      {
-                        'value': '12',
-                        'label': '12',
-                      },
-                    ]
-                  },
-                  {
-                    'value': '2',
-                    'label': 'market',
-                    'isLeaf': false,
-                    'children': [
-                      {'value': '1', 'label': '1'},
-                      {'value': '2', 'label': '2'}
-                    ]
-                  },
-                  {
-                    'value': '3',
-                    'label': 'love1',
-                    'children': [
-                      {'value': '1', 'label': '1'},
-                      {'value': '2', 'label': '2'}
-                    ]
-                  },
-                  {
-                    'value': '4',
-                    'label': 'love2',
-                    'children': [
-                      {'value': '1', 'label': '1'},
-                      {'value': '2', 'label': '2'}
-                    ]
-                  },
-                  {
-                    'value': '5',
-                    'label': 'love3',
-                    'children': [
-                      {'value': '1', 'label': '1'},
-                      {'value': '2', 'label': '2'}
-                    ]
-                  },
-                  {
-                    'value': '6',
-                    'label': 'love4',
-                    'children': [
-                      {'value': '1', 'label': '1'},
-                      {'value': '2', 'label': '2'}
-                    ]
-                  },
-                  {
-                    'value': '7',
-                    'label': 'love5',
-                    'children': [
-                      {'value': '1', 'label': '1'},
-                      {'value': '2', 'label': '2'}
-                    ]
-                  },
-                  {
-                    'value': '8',
-                    'label': 'love6',
-                    'children': [
-                      {'value': '1', 'label': '1'},
-                      {'value': '2', 'label': '2'}
-                    ]
-                  },
-                  {
-                    'value': '9',
-                    'label': 'love7',
-                    'children': [
-                      {'value': '1', 'label': '1'},
-                      {'value': '2', 'label': '2'}
-                    ]
-                  },
-                  {
-                    'value': '10',
-                    'label': 'love8',
-                  },
-                ],
-                onChange: (value) {
-                  print(value);
-                },
-              )
-            ],
-          ),
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+        child: Column(
+          children: <Widget>[
+            Badge(
+              text: '测试',
+              dot: false,
+              child: Container(
+                width: 26.0,
+                height: 26.0,
+                decoration: BoxDecoration(color: Color(0xffdddddd)),
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              text: '优惠优惠优惠优惠优惠',
+              corner: true,
+              dot: false,
+              child: Container(
+                width: 200.0,
+                height: 50.0,
+                decoration: BoxDecoration(color: Color(0xffffffff)),
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              text: '测试',
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              overflowCount: 30,
+              text: 66,
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              dot: true,
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              text: 0,
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              text: 66,
+              dot: true,
+              child: Text('123'),
+            )
+          ],
         ),
       ),
     );

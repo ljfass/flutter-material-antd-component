@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../checkbox/checkbox.dart' as AntCheckbox;
+import '../button/button.dart';
 
 class Menu extends StatefulWidget {
   Menu(
@@ -803,52 +804,15 @@ class MultiSelectButtonContainer extends StatelessWidget {
       children: <Widget>[
         Expanded(
           flex: 5,
-          // child: FlatButton(
-          //   child: Text('取消'),
-          //   color: Colors.white,
-          //   onPressed: () {},
-          // ),
-          child: DecoratedBox(
-            decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Color(0XFFDDDDDD), width: 0.5),
-                ),
-                color: Colors.white),
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                  buttonTheme: ButtonTheme.of(context).copyWith(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap)),
-              child: OutlineButton(
-                child: Text('取消'),
-                onPressed: this.onCancel,
-              ),
-            ),
+          child: Button(
+            onClick: this.onCancel,
+            buttonText: '取消',
           ),
         ),
         Expanded(
-          flex: 5,
-          // child: FlatButton(
-          //   child: Text('确定'),
-          //   color: Theme.of(context).primaryColor,
-          //   onPressed: () {},
-          // ),
-          child: DecoratedBox(
-            decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide.none,
-                ),
-                color: Theme.of(context).primaryColor),
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                  buttonTheme: ButtonTheme.of(context).copyWith(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap)),
-              child: OutlineButton(
-                child: Text('确定'),
-                onPressed: this.onOk,
-              ),
-            ),
-          ),
-        )
+            flex: 5,
+            child:
+                Button(onClick: this.onOk, buttonText: '确定', type: 'primary'))
       ],
     );
   }

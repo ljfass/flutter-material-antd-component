@@ -11,11 +11,13 @@ class Button<T> extends StatefulWidget {
     this.onClick,
     this.loading = false,
     this.icon,
+    this.radius = 5.0,
   })  : assert(type == null ||
             (type != null &&
                 (type == 'primary' || type == 'ghost' || type == 'warning'))),
         assert(type == null || (size == 'small' || size == 'large')),
         assert(icon == null || (icon is IconData || icon is Icon)),
+        assert(radius == null || (radius != null && (0.0 <= radius && radius <= 100.0))),
         super(key: key);
   final String buttonText;
   final String type;
@@ -24,6 +26,7 @@ class Button<T> extends StatefulWidget {
   final VoidCallback onClick;
   final bool loading;
   final T icon;
+  final double radius;
 
   @override
   _ButtonState createState() => _ButtonState();
@@ -48,7 +51,7 @@ class _ButtonState extends State<Button> {
                 splashColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: Color(0XFF108EE9), width: 0.5),
-                    borderRadius: BorderRadius.circular(5.0)),
+                    borderRadius: BorderRadius.circular(widget.radius)),
                 elevation: 0.0,
                 highlightElevation: 0.0,
                 fillColor: widget.disabled == true
@@ -83,7 +86,7 @@ class _ButtonState extends State<Button> {
                                           .toColor()
                                   : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
                                       .toColor(),
-                              fontSize:  widget.size == 'large' ? 16.0 : 13.0,
+                              fontSize: widget.size == 'large' ? 16.0 : 13.0,
                               fontWeight: FontWeight.w400,
                             ),
                           )
@@ -98,7 +101,11 @@ class _ButtonState extends State<Button> {
                                       iconTheme: Theme.of(context)
                                           .iconTheme
                                           .copyWith(
-                                            size: widget.size == 'small'? 18.0 : Theme.of(context).iconTheme.size,
+                                              size: widget.size == 'small'
+                                                  ? 18.0
+                                                  : Theme.of(context)
+                                                      .iconTheme
+                                                      .size,
                                               color: widget.disabled != true
                                                   ? buttonActived == false
                                                       ? Color(0XFFFFFFFF)
@@ -125,7 +132,8 @@ class _ButtonState extends State<Button> {
                                               .toColor()
                                       : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
                                           .toColor(),
-                                  fontSize:  widget.size == 'large' ? 16.0 : 13.0,
+                                  fontSize:
+                                      widget.size == 'large' ? 16.0 : 13.0,
                                   fontWeight: FontWeight.w400,
                                 ),
                               )
@@ -145,7 +153,8 @@ class _ButtonState extends State<Button> {
                                               .toColor()
                                       : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
                                           .toColor(),
-                                  fontSize:  widget.size == 'large' ? 16.0 : 13.0,
+                                  fontSize:
+                                      widget.size == 'large' ? 16.0 : 13.0,
                                   fontWeight: FontWeight.w400,
                                 ),
                               )
@@ -177,7 +186,7 @@ class _ButtonState extends State<Button> {
                               ? Color(0XFF108EE9).withOpacity(0.6)
                               : Color(0XFF108EE9),
                       width: 0.5),
-                  borderRadius: BorderRadius.circular(5.0)),
+                  borderRadius: BorderRadius.circular(widget.radius)),
               elevation: 0.0,
               highlightElevation: 0.0,
               highlightColor: Colors.transparent,
@@ -189,8 +198,8 @@ class _ButtonState extends State<Button> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Container(
-                          width: widget.size == 'small' ? 15.0: 18.0,
-                          height: widget.size == 'small' ? 15.0: 18.0,
+                          width: widget.size == 'small' ? 15.0 : 18.0,
+                          height: widget.size == 'small' ? 15.0 : 18.0,
                           child: CircularProgressIndicator(
                             strokeWidth: 1.0,
                             backgroundColor: Colors.grey.withOpacity(0.3),
@@ -209,7 +218,7 @@ class _ButtonState extends State<Button> {
                                     ? Color(0XFF108ee9)
                                     : Color(0XFF108ee9).withOpacity(0.6)
                                 : Color(0XFF000000).withOpacity(0.1),
-                            fontSize:  widget.size == 'large' ? 16.0 : 13.0,
+                            fontSize: widget.size == 'large' ? 16.0 : 13.0,
                             fontWeight: FontWeight.w400,
                           ),
                         )
@@ -251,7 +260,7 @@ class _ButtonState extends State<Button> {
                                         ? Color(0XFF108ee9)
                                         : Color(0XFF108ee9).withOpacity(0.6)
                                     : Color(0XFF000000).withOpacity(0.1),
-                                fontSize:  widget.size == 'large' ? 16.0 : 13.0,
+                                fontSize: widget.size == 'large' ? 16.0 : 13.0,
                                 fontWeight: FontWeight.w400,
                               ),
                             )
@@ -268,7 +277,7 @@ class _ButtonState extends State<Button> {
                                         ? Color(0XFF108ee9)
                                         : Color(0XFF108ee9).withOpacity(0.6)
                                     : Color(0XFF000000).withOpacity(0.1),
-                                fontSize:  widget.size == 'large' ? 16.0 : 13.0,
+                                fontSize: widget.size == 'large' ? 16.0 : 13.0,
                                 fontWeight: FontWeight.w400,
                               ),
                             )
@@ -295,7 +304,7 @@ class _ButtonState extends State<Button> {
                 splashColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: Color(0XFFDDDDDD), width: 0.5),
-                    borderRadius: BorderRadius.circular(5.0)),
+                    borderRadius: BorderRadius.circular(widget.radius)),
                 elevation: 0.0,
                 highlightElevation: 0.0,
                 fillColor: widget.disabled == true
@@ -308,8 +317,8 @@ class _ButtonState extends State<Button> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: widget.size == 'small' ? 15.0: 18.0,
-                            height: widget.size == 'small' ? 15.0: 18.0,
+                            width: widget.size == 'small' ? 15.0 : 18.0,
+                            height: widget.size == 'small' ? 15.0 : 18.0,
                             child: CircularProgressIndicator(
                               strokeWidth: 1.0,
                               backgroundColor: Colors.grey.withOpacity(0.3),
@@ -330,7 +339,7 @@ class _ButtonState extends State<Button> {
                                           .toColor()
                                   : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
                                       .toColor(),
-                              fontSize:  widget.size == 'large' ? 16.0 : 13.0,
+                              fontSize: widget.size == 'large' ? 16.0 : 13.0,
                               fontWeight: FontWeight.w400,
                             ),
                           )
@@ -342,10 +351,13 @@ class _ButtonState extends State<Button> {
                             children: <Widget>[
                                 Theme(
                                     data: Theme.of(context).copyWith(
-                                        iconTheme: Theme.of(context)
-                                            .iconTheme
-                                            .copyWith(
-                                              size: widget.size == 'small'? 18.0 : Theme.of(context).iconTheme.size,
+                                        iconTheme:
+                                            Theme.of(context).iconTheme.copyWith(
+                                                size: widget.size == 'small'
+                                                    ? 18.0
+                                                    : Theme.of(context)
+                                                        .iconTheme
+                                                        .size,
                                                 color: widget.disabled != true
                                                     ? buttonActived == false
                                                         ? Color(0XFFFFFFFF)
@@ -372,7 +384,8 @@ class _ButtonState extends State<Button> {
                                                 .toColor()
                                         : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
                                             .toColor(),
-                                    fontSize: widget.size == 'large' ? 16.0 : 13.0,
+                                    fontSize:
+                                        widget.size == 'large' ? 16.0 : 13.0,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 )
@@ -391,7 +404,8 @@ class _ButtonState extends State<Button> {
                                               .toColor()
                                       : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
                                           .toColor(),
-                                  fontSize:  widget.size == 'large' ? 16.0 : 13.0,
+                                  fontSize:
+                                      widget.size == 'large' ? 16.0 : 13.0,
                                   fontWeight: FontWeight.w400,
                                 ),
                               )
@@ -419,7 +433,7 @@ class _ButtonState extends State<Button> {
                 splashColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: Color(0XFFDDDDDD), width: 0.5),
-                    borderRadius: BorderRadius.circular(5.0)),
+                    borderRadius: BorderRadius.circular(widget.radius)),
                 highlightElevation: 0.0,
                 elevation: 0.0,
                 fillColor: widget.disabled == true

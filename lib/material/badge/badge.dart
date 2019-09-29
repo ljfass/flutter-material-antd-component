@@ -67,155 +67,197 @@ class _BadgeState extends State<Badge> {
     );
   }
 
+  Widget buildHot(content) {
+    return Container(
+        key: _containerKey,
+        height: 18.0,
+        padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 2.0),
+        decoration: BoxDecoration(
+            color: Color(0XFFF96268),
+            borderRadius: BorderRadius.circular(12.0)),
+        child: content is String
+            ? Text('$content',
+                style:
+                    TextStyle(color: Colors.white, height: 1.2, fontSize: 12.0))
+            : buildNumber(content));
+  }
+
+  Widget buildNumber(num number) {
+    return number > widget.overflowCount
+        ? Text('${widget.overflowCount}+',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, height: 1.2, fontSize: 12.0))
+        : Text('$number',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, height: 1.2, fontSize: 12.0));
+  }
+
   Widget buildDot() {
     return DecoratedBox(
       decoration:
           BoxDecoration(color: Color(0XFFFF5B05), shape: BoxShape.circle),
       child: Container(
-        width: 8.0,
-        height: 8.0,
+        width: widget.size == 'small' ? 8.0 : 16.0,
+        height: widget.size == 'small' ? 8.0 : 16.0,
       ),
     );
   }
 
   Widget buildTextWithoutChild<T>(text) {
+    if (widget.corner == true) {
+      return Text('');
+    }
     if (widget.dot == true) {
       return buildDot();
+    }
+    if (text == null) {
+      return Text('');
     }
     if (text is num) {
       if (text == 0) {
         return Text('');
       }
-      return ConstrainedBox(
-        constraints: BoxConstraints(minWidth: 9.0),
-        child: Container(
-            height: 18.0,
-            padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 2.0),
-            decoration: BoxDecoration(
-                color: Color(0XFFFF5B05),
-                borderRadius: BorderRadius.circular(12.0)),
-            child: text > widget.overflowCount
-                ? Text('${widget.overflowCount}+',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.white, height: 1.2, fontSize: 12.0))
-                : Text('$text',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.white, height: 1.2, fontSize: 12.0))),
-      );
+      return widget.hot == true
+          ? buildHot(text)
+          : ConstrainedBox(
+              constraints: BoxConstraints(minWidth: 9.0),
+              child: Container(
+                  height: 18.0,
+                  padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 2.0),
+                  decoration: BoxDecoration(
+                      color: Color(0XFFFF5B05),
+                      borderRadius: BorderRadius.circular(12.0)),
+                  child: buildNumber(text)),
+            );
     } else {
-      return ConstrainedBox(
-        constraints: BoxConstraints(minWidth: 9.0),
-        child: Container(
-            height: 18.0,
-            padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 2.0),
-            decoration: BoxDecoration(
-                color: Color(0XFFFF5B05),
-                borderRadius: BorderRadius.circular(12.0)),
-            child: Text(text,
-                style: TextStyle(
-                    color: Colors.white, height: 1.2, fontSize: 12.0))),
-      );
+      return widget.hot == true
+          ? buildHot(text)
+          : Container(
+              height: 18.0,
+              padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 2.0),
+              decoration: BoxDecoration(
+                  color: Color(0XFFFF5B05),
+                  borderRadius: BorderRadius.circular(12.0)),
+              child: Text(text,
+                  style: TextStyle(
+                      color: Colors.white, height: 1.2, fontSize: 12.0)));
+    }
+  }
+
+  Widget buildUsualContent(content) {
+    if (content is num) {
+      return Container(
+          key: _containerKey,
+          height: 18.0,
+          padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+          decoration: BoxDecoration(
+              color: Color(0XFFFF5B05),
+              borderRadius: BorderRadius.circular(12.0)),
+          child: buildNumber(content));
+    } else if (content is String) {
+      return Container(
+          key: _containerKey,
+          height: 18.0,
+          padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+          decoration: BoxDecoration(
+              color: Color(0XFFFF5B05),
+              borderRadius: BorderRadius.circular(12.0)),
+          child: Text(content,
+              style:
+                  TextStyle(color: Colors.white, height: 1.2, fontSize: 12.0)));
     }
   }
 
   Widget buildTextWithChild<T>(text) {
+    if (widget.dot == true && widget.corner == true) {
+      return Text('$text');
+    }
     if (widget.dot == true) {
       return Stack(
         overflow: Overflow.visible,
         children: <Widget>[
           widget.child,
           Positioned(
-            right: -2.0,
+            right: -6.0,
             top: -4.0,
             child: buildDot(),
           )
         ],
       );
     }
+    if (text == null) {
+      return widget.child;
+    }
     if (text is num) {
       if (text == 0) {
         return widget.child;
       }
       return Stack(
-        alignment: Alignment.topRight,
-        overflow: widget.corner == true ? Overflow.clip : Overflow.visible,
+        overflow: Overflow.clip,
         children: <Widget>[
           widget.child,
-          Positioned(
-            right: widget.corner == true ? -32.0 : -9.0,
-            top: widget.corner == true ? -0.0 : -6.0,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minWidth: 9.0),
-              child: widget.corner == true
-                  ? buildBadgeCorner(text > widget.overflowCount
-                      ? Text('${widget.overflowCount}+',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white, height: 1.2, fontSize: 10.0))
-                      : Text('$text',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              height: 1.2,
-                              fontSize: 10.0)))
-                  : Container(
-                      key: _containerKey,
-                      height: 18.0,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                      decoration: BoxDecoration(
-                          color: Color(0XFFFF5B05),
-                          borderRadius: BorderRadius.circular(12.0)),
-                      child: text > widget.overflowCount
-                          ? Text('${widget.overflowCount}+',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  height: 1.2,
-                                  fontSize: 10.0))
-                          : Text('$text',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  height: 1.2,
-                                  fontSize: 10.0))),
-            ),
-          )
+          widget.corner == true
+              ? Positioned(
+                  right: -20.0,
+                  top: 12.0,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: 9.0),
+                    child: widget.corner == true
+                        ? buildBadgeCorner(buildNumber(text))
+                        : widget.hot == true
+                            ? buildHot(text)
+                            : buildUsualContent(text),
+                  ),
+                )
+              : Positioned(
+                  left: -(_containerSize.width / 2) + 4,
+                  top: -1.0,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: 9.0),
+                    child: widget.corner == true
+                        ? buildBadgeCorner(buildNumber(text))
+                        : widget.hot == true
+                            ? buildHot(text)
+                            : buildUsualContent(text),
+                  ),
+                )
         ],
       );
     } else {
+      // text is String
       return Stack(
-        overflow: widget.corner == true ? Overflow.clip : Overflow.visible,
+        overflow: Overflow.clip,
         children: <Widget>[
           widget.child,
-          Positioned(
-            right: widget.corner == true
-                ? -_containerSize.width + 12
-                : -_containerSize.width + 6,
-            top: widget.corner == true ? 0.0 : -10.0,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minWidth: 9.0),
-              child: widget.corner == true
-                  ? buildBadgeCorner(Text(text,
-                      style: TextStyle(
-                          color: Colors.white, height: 1.2, fontSize: 12.0)))
-                  : Container(
-                      key: _containerKey,
-                      height: 18.0,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                      decoration: BoxDecoration(
-                          color: Color(0XFFFF5B05),
-                          borderRadius: BorderRadius.circular(12.0)),
-                      child: Text(text,
+          widget.corner == true
+              ? Positioned(
+                  right: -20.0,
+                  top: 12.0,
+                  child: widget.corner == true
+                      ? buildBadgeCorner(Text('$text',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                               color: Colors.white,
                               height: 1.2,
-                              fontSize: 12.0))),
-            ),
-          )
+                              fontSize: 12.0)))
+                      : widget.hot == true
+                          ? buildHot(text)
+                          : buildUsualContent(text),
+                )
+              : Positioned(
+                  left: -_containerSize.width / 2 + 4,
+                  top: -1.0,
+                  child: widget.corner == true
+                      ? buildBadgeCorner(Text('$text',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.white,
+                              height: 1.2,
+                              fontSize: 12.0)))
+                      : widget.hot == true
+                          ? buildHot(text)
+                          : buildUsualContent(text),
+                )
         ],
       );
     }

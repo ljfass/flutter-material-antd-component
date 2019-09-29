@@ -46,61 +46,78 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
         child: Column(
           children: <Widget>[
-            // Badge(
-            //   text: '测试',
-            //   dot: false,
-            //   child: Container(
-            //     width: 26.0,
-            //     height: 26.0,
-            //     decoration: BoxDecoration(color: Color(0xffdddddd)),
-            //   ),
-            // ),
-            // SizedBox(
-            //   height: 20.0,
-            // ),
             Badge(
-              text: 'sfsdf',
-              corner: true,
-              dot: false,
+              text: 122,
+              dot: true,
+              size: 'large',
+              hot: true,
               child: Container(
-                width: 200.0,
-                height: 50.0,
-                decoration: BoxDecoration(color: Color(0xffffffff)),
+                width: 200,
+                height: 50,
+                decoration: BoxDecoration(color: Colors.white),
               ),
             ),
-            // SizedBox(
-            //   height: 20.0,
-            // ),
-            // Badge(
-            //   text: '测试',
-            // ),
-            // SizedBox(
-            //   height: 20.0,
-            // ),
-            // Badge(
-            //   overflowCount: 30,
-            //   text: 66,
-            // ),
-            // SizedBox(
-            //   height: 20.0,
-            // ),
-            // Badge(
-            //   dot: true,
-            // ),
-            // SizedBox(
-            //   height: 20.0,
-            // ),
-            // Badge(
-            //   text: 0,
-            // ),
-            // SizedBox(
-            //   height: 20.0,
-            // ),
-            // Badge(
-            //   text: 66,
-            //   dot: true,
-            //   child: Text('123'),
-            // )
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              text: 'contentcontentcontentcontent',
+              child: Container(
+                width: 200,
+                height: 50,
+                decoration: BoxDecoration(color: Colors.white),
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              text: 'content',
+              hot: true,
+              corner: true,
+              child: Container(
+                width: 200,
+                height: 50,
+                decoration: BoxDecoration(color: Colors.white),
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              text: 122,
+              hot: true,
+              corner: true,
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              text: 122,
+              hot: true,
+              corner: true,
+              child: Container(
+                width: 200,
+                height: 50,
+                decoration: BoxDecoration(color: Colors.white),
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Badge(
+              text: 122,
+              hot: false,
+              corner: true,
+              child: Container(
+                width: 200,
+                height: 50,
+                decoration: BoxDecoration(color: Colors.white),
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
           ],
         ),
       ),

@@ -17,7 +17,8 @@ class Button<T> extends StatefulWidget {
                 (type == 'primary' || type == 'ghost' || type == 'warning'))),
         assert(type == null || (size == 'small' || size == 'large')),
         assert(icon == null || (icon is IconData || icon is Icon)),
-        assert(radius == null || (radius != null && (0.0 <= radius && radius <= 100.0))),
+        assert(radius == null ||
+            (radius != null && (0.0 <= radius && radius <= 100.0))),
         super(key: key);
   final String buttonText;
   final String type;
@@ -47,7 +48,11 @@ class _ButtonState extends State<Button> {
                     minHeight: widget.size == 'small' ? 30.0 : 42.0),
                 onPressed: widget.disabled == true
                     ? null
-                    : widget.onClick == null ? () {} : widget.onClick,
+                    : widget.onClick == null
+                        ? () {}
+                        : () {
+                            widget.onClick();
+                          },
                 splashColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: Color(0XFF108EE9), width: 0.5),

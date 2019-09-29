@@ -46,20 +46,20 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
         child: Column(
           children: <Widget>[
+            // Badge(
+            //   text: '测试',
+            //   dot: false,
+            //   child: Container(
+            //     width: 26.0,
+            //     height: 26.0,
+            //     decoration: BoxDecoration(color: Color(0xffdddddd)),
+            //   ),
+            // ),
+            // SizedBox(
+            //   height: 20.0,
+            // ),
             Badge(
-              text: '测试',
-              dot: false,
-              child: Container(
-                width: 26.0,
-                height: 26.0,
-                decoration: BoxDecoration(color: Color(0xffdddddd)),
-              ),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Badge(
-              text: '优惠优惠优惠优惠优惠',
+              text: 'sfsdf',
               corner: true,
               dot: false,
               child: Container(
@@ -68,39 +68,39 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: BoxDecoration(color: Color(0xffffffff)),
               ),
             ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Badge(
-              text: '测试',
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Badge(
-              overflowCount: 30,
-              text: 66,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Badge(
-              dot: true,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Badge(
-              text: 0,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Badge(
-              text: 66,
-              dot: true,
-              child: Text('123'),
-            )
+            // SizedBox(
+            //   height: 20.0,
+            // ),
+            // Badge(
+            //   text: '测试',
+            // ),
+            // SizedBox(
+            //   height: 20.0,
+            // ),
+            // Badge(
+            //   overflowCount: 30,
+            //   text: 66,
+            // ),
+            // SizedBox(
+            //   height: 20.0,
+            // ),
+            // Badge(
+            //   dot: true,
+            // ),
+            // SizedBox(
+            //   height: 20.0,
+            // ),
+            // Badge(
+            //   text: 0,
+            // ),
+            // SizedBox(
+            //   height: 20.0,
+            // ),
+            // Badge(
+            //   text: 66,
+            //   dot: true,
+            //   child: Text('123'),
+            // )
           ],
         ),
       ),

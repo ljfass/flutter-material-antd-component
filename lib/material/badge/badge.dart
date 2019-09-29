@@ -34,7 +34,7 @@ class _BadgeState extends State<Badge> {
   @override
   void initState() {
     super.initState();
-    if (widget.text is String && widget.child != null) {
+    if ((widget.text is String || widget.text is num) && widget.child != null) {
       WidgetsBinding.instance.addPostFrameCallback(_onBuildCompleted);
     }
   }
@@ -56,10 +56,11 @@ class _BadgeState extends State<Badge> {
     return RotationTransition(
       turns: AlwaysStoppedAnimation(45 / 360),
       child: Container(
+        key: _containerKey,
         alignment: Alignment.center,
         width: 80.0,
         height: 16.0,
-        padding: EdgeInsets.fromLTRB(16.0, 2.0, 2.0, 2.0),
+        padding: EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 2.0),
         decoration: BoxDecoration(color: Color(0XFFff5b05)),
         child: _child,
       ),
@@ -160,6 +161,7 @@ class _BadgeState extends State<Badge> {
                               height: 1.2,
                               fontSize: 10.0)))
                   : Container(
+                      key: _containerKey,
                       height: 18.0,
                       padding:
                           EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
@@ -185,7 +187,6 @@ class _BadgeState extends State<Badge> {
       );
     } else {
       return Stack(
-        alignment: Alignment.topLeft,
         overflow: widget.corner == true ? Overflow.clip : Overflow.visible,
         children: <Widget>[
           widget.child,

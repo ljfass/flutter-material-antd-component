@@ -7,6 +7,7 @@ import './material/radio/radioItem.dart';
 import './material/card/card.dart' as AntCard;
 import './material/button/button.dart';
 import './material/badge/badge.dart';
+import './material/toast/toast.dart';
 
 void main() => runApp(MyApp());
 
@@ -46,78 +47,71 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
         child: Column(
           children: <Widget>[
-            Badge(
-              text: 122,
-              dot: true,
-              size: 'large',
-              hot: true,
-              child: Container(
-                width: 200,
-                height: 50,
-                decoration: BoxDecoration(color: Colors.white),
-              ),
+            Button(
+              buttonText: 'text only',
+              onClick: () {
+                Toast.showToast(context,
+                    content: 'This is a toast tips!!',
+                    type: 'info',
+                    duration: 10000,
+                    mask: false, onClose: () {
+                  // Toast.hide();
+                });
+              },
             ),
-            SizedBox(
-              height: 20.0,
+            Button(
+              buttonText: 'without mask',
+              onClick: () {
+                Toast.showToast(context,
+                    content: 'Toast without mask!!',
+                    type: 'info',
+                    mask: false, onClose: () {
+                  print('done toast');
+                });
+              },
             ),
-            Badge(
-              text: 'contentcontentcontentcontent',
-              child: Container(
-                width: 200,
-                height: 50,
-                decoration: BoxDecoration(color: Colors.white),
-              ),
+            Button(
+              buttonText: 'custom icon',
+              onClick: () {
+                Toast.showToast(context,
+                    content: Icon(
+                      Icons.refresh,
+                      color: Colors.white,
+                    ),
+                    mask: false,
+                    type: 'info');
+              },
             ),
-            SizedBox(
-              height: 20.0,
+            Button(
+              buttonText: 'success',
+              onClick: () {
+                Toast.showToast(context,
+                    content: 'Load success!!', mask: false, type: 'success');
+              },
             ),
-            Badge(
-              text: 'content',
-              hot: true,
-              corner: true,
-              child: Container(
-                width: 200,
-                height: 50,
-                decoration: BoxDecoration(color: Colors.white),
-              ),
+            Button(
+              buttonText: 'fail',
+              onClick: () {
+                Toast.showToast(context,
+                    content: 'Load failed!!', mask: false, type: 'fail');
+              },
             ),
-            SizedBox(
-              height: 20.0,
+            Button(
+              buttonText: 'network failure',
+              onClick: () {
+                Toast.showToast(context,
+                    content: 'Network conntection failed!!',
+                    mask: false,
+                    type: 'offline');
+              },
             ),
-            Badge(
-              text: 122,
-              hot: true,
-              corner: true,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Badge(
-              text: 122,
-              hot: true,
-              corner: true,
-              child: Container(
-                width: 200,
-                height: 50,
-                decoration: BoxDecoration(color: Colors.white),
-              ),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Badge(
-              text: 122,
-              hot: false,
-              corner: true,
-              child: Container(
-                width: 200,
-                height: 50,
-                decoration: BoxDecoration(color: Colors.white),
-              ),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
+            Button(
+              buttonText: 'loading',
+              onClick: () {
+                Toast.showToast(context,
+                    content: 'Loading...', mask: false, type: 'loading');
+              },
+            )
           ],
         ),
       ),

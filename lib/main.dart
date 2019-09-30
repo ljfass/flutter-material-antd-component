@@ -10,6 +10,7 @@ import './material/badge/badge.dart';
 import './material/toast/toast.dart';
 import './material/progress/progress.dart';
 import './material/tag/tag.dart';
+import './material/noticebar/noticebar.dart';
 
 void main() => runApp(MyApp());
 
@@ -47,51 +48,90 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+          // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Tag(
-                child: Text('Basic1'),
-                disabled: false,
-                closable: true,
-                onChange: (bool selected) {
-                  print(selected);
-                },
-                onClose: () {
-                  print('onclose');
-                },
-                afterClose: () {
-                  print('afterclose');
-                },
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Tag(
-                child: Text('data'),
-                disabled: true,
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Tag(
-                child: Text('Basic2'),
-                disabled: false,
-                closable: false,
-                onChange: (bool selected) {
-                  print(selected);
-                },
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Tag(
-                child: Text('Small and Readonly'),
-                small: true,
-              ),
-            ],
-          )),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Badge(
+            text: 190,
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Badge(
+            text: 122,
+            dot: true,
+            size: 'large',
+            hot: true,
+            child: Container(
+              width: 200,
+              height: 50,
+              decoration: BoxDecoration(color: Colors.white),
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Badge(
+            text: 'contentcontentcontentcontent',
+            child: Container(
+              width: 200,
+              height: 50,
+              decoration: BoxDecoration(color: Colors.white),
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Badge(
+            text: 'content',
+            hot: true,
+            corner: true,
+            child: Container(
+              width: 200,
+              height: 50,
+              decoration: BoxDecoration(color: Colors.white),
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Badge(
+            text: 122,
+            hot: true,
+            corner: true,
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Badge(
+            text: 122,
+            hot: true,
+            corner: true,
+            child: Container(
+              width: 200,
+              height: 50,
+              decoration: BoxDecoration(color: Colors.white),
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Badge(
+            text: 122,
+            hot: false,
+            corner: true,
+            child: Container(
+              width: 200,
+              height: 50,
+              decoration: BoxDecoration(color: Colors.white),
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+          )
+        ],
+      )),
     );
   }
 }

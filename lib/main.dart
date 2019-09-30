@@ -9,6 +9,7 @@ import './material/button/button.dart';
 import './material/badge/badge.dart';
 import './material/toast/toast.dart';
 import './material/progress/progress.dart';
+import './material/tag/tag.dart';
 
 void main() => runApp(MyApp());
 
@@ -50,21 +51,45 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Progress(
-                percent: percent,
-                unfilled: false,
+              Tag(
+                child: Text('Basic1'),
+                disabled: false,
+                closable: true,
+                onChange: (bool selected) {
+                  print(selected);
+                },
+                onClose: () {
+                  print('onclose');
+                },
+                afterClose: () {
+                  print('afterclose');
+                },
               ),
               SizedBox(
                 height: 20.0,
               ),
-              Button(
-                buttonText: 'add',
-                onClick: () {
-                  setState(() {
-                    percent = percent + 10;
-                  });
+              Tag(
+                child: Text('data'),
+                disabled: true,
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Tag(
+                child: Text('Basic2'),
+                disabled: false,
+                closable: false,
+                onChange: (bool selected) {
+                  print(selected);
                 },
-              )
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Tag(
+                child: Text('Small and Readonly'),
+                small: true,
+              ),
             ],
           )),
     );

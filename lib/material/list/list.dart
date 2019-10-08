@@ -58,7 +58,7 @@ class List<T> extends StatelessWidget {
             )
           : Text(
               itemContent,
-              maxLines: 3,
+              maxLines: this.extra == null ? 1 : 3,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.left,
               style: TextStyle(
@@ -77,7 +77,7 @@ class List<T> extends StatelessWidget {
                   fontSize: 14.0),
               child: itemContent)
           : DefaultTextStyle(
-              maxLines: 3,
+              maxLines: this.extra == null ? 1 : 3,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                   color: this.disabled == true

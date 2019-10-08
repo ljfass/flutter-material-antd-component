@@ -18,7 +18,7 @@ class NoticeBar extends StatefulWidget {
   final VoidCallback onClick;
   final Widget action;
   final String noticeText;
-  final double duration;
+  final int duration;
   final bool loop;
 
   @override
@@ -35,14 +35,18 @@ class _NoticeBarState extends State<NoticeBar>
   GlobalKey _contentKey = GlobalKey();
   Size _containerSize = Size(0, 0);
   Size _contentSize = Size(0, 0);
+  bool visible = true;
+  VisibleNotifier _visible;
 
   @override
   void initState() {
     super.initState();
+
     _controller = AnimationController(
         duration: Duration(
-            milliseconds:
-                (_contentSize.width - _containerSize.width + 20.0).toInt() *
+            milliseconds: widget.duration != null
+                ? widget.duration
+                : (_contentSize.width - _containerSize.width + 20.0).toInt() *
                     500),
         vsync: this);
     _animation = Tween<double>(begin: _currentBegin, end: _currentEnd)
@@ -77,17 +81,28 @@ class _NoticeBarState extends State<NoticeBar>
   }
 
   _getContentSize() {
+    // _visible.addListener(_handleVisibleChange);
+    _visible = VisibleNotifier(true);
+    _visible.addListener(_handleVisibleChange);
     final RenderBox containerRenderBox =
         _contentKey.currentContext.findRenderObject();
     final contentSize = containerRenderBox.size;
     _contentSize = contentSize;
     if (_contentSize.width > _containerSize.width) {
-      _animation = Tween<double>(
-              begin: _currentBegin,
-              end: _contentSize.width - _containerSize.width + 20.0)
-          .animate(_controller);
-      _controller.forward();
+      setState(() {
+        _animation = Tween<double>(
+                begin: _currentBegin,
+                end: _contentSize.width - _containerSize.width + 20.0)
+            .animate(_controller);
+        _controller.forward();
+      });
     }
+  }
+
+  void _handleVisibleChange() {
+    setState(() {
+      visible = _visible.value;
+    });
   }
 
   @override
@@ -98,11 +113,15 @@ class _NoticeBarState extends State<NoticeBar>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedNoticeBar(
-        animation: _animation,
-        widget: widget,
-        containerKey: _containerKey,
-        contentKey: _contentKey);
+    return Visibility(
+      visible: visible,
+      child: AnimatedNoticeBar(
+          animation: _animation,
+          vd: _visible,
+          widget: widget,
+          containerKey: _containerKey,
+          contentKey: _contentKey),
+    );
   }
 }
 
@@ -113,10 +132,54 @@ class AnimatedNoticeBar extends AnimatedWidget {
     this.containerKey,
     this.contentKey,
     this.widget,
+    this.vd,
   }) : super(key: key, listenable: animation);
   final widget;
   final GlobalKey containerKey;
   final GlobalKey contentKey;
+  final VisibleNotifier vd;
+
+  Widget buildTail() {
+    Widget tail;
+    if (widget.mode == null) {
+      tail = Container(
+        width: 0.0,
+        height: 0.0,
+      );
+    } else if (widget.mode == 'closable') {
+      tail = GestureDetector(
+          child: Container(
+            padding: EdgeInsets.only(left: 4.0),
+            alignment: Alignment.centerRight,
+            decoration: BoxDecoration(color: Color(0xfffefcec)),
+            child: widget.action == null ? Icon(Icons.close) : widget.action,
+          ),
+          onTap: widget.onClick == null
+              ? () {
+                  vd.value = false;
+                }
+              : () {
+                  widget.onClick();
+                  vd.value = false;
+                });
+    } else if (widget.mode == 'link') {
+      tail = GestureDetector(
+          child: Container(
+            padding: EdgeInsets.only(left: 4.0),
+            alignment: Alignment.centerRight,
+            decoration: BoxDecoration(color: Color(0xfffefcec)),
+            child: widget.action == null
+                ? Icon(Icons.chevron_right)
+                : widget.action,
+          ),
+          onTap: widget.onClick == null
+              ? null
+              : () {
+                  widget.onClick();
+                });
+    }
+    return tail;
+  }
 
   Widget build(BuildContext context) {
     final Animation<double> animation = listenable;
@@ -124,13 +187,15 @@ class AnimatedNoticeBar extends AnimatedWidget {
       data: Theme.of(context).copyWith(
           iconTheme: Theme.of(context)
               .iconTheme
-              .copyWith(color: Color(0xfff76a24), size: 18.0)),
+              .copyWith(color: Color(0xfff76a24), size: 17.0)),
       child: Container(
         height: 36.0,
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
         decoration: BoxDecoration(
           color: Color(0xfffefcec),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             widget.icon == null
                 ? Container(
@@ -138,7 +203,7 @@ class AnimatedNoticeBar extends AnimatedWidget {
                     height: 0.0,
                   )
                 : Container(
-                    width: 22.0,
+                    padding: EdgeInsets.only(right: 6.0),
                     decoration: BoxDecoration(color: Color(0xfffefcec)),
                     child: Icon(widget.icon),
                   ),
@@ -168,23 +233,14 @@ class AnimatedNoticeBar extends AnimatedWidget {
                 ],
               ),
             ),
-            widget.mode == null
-                ? Container(
-                    width: 0.0,
-                    height: 0.0,
-                  )
-                : Container(
-                    width: 40.0,
-                    padding: EdgeInsets.only(right: 6.0),
-                    alignment: Alignment.centerRight,
-                    decoration: BoxDecoration(color: Color(0xfffefcec)),
-                    child: widget.mode == 'closable'
-                        ? Icon(Icons.close)
-                        : Icon(Icons.chevron_right),
-                  ),
+            buildTail(),
           ],
         ),
       ),
     );
   }
+}
+
+class VisibleNotifier extends ValueNotifier<bool> {
+  VisibleNotifier(value) : super(value);
 }

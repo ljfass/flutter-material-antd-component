@@ -48,87 +48,66 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Container(
-          // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
           child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Badge(
-            text: 190,
+          SizedBox(
+            height: 20.0,
+          ),
+          NoticeBar(
+            loop: true,
+            noticeText:
+                'Notice: The arrival time of incomes and transfers of Yu &#39;E Bao will be delayed during National Day.',
           ),
           SizedBox(
             height: 20.0,
           ),
-          Badge(
-            text: 122,
-            dot: true,
-            size: 'large',
-            hot: true,
-            child: Container(
-              width: 200,
-              height: 50,
-              decoration: BoxDecoration(color: Colors.white),
+          NoticeBar(
+            loop: false,
+            mode: 'closable',
+            noticeText:
+                'Notice: The arrival time of incomes and transfers of Yu &#39;E Bao will be delayed during National Day.',
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          NoticeBar(
+            loop: false,
+            icon: null,
+            mode: 'closable',
+            noticeText: 'Remove the default icon.',
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          NoticeBar(
+            loop: false,
+            icon: Icons.check_circle_outline,
+            mode: 'closable',
+            noticeText: 'Customized icon.',
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          NoticeBar(
+            loop: false,
+            action: Text(
+              '不再提示',
+              style: TextStyle(color: Colors.grey),
             ),
+            mode: 'closable',
+            noticeText: 'Closable demo for `actionText`.',
           ),
           SizedBox(
             height: 20.0,
           ),
-          Badge(
-            text: 'contentcontentcontentcontent',
-            child: Container(
-              width: 200,
-              height: 50,
-              decoration: BoxDecoration(color: Colors.white),
+          NoticeBar(
+            loop: false,
+            action: Text(
+              '去看看',
+              style: TextStyle(color: Color(0xfff76a24)),
             ),
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
-          Badge(
-            text: 'content',
-            hot: true,
-            corner: true,
-            child: Container(
-              width: 200,
-              height: 50,
-              decoration: BoxDecoration(color: Colors.white),
-            ),
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
-          Badge(
-            text: 122,
-            hot: true,
-            corner: true,
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
-          Badge(
-            text: 122,
-            hot: true,
-            corner: true,
-            child: Container(
-              width: 200,
-              height: 50,
-              decoration: BoxDecoration(color: Colors.white),
-            ),
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
-          Badge(
-            text: 122,
-            hot: false,
-            corner: true,
-            child: Container(
-              width: 200,
-              height: 50,
-              decoration: BoxDecoration(color: Colors.white),
-            ),
-          ),
-          SizedBox(
-            height: 20.0,
+            mode: 'link',
+            noticeText: 'Closable demo for `actionText`.',
           )
         ],
       )),

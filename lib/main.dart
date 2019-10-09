@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_antd/material/list/list.dart' as prefix0;
+import 'package:material_antd/material/steps/steps.dart' as prefix1;
 import './material/radio/radio.dart' as AntRadio;
 import './material/checkbox/checkbox.dart' as AntCheckbox;
 import 'package:flutter/cupertino.dart';
@@ -13,6 +14,7 @@ import './material/progress/progress.dart';
 import './material/tag/tag.dart';
 import './material/noticebar/noticebar.dart';
 import './material/list/list.dart' as AntList;
+import './material/steps/steps.dart';
 
 void main() => runApp(MyApp());
 
@@ -47,147 +49,112 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Container(
-          child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            AntList.List(
-                itemContent: Text('Title'),
-                header: 'Basic Style',
-                onClick: () {},
-                extra: Text('extra content')),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              itemContent: Text('ListItem（Android）'),
-              // arrow: 'horizontal',
-              onClick: null,
-              thumb:
-                  'https://zos.alipayobjects.com/rmsportal/dNuvNrtqUztHCwM.png',
-              brief: Text(
-                  'There may have water ripple effect of material if you set the click event.'),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              itemContent: Text('Title'),
-              onClick: null,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              itemContent: Text('Title'),
-              arrow: 'horizontal',
-              onClick: null,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              itemContent: Text('Title'),
-              arrow: 'horizontal',
-              extra: 'extra content',
-              onClick: null,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              itemContent: Text('Title'),
-              extra: '10:30',
-              thumb:
-                  'https://zos.alipayobjects.com/rmsportal/dNuvNrtqUztHCwM.png',
-              brief: 'subtitle',
-              onClick: null,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              itemContent: Text('My wallet'),
-              arrow: 'horizontal',
-              thumb:
-                  'https://zos.alipayobjects.com/rmsportal/dNuvNrtqUztHCwM.png',
-              onClick: null,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              itemContent: Text('My Cost Ratio'),
-              arrow: 'horizontal',
-              thumb:
-                  'https://zos.alipayobjects.com/rmsportal/UmbJMbWOejVOpxe.png',
-              onClick: null,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              header: 'Text Wrapping',
-              itemContent: Text(
-                  'Single line，long text will be hidden with ellipsisSingle line，long text will be hidden with ellipsis；'),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              header: 'Text Wrapping',
-              itemContent: Text(
-                  'Multiple line，long text will wrap；Long Text Long Text Long Text Long Text Long Text Long Text'),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              header: 'Text Wrapping',
-              extra: 'extra content',
-              // arrow: 'empty',
-              align: 'top',
-              itemContent: Text(
-                  ' Multiple line and long text will wrap. Long Text Long Text Long Text.Long Text Long Text Long Text.Long Text Long Text Long Text'),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              header: 'Text Wrapping',
-              extra: Switch(
-                value: true,
-                onChanged: (bool value) {},
-              ),
-              itemContent: Text('Confirm Information'),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              itemContent: Slider(
-                value: 0.5,
-                onChanged: (double value) {},
-              ),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            AntList.List(
-              itemContent: 'Click to disable',
-              disabled: disabled,
-              onClick: () {
-                setState(() {
-                  disabled = true;
-                });
-              },
-            ),
-          ],
+        appBar: AppBar(
+          title: Text(widget.title),
         ),
-      )),
-    );
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Steps(
+                current: 1,
+                size: 'small',
+                steps: [
+                  StepItem(
+                    title: 'Finished',
+                    description: 'description1',
+                  ),
+                  StepItem(
+                    title: 'In Progress',
+                    description: 'description2',
+                  ),
+                  StepItem(
+                    title: 'Waiting',
+                    description: 'description3',
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Steps(
+                current: 1,
+                size: 'small',
+                steps: [
+                  StepItem(title: 'Finished'),
+                  StepItem(title: 'In Progress'),
+                  StepItem(title: 'Waiting')
+                ],
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Steps(
+                steps: [
+                  StepItem(
+                    title: 'Finished',
+                    description: 'This is description',
+                  ),
+                  StepItem(
+                    title: 'Error',
+                    status: 'error',
+                    description: 'This is description',
+                  ),
+                  StepItem(
+                    title: 'Waiting',
+                    description: 'This is description',
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Steps(
+                steps: [
+                  StepItem(
+                    title: 'Step 1',
+                    status: 'finish',
+                    icon: Icons.mail,
+                  ),
+                  StepItem(
+                    title: 'Step 2',
+                    status: 'process',
+                    icon: Icons.mail,
+                  ),
+                  StepItem(
+                    title: 'Step 3',
+                    status: 'error',
+                    icon: Icons.mail,
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Steps(
+                current: 1,
+                steps: [
+                  StepItem(
+                    title: 'Step 1',
+                    description: 'This is description',
+                    icon: Icons.mail,
+                  ),
+                  StepItem(
+                    title: 'Step 2',
+                    description: 'This is description',
+                    icon: Icons.mail,
+                  ),
+                  StepItem(
+                    title: 'Step 3',
+                    description: 'This is description',
+                    icon: Icons.mail,
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+            ],
+          ),
+        ));
   }
 }

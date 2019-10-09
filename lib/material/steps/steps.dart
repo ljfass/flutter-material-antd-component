@@ -23,7 +23,76 @@ class Steps extends StatelessWidget {
   final String direction;
   final List<StepItem> steps;
 
-  Column buildContent(BuildContext context) {
+  Widget buildContentHorizontal(BuildContext context) {
+    List<Widget> _children = [];
+    double _height = size == 'small' ? 83.0 : 83.0;
+    this.steps.asMap().forEach((int index, StepItem stepItem) {
+      String _status = stepItem.status != null
+          ? stepItem.status
+          : status != null
+              ? current == index ? status : current > index ? 'finish' : 'wait'
+              : current == index
+                  ? 'process'
+                  : current > index ? 'finish' : 'wait';
+      if (index > 0) {
+        _children.add(Expanded(
+          child: Container(
+            alignment: Alignment.center,
+            // decoration: BoxDecoration(color: Colors.pink),
+            width: 120.0,
+            // height: _height,
+            child: Stack(
+              overflow: Overflow.visible,
+              children: <Widget>[
+                StepItem(
+                    title: stepItem.title,
+                    description: stepItem.description,
+                    current: current,
+                    size: size,
+                    status: _status,
+                    direction: direction,
+                    icon: stepItem.icon ?? null),
+                Positioned(
+                  left: -66.0,
+                  top: 8.0,
+                  child: buildTail(
+                      context,
+                      (_status == 'process' || _status == 'finish')
+                          ? true
+                          : false,
+                      _status,
+                      direction),
+                )
+              ],
+            ),
+          ),
+        ));
+      } else {
+        _children.add(Expanded(
+          child: Container(
+            alignment: Alignment.center,
+            width: 120.0,
+            // height: _height,
+            child: StepItem(
+              title: stepItem.title,
+              size: size,
+              description: stepItem.description,
+              current: current,
+              status: _status,
+              direction: direction,
+              icon: stepItem.icon ?? null,
+            ),
+          ),
+        ));
+      }
+    });
+
+    return Row(
+      children: _children,
+    );
+  }
+
+  Widget buildContentVertical(BuildContext context) {
     List<Widget> _children = [];
     double _height = size == 'small' ? 52.0 : 63.0;
     this.steps.asMap().forEach((int index, StepItem stepItem) {
@@ -46,6 +115,7 @@ class Steps extends StatelessWidget {
                   current: current,
                   size: size,
                   status: _status,
+                  direction: direction,
                   icon: stepItem.icon ?? null),
               Positioned(
                 top: size == 'small' ? -29.0 : -33.0,
@@ -54,13 +124,15 @@ class Steps extends StatelessWidget {
                     (_status == 'process' || _status == 'finish')
                         ? true
                         : false,
-                    _status),
+                    _status,
+                    direction),
               )
             ],
           ),
         ));
       } else {
         _children.add(Container(
+          alignment: Alignment.centerLeft,
           height: _height,
           child: StepItem(
             title: stepItem.title,
@@ -68,6 +140,7 @@ class Steps extends StatelessWidget {
             description: stepItem.description,
             current: current,
             status: _status,
+            direction: direction,
             icon: stepItem.icon ?? null,
           ),
         ));
@@ -79,7 +152,8 @@ class Steps extends StatelessWidget {
     );
   }
 
-  Widget buildTail(BuildContext context, bool isActive, String status) {
+  Widget buildTail(
+      BuildContext context, bool isActive, String status, String direction) {
     Color tailColor = Color(0xffdddddd);
     Color tailColorActive = Theme.of(context).primaryColor;
     EdgeInsets _margin = size == 'small'
@@ -88,15 +162,28 @@ class Steps extends StatelessWidget {
     EdgeInsets _padding = size == 'small'
         ? EdgeInsets.fromLTRB(0, 17.0, 0, 4.0)
         : EdgeInsets.fromLTRB(0, 22.0, 0, 4.0);
-    return Container(
-      width: 1.0,
-      margin: _margin,
-      decoration: BoxDecoration(
-          color: status == 'error'
-              ? Color(0xfff4333c)
-              : isActive == true ? tailColorActive : tailColor),
-      padding: _padding,
-    );
+    EdgeInsets _paddingHorizontal = size == 'small'
+        ? EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0)
+        : EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0);
+    return direction == 'vertical'
+        ? Container(
+            width: 1.0,
+            margin: _margin,
+            decoration: BoxDecoration(
+                color: status == 'error'
+                    ? Color(0xfff4333c)
+                    : isActive == true ? tailColorActive : tailColor),
+            padding: _padding,
+          )
+        : Container(
+            height: 1.0,
+            width: 80.0,
+            decoration: BoxDecoration(
+                color: status == 'error'
+                    ? Color(0xfff4333c)
+                    : isActive == true ? tailColorActive : tailColor),
+            padding: _paddingHorizontal,
+          );
   }
 
   @override
@@ -104,7 +191,9 @@ class Steps extends StatelessWidget {
     if (this.steps.length <= 1) {
       return Container();
     }
-    return buildContent(context);
+    return direction == 'vertical'
+        ? buildContentVertical(context)
+        : buildContentHorizontal(context);
   }
 }
 
@@ -116,6 +205,7 @@ class StepItem<T> extends StatelessWidget {
       @required this.title,
       this.size,
       this.description,
+      this.direction,
       this.icon})
       : assert(status == null ||
             status == 'process' ||
@@ -130,6 +220,7 @@ class StepItem<T> extends StatelessWidget {
   final String description;
   final T icon;
   final String size;
+  final String direction;
 
   Widget buildIcon<T>(icon, double iconSize, BuildContext context) {
     if (icon is IconData) {
@@ -251,36 +342,73 @@ class StepItem<T> extends StatelessWidget {
         color: status == 'error' ? Color(0xfff4333c) : Color(0xff000000),
         fontSize: 15.0);
     double _top = size == 'small' ? 0.0 : description == null ? 4.0 : 2.0;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        buildStepItem(context),
-        SizedBox(
-          width: 8.0,
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: _top),
-          child: Column(
+    return description == 'vertical'
+        ? Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                title,
-                style: titleStyle,
-              ),
+              buildStepItem(context),
               SizedBox(
-                height: 6.0,
+                width: 8.0,
               ),
-              description == null
-                  ? Text('')
-                  : Text(description,
-                      style: size == null
-                          ? defaultSizeDescriptionStyle
-                          : smallSizeDescriptionStyle)
+              Padding(
+                padding: EdgeInsets.only(top: _top),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      title,
+                      style: titleStyle,
+                    ),
+                    SizedBox(
+                      height: 6.0,
+                    ),
+                    description == null
+                        ? Text('')
+                        : Text(description,
+                            style: size == null
+                                ? defaultSizeDescriptionStyle
+                                : smallSizeDescriptionStyle)
+                  ],
+                ),
+              )
             ],
-          ),
-        )
-      ],
-    );
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              buildStepItem(context),
+              SizedBox(
+                height: 10.0,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(top: _top),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        title,
+                        style: titleStyle,
+                      ),
+                      SizedBox(
+                        height: 6.0,
+                      ),
+                      description == null
+                          ? Text('')
+                          : Expanded(
+                              child: Container(
+                                  width: 60.0,
+                                  child: Text(description,
+                                      textAlign: TextAlign.center,
+                                      style: size == null
+                                          ? defaultSizeDescriptionStyle
+                                          : smallSizeDescriptionStyle)),
+                            )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          );
   }
 
   @override

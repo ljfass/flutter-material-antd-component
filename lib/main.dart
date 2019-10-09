@@ -56,103 +56,129 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             children: <Widget>[
               Steps(
+                direction: 'horizontal',
                 current: 1,
                 size: 'small',
                 steps: [
                   StepItem(
-                    title: 'Finished',
-                    description: 'description1',
-                  ),
-                  StepItem(
-                    title: 'In Progress',
-                    description: 'description2',
-                  ),
-                  StepItem(
                     title: 'Waiting',
-                    description: 'description3',
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Steps(
-                current: 1,
-                size: 'small',
-                steps: [
-                  StepItem(title: 'Finished'),
-                  StepItem(title: 'In Progress'),
-                  StepItem(title: 'Waiting')
-                ],
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Steps(
-                steps: [
-                  StepItem(
-                    title: 'Finished',
-                    description: 'This is description',
-                  ),
-                  StepItem(
-                    title: 'Error',
-                    status: 'error',
-                    description: 'This is description',
-                  ),
-                  StepItem(
-                    title: 'Waiting',
-                    description: 'This is description',
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Steps(
-                steps: [
-                  StepItem(
-                    title: 'Step 1',
                     status: 'finish',
-                    icon: Icons.mail,
+                    description: 'This is description This is description',
                   ),
                   StepItem(
-                    title: 'Step 2',
-                    status: 'process',
-                    icon: Icons.mail,
+                    title: 'Waiting',
+                    status: 'wait',
+                    description: 'This is description',
                   ),
                   StepItem(
-                    title: 'Step 3',
-                    status: 'error',
-                    icon: Icons.mail,
+                    title: 'Waiting',
+                    status: 'wait',
+                    description: 'This is description',
                   )
                 ],
               ),
               SizedBox(
                 height: 10.0,
               ),
-              Steps(
-                current: 1,
-                steps: [
-                  StepItem(
-                    title: 'Step 1',
-                    description: 'This is description',
-                    icon: Icons.mail,
-                  ),
-                  StepItem(
-                    title: 'Step 2',
-                    description: 'This is description',
-                    icon: Icons.mail,
-                  ),
-                  StepItem(
-                    title: 'Step 3',
-                    description: 'This is description',
-                    icon: Icons.mail,
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
+              // Steps(
+              //   current: 1,
+              //   size: 'small',
+              //   steps: [
+              //     StepItem(title: 'Finished'),
+              //     StepItem(title: 'In Progress'),
+              //     StepItem(title: 'Waiting')
+              //   ],
+              // ),
+              // SizedBox(
+              //   height: 10.0,
+              // ),
+              // Steps(
+              //   steps: [
+              //     StepItem(
+              //       title: 'Finished',
+              //       description: 'This is description',
+              //     ),
+              //     StepItem(
+              //       title: 'Error',
+              //       status: 'error',
+              //       description: 'This is description',
+              //     ),
+              //     StepItem(
+              //       title: 'Waiting',
+              //       description: 'This is description',
+              //     )
+              //   ],
+              // ),
+              // SizedBox(
+              //   height: 10.0,
+              // ),
+              // Steps(
+              //   steps: [
+              //     StepItem(
+              //       title: 'Step 1',
+              //       status: 'finish',
+              //       icon: Icons.mail,
+              //     ),
+              //     StepItem(
+              //       title: 'Step 2',
+              //       status: 'process',
+              //       icon: Icons.mail,
+              //     ),
+              //     StepItem(
+              //       title: 'Step 3',
+              //       status: 'error',
+              //       icon: Icons.mail,
+              //     )
+              //   ],
+              // ),
+              // SizedBox(
+              //   height: 10.0,
+              // ),
+              // Steps(
+              //   current: 1,
+              //   steps: [
+              //     StepItem(
+              //       title: 'Step 1',
+              //       description: 'This is description',
+              //       icon: Icons.mail,
+              //     ),
+              //     StepItem(
+              //       title: 'Step 2',
+              //       description: 'This is description',
+              //       icon: Icons.mail,
+              //     ),
+              //     StepItem(
+              //       title: 'Step 3',
+              //       description: 'This is description',
+              //       icon: Icons.mail,
+              //     )
+              //   ],
+              // ),
+              // SizedBox(
+              //   height: 10.0,
+              // ),
+              // Steps(
+              //   current: 1,
+              //   steps: [
+              //     StepItem(
+              //       title: 'Step 1',
+              //       icon: Icons.mail,
+              //     ),
+              //     StepItem(
+              //       title: 'Step 2',
+              //       icon: Icons.mail,
+              //     ),
+              //     StepItem(
+              //       title: 'Step 3',
+              //       icon: Icons.mail,
+              //       status: 'error',
+              //     ),
+              //     StepItem(
+              //       title: 'Step 4',
+              //       icon: Icons.mail,
+              //     )
+              //   ],
+              // ),
             ],
           ),
         ));

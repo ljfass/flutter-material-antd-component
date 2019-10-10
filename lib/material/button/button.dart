@@ -5,6 +5,7 @@ class Button<T> extends StatefulWidget {
   Button({
     Key key,
     @required this.buttonText,
+    this.buttonTextColor,
     this.type,
     this.size = 'large',
     this.disabled = false,
@@ -28,6 +29,7 @@ class Button<T> extends StatefulWidget {
   final bool loading;
   final T icon;
   final double radius;
+  final Color buttonTextColor;
 
   @override
   _ButtonState createState() => _ButtonState();
@@ -43,7 +45,7 @@ class _ButtonState extends State<Button> {
           return Opacity(
             opacity: widget.disabled == true ? 0.4 : 1.0,
             child: RawMaterialButton(
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 constraints: BoxConstraints(
                     maxHeight: widget.size == 'small' ? 30.0 : double.infinity,
                     minHeight: widget.size == 'small' ? 30.0 : 42.0),
@@ -85,7 +87,7 @@ class _ButtonState extends State<Button> {
                           Text(
                             widget.buttonText,
                             style: TextStyle(
-                              color: widget.disabled != true
+                              color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                   ? buttonActived == false
                                       ? Color(0XFFFFFFFF)
                                       : HSLColor.fromAHSL(0.3, 0.0, 0.0, 1.0)
@@ -130,7 +132,7 @@ class _ButtonState extends State<Button> {
                               Text(
                                 widget.buttonText,
                                 style: TextStyle(
-                                  color: widget.disabled != true
+                                  color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                       ? buttonActived == false
                                           ? Color(0XFFFFFFFF)
                                           : HSLColor.fromAHSL(
@@ -151,7 +153,7 @@ class _ButtonState extends State<Button> {
                               Text(
                                 widget.buttonText,
                                 style: TextStyle(
-                                  color: widget.disabled != true
+                                  color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                       ? buttonActived == false
                                           ? Color(0XFFFFFFFF)
                                           : HSLColor.fromAHSL(
@@ -220,7 +222,7 @@ class _ButtonState extends State<Button> {
                         Text(
                           widget.buttonText,
                           style: TextStyle(
-                            color: widget.disabled != true
+                            color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                 ? buttonActived == false
                                     ? Color(0XFF108ee9)
                                     : Color(0XFF108ee9).withOpacity(0.6)
@@ -262,7 +264,7 @@ class _ButtonState extends State<Button> {
                             Text(
                               widget.buttonText,
                               style: TextStyle(
-                                color: widget.disabled != true
+                                color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                     ? buttonActived == false
                                         ? Color(0XFF108ee9)
                                         : Color(0XFF108ee9).withOpacity(0.6)
@@ -279,7 +281,7 @@ class _ButtonState extends State<Button> {
                             Text(
                               widget.buttonText,
                               style: TextStyle(
-                                color: widget.disabled != true
+                                color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                     ? buttonActived == false
                                         ? Color(0XFF108ee9)
                                         : Color(0XFF108ee9).withOpacity(0.6)
@@ -340,7 +342,7 @@ class _ButtonState extends State<Button> {
                           Text(
                             widget.buttonText,
                             style: TextStyle(
-                              color: widget.disabled != true
+                              color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                   ? buttonActived == false
                                       ? Color(0XFFFFFFFF)
                                       : HSLColor.fromAHSL(0.3, 0.0, 0.0, 1.0)
@@ -384,7 +386,7 @@ class _ButtonState extends State<Button> {
                                 Text(
                                   widget.buttonText,
                                   style: TextStyle(
-                                    color: widget.disabled != true
+                                    color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                         ? buttonActived == false
                                             ? Color(0XFFFFFFFF)
                                             : HSLColor.fromAHSL(
@@ -404,7 +406,7 @@ class _ButtonState extends State<Button> {
                               Text(
                                 widget.buttonText,
                                 style: TextStyle(
-                                  color: widget.disabled != true
+                                  color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                       ? buttonActived == false
                                           ? Color(0XFFFFFFFF)
                                           : HSLColor.fromAHSL(
@@ -432,7 +434,7 @@ class _ButtonState extends State<Button> {
           return Opacity(
             opacity: widget.disabled == true ? 0.6 : 1.0,
             child: RawMaterialButton(
-  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 constraints: BoxConstraints(
                     maxHeight: widget.size == 'small' ? 30.0 : double.infinity,
                     minHeight: widget.size == 'small' ? 30.0 : 42.0),
@@ -470,7 +472,7 @@ class _ButtonState extends State<Button> {
                           Text(
                             widget.buttonText,
                             style: TextStyle(
-                              color: widget.disabled != true
+                              color:widget.buttonTextColor != null ? widget.buttonTextColor: widget.disabled != true
                                   ? Color(0XFF000000)
                                   : Color(0XFF000000).withOpacity(0.3),
                               fontSize: widget.size == 'large' ? 16.0 : 13.0,
@@ -506,7 +508,7 @@ class _ButtonState extends State<Button> {
                               Text(
                                 widget.buttonText,
                                 style: TextStyle(
-                                  color: widget.disabled != true
+                                  color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                       ? Color(0XFF000000)
                                       : Color(0XFF000000).withOpacity(0.3),
                                   fontSize:
@@ -522,7 +524,7 @@ class _ButtonState extends State<Button> {
                               Text(
                                 widget.buttonText,
                                 style: TextStyle(
-                                  color: widget.disabled != true
+                                  color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
                                       ? Color(0XFF000000)
                                       : Color(0XFF000000).withOpacity(0.3),
                                   fontSize:

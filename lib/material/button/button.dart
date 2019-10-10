@@ -43,6 +43,7 @@ class _ButtonState extends State<Button> {
           return Opacity(
             opacity: widget.disabled == true ? 0.4 : 1.0,
             child: RawMaterialButton(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 constraints: BoxConstraints(
                     maxHeight: widget.size == 'small' ? 30.0 : double.infinity,
                     minHeight: widget.size == 'small' ? 30.0 : 42.0),
@@ -176,6 +177,7 @@ class _ButtonState extends State<Button> {
       case 'ghost':
         {
           return RawMaterialButton(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               constraints: BoxConstraints(
                   maxHeight: widget.size == 'small' ? 30.0 : double.infinity,
                   minHeight: widget.size == 'small' ? 30.0 : 42.0),
@@ -300,6 +302,7 @@ class _ButtonState extends State<Button> {
           return Opacity(
             opacity: widget.disabled == true ? 0.4 : 1.0,
             child: RawMaterialButton(
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 constraints: BoxConstraints(
                     maxHeight: widget.size == 'small' ? 30.0 : double.infinity,
                     minHeight: widget.size == 'small' ? 30.0 : 42.0),
@@ -429,6 +432,7 @@ class _ButtonState extends State<Button> {
           return Opacity(
             opacity: widget.disabled == true ? 0.6 : 1.0,
             child: RawMaterialButton(
+  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 constraints: BoxConstraints(
                     maxHeight: widget.size == 'small' ? 30.0 : double.infinity,
                     minHeight: widget.size == 'small' ? 30.0 : 42.0),

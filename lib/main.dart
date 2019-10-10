@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:material_antd/material/list/list.dart' as prefix0;
 import 'package:material_antd/material/steps/steps.dart' as prefix1;
 import './material/radio/radio.dart' as AntRadio;
@@ -15,6 +16,7 @@ import './material/tag/tag.dart';
 import './material/noticebar/noticebar.dart';
 import './material/list/list.dart' as AntList;
 import './material/steps/steps.dart';
+import './material/actionSheet/actionSheet.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,7 +30,12 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('widget.title'),
+        ),
+        body: MyHomePage(title: 'Flutter Demo Home Page'),
+      ),
     );
   }
 }
@@ -42,86 +49,43 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   double percent = 0;
   bool disabled = false;
+  AnimationController _animationController;
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Steps(
-                direction: 'horizontal',
-                current: 1,
-                size: 'small',
-                steps: [
-                  StepItem(
-                    title: 'Finished',
-                    description: 'This is description',
-                  ),
-                  StepItem(
-                    title: 'In Progress',
-                    description: 'This is description',
-                  ),
-                  StepItem(
-                    title: 'Waiting',
-                    description: 'This is description',
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Steps(
-                direction: 'horizontal',
-                current: 1,
-                steps: [
-                  StepItem(
-                    title: 'Finished',
-                    description: 'This is description',
-                  ),
-                  StepItem(
-                    title: 'In Progress',
-                    description: 'This is description',
-                  ),
-                  StepItem(
-                    title: 'Waiting',
-                    description: 'This is description',
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Steps(
-                direction: 'horizontal',
-                current: 1,
-                steps: [
-                  StepItem(
-                    title: 'Step 1',
-                    icon: Icons.access_alarm,
-                  ),
-                  StepItem(
-                    title: 'Step 2',
-                    status: 'error',
-                    icon: Icons.access_alarm,
-                  ),
-                  StepItem(
-                    title: 'Step 3',
-                    icon: Icons.access_alarm,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-            ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          RaisedButton(
+            child: Text('show'),
+            onPressed: () {
+              ActionSheet.showActionSheetWithOptions(context,
+                  options: [
+                    'Opertaion1',
+                    'Opertaion2',
+                    'Opertaion3',
+                    'Cancel',
+                    'Delete',
+                  ],
+                  destructiveButtonIndex: 4,
+                  cancelButtonIndex: 3,
+                  title: 'title',
+                  message: 'description', callback: (int index) {
+                print(index);
+              });
+            },
           ),
-        ));
+        ],
+      ),
+    );
   }
 }

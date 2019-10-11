@@ -13,7 +13,8 @@ class Button<T> extends StatefulWidget {
     this.loading = false,
     this.icon,
     this.radius = 5.0,
-  })  : assert(type == null ||
+  })  : assert(buttonText is String || buttonText is Widget),
+        assert(type == null ||
             (type != null &&
                 (type == 'primary' || type == 'ghost' || type == 'warning'))),
         assert(type == null || (size == 'small' || size == 'large')),
@@ -21,7 +22,7 @@ class Button<T> extends StatefulWidget {
         assert(radius == null ||
             (radius != null && (0.0 <= radius && radius <= 100.0))),
         super(key: key);
-  final String buttonText;
+  final T buttonText;
   final String type;
   final String size;
   final bool disabled;
@@ -37,6 +38,168 @@ class Button<T> extends StatefulWidget {
 
 class _ButtonState extends State<Button> {
   bool buttonActived = false;
+
+  Widget buildButtonText<T>(buttonText, String type) {
+    if (buttonText is String) {
+      switch (type) {
+        case 'primay':
+          {
+            return Text(
+              widget.buttonText,
+              style: TextStyle(
+                color: widget.buttonTextColor != null
+                    ? widget.buttonTextColor
+                    : widget.disabled != true
+                        ? buttonActived == false
+                            ? Color(0XFFFFFFFF)
+                            : HSLColor.fromAHSL(0.3, 0.0, 0.0, 1.0).toColor()
+                        : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0).toColor(),
+                fontSize: widget.size == 'large' ? 16.0 : 13.0,
+                fontWeight: FontWeight.w400,
+              ),
+            );
+          }
+          break;
+        case 'ghost':
+          {
+            Text(
+              widget.buttonText,
+              style: TextStyle(
+                color: widget.buttonTextColor != null
+                    ? widget.buttonTextColor
+                    : widget.disabled != true
+                        ? buttonActived == false
+                            ? Color(0XFF108ee9)
+                            : Color(0XFF108ee9).withOpacity(0.6)
+                        : Color(0XFF000000).withOpacity(0.1),
+                fontSize: widget.size == 'large' ? 16.0 : 13.0,
+                fontWeight: FontWeight.w400,
+              ),
+            );
+          }
+          break;
+        case 'warning':
+          {
+            return Text(
+              widget.buttonText,
+              style: TextStyle(
+                color: widget.buttonTextColor != null
+                    ? widget.buttonTextColor
+                    : widget.disabled != true
+                        ? buttonActived == false
+                            ? Color(0XFFFFFFFF)
+                            : HSLColor.fromAHSL(0.3, 0.0, 0.0, 1.0).toColor()
+                        : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0).toColor(),
+                fontSize: widget.size == 'large' ? 16.0 : 13.0,
+                fontWeight: FontWeight.w400,
+              ),
+            );
+          }
+          break;
+        default:
+          {
+            return Text(
+              widget.buttonText,
+              style: TextStyle(
+                color: widget.buttonTextColor != null
+                    ? widget.buttonTextColor
+                    : widget.disabled != true
+                        ? Color(0XFF000000)
+                        : Color(0XFF000000).withOpacity(0.3),
+                fontSize: widget.size == 'large' ? 16.0 : 13.0,
+                fontWeight: FontWeight.w400,
+              ),
+            );
+          }
+      }
+    } else {
+      switch (type) {
+        case 'primary':
+          {
+            return DefaultTextStyle(
+              style: TextStyle(
+                color: widget.buttonTextColor != null
+                    ? widget.buttonTextColor
+                    : widget.disabled != true
+                        ? buttonActived == false
+                            ? Color(0XFFFFFFFF)
+                            : HSLColor.fromAHSL(0.3, 0.0, 0.0, 1.0).toColor()
+                        : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0).toColor(),
+                fontSize: widget.size == 'large' ? 16.0 : 13.0,
+                fontWeight: FontWeight.w400,
+              ),
+              child: buttonText,
+            );
+          }
+          break;
+        case 'ghost':
+          {
+            return DefaultTextStyle(
+              style: TextStyle(
+                color: widget.buttonTextColor != null
+                    ? widget.buttonTextColor
+                    : widget.disabled != true
+                        ? buttonActived == false
+                            ? Color(0XFF108ee9)
+                            : Color(0XFF108ee9).withOpacity(0.6)
+                        : Color(0XFF000000).withOpacity(0.1),
+                fontSize: widget.size == 'large' ? 16.0 : 13.0,
+                fontWeight: FontWeight.w400,
+              ),
+              child: buttonText,
+            );
+          }
+          break;
+        case 'warning':
+          {
+            return DefaultTextStyle(
+              style: TextStyle(
+                color: widget.buttonTextColor != null
+                    ? widget.buttonTextColor
+                    : widget.disabled != true
+                        ? buttonActived == false
+                            ? Color(0XFFFFFFFF)
+                            : HSLColor.fromAHSL(0.3, 0.0, 0.0, 1.0).toColor()
+                        : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0).toColor(),
+                fontSize: widget.size == 'large' ? 16.0 : 13.0,
+                fontWeight: FontWeight.w400,
+              ),
+              child: buttonText,
+            );
+          }
+          break;
+        default:
+          {
+            return DefaultTextStyle(
+              style: TextStyle(
+                color: widget.buttonTextColor != null
+                    ? widget.buttonTextColor
+                    : widget.disabled != true
+                        ? Color(0XFF000000)
+                        : Color(0XFF000000).withOpacity(0.3),
+                fontSize: widget.size == 'large' ? 16.0 : 13.0,
+                fontWeight: FontWeight.w400,
+              ),
+              child: buttonText,
+            );
+          }
+      }
+      DefaultTextStyle(
+        style: TextStyle(
+          color: widget.buttonTextColor != null
+              ? widget.buttonTextColor
+              : widget.disabled != true
+                  ? buttonActived == false
+                      ? Color(0XFFFFFFFF)
+                      : HSLColor.fromAHSL(0.3, 0.0, 0.0, 1.0).toColor()
+                  : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0).toColor(),
+          fontSize: widget.size == 'large' ? 16.0 : 13.0,
+          fontWeight: FontWeight.w400,
+        ),
+        child: buttonText,
+      );
+    }
+  }
 
   Widget buildContent() {
     switch (widget.type) {
@@ -84,20 +247,7 @@ class _ButtonState extends State<Button> {
                           SizedBox(
                             width: 10.0,
                           ),
-                          Text(
-                            widget.buttonText,
-                            style: TextStyle(
-                              color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                  ? buttonActived == false
-                                      ? Color(0XFFFFFFFF)
-                                      : HSLColor.fromAHSL(0.3, 0.0, 0.0, 1.0)
-                                          .toColor()
-                                  : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
-                                      .toColor(),
-                              fontSize: widget.size == 'large' ? 16.0 : 13.0,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          )
+                          buildButtonText(widget.buttonText, widget.type)
                         ],
                       )
                     : widget.icon != null
@@ -129,43 +279,13 @@ class _ButtonState extends State<Button> {
                               SizedBox(
                                 width: 4.0,
                               ),
-                              Text(
-                                widget.buttonText,
-                                style: TextStyle(
-                                  color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                      ? buttonActived == false
-                                          ? Color(0XFFFFFFFF)
-                                          : HSLColor.fromAHSL(
-                                                  0.3, 0.0, 0.0, 1.0)
-                                              .toColor()
-                                      : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
-                                          .toColor(),
-                                  fontSize:
-                                      widget.size == 'large' ? 16.0 : 13.0,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              )
+                              buildButtonText(widget.buttonText, widget.type)
                             ],
                           )
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                widget.buttonText,
-                                style: TextStyle(
-                                  color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                      ? buttonActived == false
-                                          ? Color(0XFFFFFFFF)
-                                          : HSLColor.fromAHSL(
-                                                  0.3, 0.0, 0.0, 1.0)
-                                              .toColor()
-                                      : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
-                                          .toColor(),
-                                  fontSize:
-                                      widget.size == 'large' ? 16.0 : 13.0,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              )
+                              buildButtonText(widget.buttonText, widget.type)
                             ],
                           ),
                 onHighlightChanged: (bool value) {
@@ -219,18 +339,7 @@ class _ButtonState extends State<Button> {
                         SizedBox(
                           width: 10.0,
                         ),
-                        Text(
-                          widget.buttonText,
-                          style: TextStyle(
-                            color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                ? buttonActived == false
-                                    ? Color(0XFF108ee9)
-                                    : Color(0XFF108ee9).withOpacity(0.6)
-                                : Color(0XFF000000).withOpacity(0.1),
-                            fontSize: widget.size == 'large' ? 16.0 : 13.0,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        )
+                        buildButtonText(widget.buttonText, widget.type)
                       ],
                     )
                   : widget.icon != null
@@ -261,35 +370,13 @@ class _ButtonState extends State<Button> {
                             SizedBox(
                               width: 4.0,
                             ),
-                            Text(
-                              widget.buttonText,
-                              style: TextStyle(
-                                color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                    ? buttonActived == false
-                                        ? Color(0XFF108ee9)
-                                        : Color(0XFF108ee9).withOpacity(0.6)
-                                    : Color(0XFF000000).withOpacity(0.1),
-                                fontSize: widget.size == 'large' ? 16.0 : 13.0,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            )
+                            buildButtonText(widget.buttonText, widget.type)
                           ],
                         )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text(
-                              widget.buttonText,
-                              style: TextStyle(
-                                color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                    ? buttonActived == false
-                                        ? Color(0XFF108ee9)
-                                        : Color(0XFF108ee9).withOpacity(0.6)
-                                    : Color(0XFF000000).withOpacity(0.1),
-                                fontSize: widget.size == 'large' ? 16.0 : 13.0,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            )
+                            buildButtonText(widget.buttonText, widget.type)
                           ],
                         ),
               onHighlightChanged: (bool value) {
@@ -339,20 +426,7 @@ class _ButtonState extends State<Button> {
                           SizedBox(
                             width: 10.0,
                           ),
-                          Text(
-                            widget.buttonText,
-                            style: TextStyle(
-                              color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                  ? buttonActived == false
-                                      ? Color(0XFFFFFFFF)
-                                      : HSLColor.fromAHSL(0.3, 0.0, 0.0, 1.0)
-                                          .toColor()
-                                  : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
-                                      .toColor(),
-                              fontSize: widget.size == 'large' ? 16.0 : 13.0,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          )
+                          buildButtonText(widget.buttonText, widget.type)
                         ],
                       )
                     : widget.icon != null
@@ -383,42 +457,12 @@ class _ButtonState extends State<Button> {
                                 SizedBox(
                                   width: 4.0,
                                 ),
-                                Text(
-                                  widget.buttonText,
-                                  style: TextStyle(
-                                    color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                        ? buttonActived == false
-                                            ? Color(0XFFFFFFFF)
-                                            : HSLColor.fromAHSL(
-                                                    0.3, 0.0, 0.0, 1.0)
-                                                .toColor()
-                                        : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
-                                            .toColor(),
-                                    fontSize:
-                                        widget.size == 'large' ? 16.0 : 13.0,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                )
+                                buildButtonText(widget.buttonText, widget.type)
                               ])
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                widget.buttonText,
-                                style: TextStyle(
-                                  color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                      ? buttonActived == false
-                                          ? Color(0XFFFFFFFF)
-                                          : HSLColor.fromAHSL(
-                                                  0.3, 0.0, 0.0, 1.0)
-                                              .toColor()
-                                      : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0)
-                                          .toColor(),
-                                  fontSize:
-                                      widget.size == 'large' ? 16.0 : 13.0,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              )
+                              buildButtonText(widget.buttonText, widget.type)
                             ],
                           ),
                 onHighlightChanged: (bool value) {
@@ -469,16 +513,7 @@ class _ButtonState extends State<Button> {
                           SizedBox(
                             width: 10.0,
                           ),
-                          Text(
-                            widget.buttonText,
-                            style: TextStyle(
-                              color:widget.buttonTextColor != null ? widget.buttonTextColor: widget.disabled != true
-                                  ? Color(0XFF000000)
-                                  : Color(0XFF000000).withOpacity(0.3),
-                              fontSize: widget.size == 'large' ? 16.0 : 13.0,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          )
+                          buildButtonText(widget.buttonText, widget.type)
                         ],
                       )
                     : widget.icon != null
@@ -505,33 +540,13 @@ class _ButtonState extends State<Button> {
                               SizedBox(
                                 width: 4.0,
                               ),
-                              Text(
-                                widget.buttonText,
-                                style: TextStyle(
-                                  color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                      ? Color(0XFF000000)
-                                      : Color(0XFF000000).withOpacity(0.3),
-                                  fontSize:
-                                      widget.size == 'large' ? 16.0 : 13.0,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              )
+                              buildButtonText(widget.buttonText, widget.type)
                             ],
                           )
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                widget.buttonText,
-                                style: TextStyle(
-                                  color: widget.buttonTextColor != null ? widget.buttonTextColor:widget.disabled != true
-                                      ? Color(0XFF000000)
-                                      : Color(0XFF000000).withOpacity(0.3),
-                                  fontSize:
-                                      widget.size == 'large' ? 16.0 : 13.0,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              )
+                              buildButtonText(widget.buttonText, widget.type)
                             ],
                           ),
                 onHighlightChanged: (bool value) {

@@ -13,6 +13,7 @@ class Button<T> extends StatefulWidget {
     this.loading = false,
     this.icon,
     this.radius = 5.0,
+    this.showBorder = true,
   })  : assert(buttonText is String || buttonText is Widget),
         assert(type == null ||
             (type != null &&
@@ -31,6 +32,7 @@ class Button<T> extends StatefulWidget {
   final T icon;
   final double radius;
   final Color buttonTextColor;
+  final bool showBorder;
 
   @override
   _ButtonState createState() => _ButtonState();
@@ -221,7 +223,7 @@ class _ButtonState extends State<Button> {
                           },
                 splashColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Color(0XFF108EE9), width: 0.5),
+                    side: widget.showBorder == true? BorderSide(color: Color(0XFF108EE9), width: 0.5):BorderSide.none,
                     borderRadius: BorderRadius.circular(widget.radius)),
                 elevation: 0.0,
                 highlightElevation: 0.0,
@@ -308,13 +310,13 @@ class _ButtonState extends State<Button> {
                   : widget.onClick == null ? () {} : widget.onClick,
               splashColor: Colors.transparent,
               shape: RoundedRectangleBorder(
-                  side: BorderSide(
+                  side: widget.showBorder == true? BorderSide(
                       color: widget.disabled == true
                           ? Color(0XFF000000).withOpacity(0.1)
                           : buttonActived == true
                               ? Color(0XFF108EE9).withOpacity(0.6)
                               : Color(0XFF108EE9),
-                      width: 0.5),
+                      width: 0.5) : BorderSide.none,
                   borderRadius: BorderRadius.circular(widget.radius)),
               elevation: 0.0,
               highlightElevation: 0.0,
@@ -400,7 +402,7 @@ class _ButtonState extends State<Button> {
                     : widget.onClick == null ? () {} : widget.onClick,
                 splashColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Color(0XFFDDDDDD), width: 0.5),
+                    side: widget.showBorder == true? BorderSide(color: Color(0XFFDDDDDD), width: 0.5) :BorderSide.none,
                     borderRadius: BorderRadius.circular(widget.radius)),
                 elevation: 0.0,
                 highlightElevation: 0.0,
@@ -487,7 +489,7 @@ class _ButtonState extends State<Button> {
                     : widget.onClick == null ? () {} : widget.onClick,
                 splashColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Color(0XFFDDDDDD), width: 0.5),
+                    side: widget.showBorder == true? BorderSide(color: Color(0XFFDDDDDD), width: 0.5):BorderSide.none,
                     borderRadius: BorderRadius.circular(widget.radius)),
                 highlightElevation: 0.0,
                 elevation: 0.0,

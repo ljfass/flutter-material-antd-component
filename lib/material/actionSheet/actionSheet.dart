@@ -455,9 +455,7 @@ class _ActionSheetWithOptionsState extends State<ActionSheetWithOptions>
     return BottomSheet(
         elevation: 0.0,
         animationController: _animationController,
-        onClosing: () {
-          return false;
-        },
+        onClosing: () {},
         enableDrag: true,
         builder: (BuildContext context) {
           return SingleChildScrollView(

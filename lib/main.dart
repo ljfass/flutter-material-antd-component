@@ -60,7 +60,48 @@ class _MyHomePageState extends State<MyHomePage> {
           RaisedButton(
             child: Text('show'),
             onPressed: () {
-              Modal.show(context, transparent: true);
+              Modal.show(context,
+                  child: Column(
+                    children: <Widget>[
+                      Text('show'),
+                      Text('show'),
+                      Text('show'),
+                      Text('show'),
+                      Text('show'),
+                      Text('show'),
+                    ],
+                  ),
+                  transparent: true,
+                  popup: false,
+                  animationType: 'slide-up',
+                  maskClosable: true,
+                  closable: true,
+                  title: 'title', afterClose: () {
+                print('afterClose');
+              }, footer: [
+                Button(
+                  buttonText: 'OK',
+                  radius: 0.0,
+                  buttonTextColor: Theme.of(context).primaryColor,
+                  // showBorder: false,
+                ),
+                Button(
+                  buttonText: 'cancel',
+                  radius: 0.0,
+                  buttonTextColor: Theme.of(context).primaryColor,
+                  // showBorder: false,
+                ),
+              ]);
+            },
+          ),
+          RaisedButton(
+            child: Text('show'),
+            onPressed: () {
+              Modal.prompt(context,
+                  title: 'input name', message: 'please input your name',
+                  callbackOrActions: (value) {
+                print(value);
+              });
             },
           )
         ],

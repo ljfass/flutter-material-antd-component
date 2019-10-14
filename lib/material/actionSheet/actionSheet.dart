@@ -144,9 +144,14 @@ class _ActionShareSheetWithOptionsState
             onClick: widget.callback == null
                 ? null
                 : () {
-                    widget.callback().then((data) {
+                    var cb = widget.callback();
+                    if (cb is Future) {
+                      cb.then((data) {
+                        Navigator.of(context).pop();
+                      });
+                    } else {
                       Navigator.of(context).pop();
-                    });
+                    }
                   },
           )),
     );
@@ -333,9 +338,15 @@ class _ActionSheetWithOptionsState extends State<ActionSheetWithOptions>
         onClick: widget.callback == null
             ? null
             : () {
-                widget.callback(index).then((data) {
+                var cb = widget.callback(index);
+
+                if (cb is Future) {
+                  cb.then((data) {
+                    Navigator.pop(context);
+                  });
+                } else {
                   Navigator.pop(context);
-                });
+                }
               },
         buttonText: option,
         buttonTextColor: widget.destructiveButtonIndex != null
@@ -358,9 +369,14 @@ class _ActionSheetWithOptionsState extends State<ActionSheetWithOptions>
             onClick: widget.callback == null
                 ? null
                 : () {
-                    widget.callback(index).then((data) {
+                    var cb = widget.callback(index);
+                    if (cb is Future) {
+                      cb.then((data) {
+                        Navigator.pop(context);
+                      });
+                    } else {
                       Navigator.pop(context);
-                    });
+                    }
                   },
             buttonText: Row(
               children: <Widget>[
@@ -412,9 +428,14 @@ class _ActionSheetWithOptionsState extends State<ActionSheetWithOptions>
         onClick: widget.callback == null
             ? null
             : () {
-                widget.callback(index).then((data) {
+                var cb = widget.callback(index);
+                if (cb is Future) {
+                  cb.then((data) {
+                    Navigator.pop(context);
+                  });
+                } else {
                   Navigator.pop(context);
-                });
+                }
               },
         buttonText: option,
         buttonTextColor: widget.destructiveButtonIndex != null
@@ -439,9 +460,14 @@ class _ActionSheetWithOptionsState extends State<ActionSheetWithOptions>
         onClick: widget.callback == null
             ? null
             : () {
-                widget.callback(_buttonOptions.length - 1).then((data) {
+                var cb = widget.callback(_buttonOptions.length - 1);
+                if (cb is Future) {
+                  cb.then((data) {
+                    Navigator.pop(context);
+                  });
+                } else {
                   Navigator.pop(context);
-                });
+                }
               },
         buttonText: widget.options[widget.cancelButtonIndex],
       ));

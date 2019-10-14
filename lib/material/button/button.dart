@@ -2,19 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Button<T> extends StatefulWidget {
-  Button({
-    Key key,
-    @required this.buttonText,
-    this.buttonTextColor,
-    this.type,
-    this.size = 'large',
-    this.disabled = false,
-    this.onClick,
-    this.loading = false,
-    this.icon,
-    this.radius = 5.0,
-    this.showBorder = true,
-  })  : assert(buttonText is String || buttonText is Widget),
+  Button(
+      {Key key,
+      @required this.buttonText,
+      this.buttonTextColor,
+      this.type,
+      this.size = 'large',
+      this.disabled = false,
+      this.onClick,
+      this.loading = false,
+      this.icon,
+      this.radius = 5.0,
+      this.showBorder = true,
+      this.textAlign = 'center'})
+      : assert(buttonText is String || buttonText is Widget),
         assert(type == null ||
             (type != null &&
                 (type == 'primary' || type == 'ghost' || type == 'warning'))),
@@ -22,6 +23,7 @@ class Button<T> extends StatefulWidget {
         assert(icon == null || (icon is IconData || icon is Icon)),
         assert(radius == null ||
             (radius != null && (0.0 <= radius && radius <= 100.0))),
+            assert(textAlign == null || textAlign == 'left' || textAlign == 'center'),
         super(key: key);
   final T buttonText;
   final String type;
@@ -33,6 +35,7 @@ class Button<T> extends StatefulWidget {
   final double radius;
   final Color buttonTextColor;
   final bool showBorder;
+  final String textAlign;
 
   @override
   _ButtonState createState() => _ButtonState();
@@ -223,7 +226,9 @@ class _ButtonState extends State<Button> {
                           },
                 splashColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
-                    side: widget.showBorder == true? BorderSide(color: Color(0XFF108EE9), width: 0.5):BorderSide.none,
+                    side: widget.showBorder == true
+                        ? BorderSide(color: Color(0XFF108EE9), width: 0.5)
+                        : BorderSide.none,
                     borderRadius: BorderRadius.circular(widget.radius)),
                 elevation: 0.0,
                 highlightElevation: 0.0,
@@ -234,8 +239,11 @@ class _ButtonState extends State<Button> {
                         : Color(0XFF0E80D2),
                 child: widget.loading == true
                     ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
                         children: <Widget>[
+                          SizedBox(
+                                width: widget.textAlign == 'center'?0.0:15.0,
+                              ),
                           Container(
                             width: widget.size == 'small' ? 15.0 : 18.0,
                             height: widget.size == 'small' ? 15.0 : 18.0,
@@ -254,8 +262,11 @@ class _ButtonState extends State<Button> {
                       )
                     : widget.icon != null
                         ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
                             children: <Widget>[
+                              SizedBox(
+                                width: widget.textAlign == 'center'?0.0:15.0,
+                              ),
                               Theme(
                                   data: Theme.of(context).copyWith(
                                       iconTheme: Theme.of(context)
@@ -285,9 +296,12 @@ class _ButtonState extends State<Button> {
                             ],
                           )
                         : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center:MainAxisAlignment.start,
                             children: <Widget>[
-                              buildButtonText(widget.buttonText, widget.type)
+                               widget.textAlign == 'center' ?  buildButtonText(widget.buttonText, widget.type):Padding(
+                               padding: EdgeInsets.only(left: 15.0),
+                               child:  buildButtonText(widget.buttonText, widget.type),
+                             )
                             ],
                           ),
                 onHighlightChanged: (bool value) {
@@ -310,13 +324,15 @@ class _ButtonState extends State<Button> {
                   : widget.onClick == null ? () {} : widget.onClick,
               splashColor: Colors.transparent,
               shape: RoundedRectangleBorder(
-                  side: widget.showBorder == true? BorderSide(
-                      color: widget.disabled == true
-                          ? Color(0XFF000000).withOpacity(0.1)
-                          : buttonActived == true
-                              ? Color(0XFF108EE9).withOpacity(0.6)
-                              : Color(0XFF108EE9),
-                      width: 0.5) : BorderSide.none,
+                  side: widget.showBorder == true
+                      ? BorderSide(
+                          color: widget.disabled == true
+                              ? Color(0XFF000000).withOpacity(0.1)
+                              : buttonActived == true
+                                  ? Color(0XFF108EE9).withOpacity(0.6)
+                                  : Color(0XFF108EE9),
+                          width: 0.5)
+                      : BorderSide.none,
                   borderRadius: BorderRadius.circular(widget.radius)),
               elevation: 0.0,
               highlightElevation: 0.0,
@@ -326,8 +342,11 @@ class _ButtonState extends State<Button> {
                   : Colors.transparent,
               child: widget.loading == true
                   ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
                       children: <Widget>[
+                         SizedBox(
+                                width: widget.textAlign == 'center'?0.0:15.0,
+                              ),
                         Container(
                           width: widget.size == 'small' ? 15.0 : 18.0,
                           height: widget.size == 'small' ? 15.0 : 18.0,
@@ -346,8 +365,11 @@ class _ButtonState extends State<Button> {
                     )
                   : widget.icon != null
                       ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
                           children: <Widget>[
+                            SizedBox(
+                                width: widget.textAlign == 'center'?0.0:15.0,
+                              ),
                             Theme(
                               data: Theme.of(context).copyWith(
                                   iconTheme: Theme.of(context)
@@ -378,7 +400,10 @@ class _ButtonState extends State<Button> {
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            buildButtonText(widget.buttonText, widget.type)
+                            widget.textAlign == 'center' ?  buildButtonText(widget.buttonText, widget.type):Padding(
+                               padding: EdgeInsets.only(left: 15.0),
+                               child:  buildButtonText(widget.buttonText, widget.type),
+                             )
                           ],
                         ),
               onHighlightChanged: (bool value) {
@@ -402,7 +427,9 @@ class _ButtonState extends State<Button> {
                     : widget.onClick == null ? () {} : widget.onClick,
                 splashColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
-                    side: widget.showBorder == true? BorderSide(color: Color(0XFFDDDDDD), width: 0.5) :BorderSide.none,
+                    side: widget.showBorder == true
+                        ? BorderSide(color: Color(0XFFDDDDDD), width: 0.5)
+                        : BorderSide.none,
                     borderRadius: BorderRadius.circular(widget.radius)),
                 elevation: 0.0,
                 highlightElevation: 0.0,
@@ -413,8 +440,11 @@ class _ButtonState extends State<Button> {
                         : Color(0XFFD24747),
                 child: widget.loading == true
                     ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                         mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
                         children: <Widget>[
+                           SizedBox(
+                                width: widget.textAlign == 'center'?0.0:15.0,
+                              ),
                           Container(
                             width: widget.size == 'small' ? 15.0 : 18.0,
                             height: widget.size == 'small' ? 15.0 : 18.0,
@@ -433,8 +463,11 @@ class _ButtonState extends State<Button> {
                       )
                     : widget.icon != null
                         ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
                             children: <Widget>[
+                              SizedBox(
+                                width: widget.textAlign == 'center'?0.0:15.0,
+                              ),
                                 Theme(
                                     data: Theme.of(context).copyWith(
                                         iconTheme:
@@ -462,9 +495,12 @@ class _ButtonState extends State<Button> {
                                 buildButtonText(widget.buttonText, widget.type)
                               ])
                         : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
                             children: <Widget>[
-                              buildButtonText(widget.buttonText, widget.type)
+                              widget.textAlign == 'center' ?  buildButtonText(widget.buttonText, widget.type):Padding(
+                               padding: EdgeInsets.only(left: 15.0),
+                               child:  buildButtonText(widget.buttonText, widget.type),
+                             )
                             ],
                           ),
                 onHighlightChanged: (bool value) {
@@ -489,7 +525,9 @@ class _ButtonState extends State<Button> {
                     : widget.onClick == null ? () {} : widget.onClick,
                 splashColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
-                    side: widget.showBorder == true? BorderSide(color: Color(0XFFDDDDDD), width: 0.5):BorderSide.none,
+                    side: widget.showBorder == true
+                        ? BorderSide(color: Color(0XFFDDDDDD), width: 0.5)
+                        : BorderSide.none,
                     borderRadius: BorderRadius.circular(widget.radius)),
                 highlightElevation: 0.0,
                 elevation: 0.0,
@@ -500,8 +538,11 @@ class _ButtonState extends State<Button> {
                         : Color(0XFFDDDDDD),
                 child: widget.loading == true
                     ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
                         children: <Widget>[
+                          SizedBox(
+                                width: widget.textAlign == 'center'?0.0:15.0,
+                              ),
                           Container(
                             width: widget.size == 'small' ? 15.0 : 18.0,
                             height: widget.size == 'small' ? 15.0 : 18.0,
@@ -520,8 +561,11 @@ class _ButtonState extends State<Button> {
                       )
                     : widget.icon != null
                         ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                             mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
                             children: <Widget>[
+                               SizedBox(
+                                width: widget.textAlign == 'center'?0.0:15.0,
+                              ),
                               Theme(
                                   data: Theme.of(context).copyWith(
                                       iconTheme: Theme.of(context)
@@ -546,9 +590,12 @@ class _ButtonState extends State<Button> {
                             ],
                           )
                         : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                             mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
                             children: <Widget>[
-                              buildButtonText(widget.buttonText, widget.type)
+                             widget.textAlign == 'center' ?  buildButtonText(widget.buttonText, widget.type):Padding(
+                               padding: EdgeInsets.only(left: 15.0),
+                               child:  buildButtonText(widget.buttonText, widget.type),
+                             )
                             ],
                           ),
                 onHighlightChanged: (bool value) {

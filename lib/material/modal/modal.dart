@@ -285,8 +285,7 @@ class Modal<T> {
         decoration: BoxDecoration(
           color: Colors.white,
         ),
-        child: Container(
-          width: 270.0,
+        child: AnimatedModalContainer(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -319,8 +318,7 @@ class Modal<T> {
         decoration: BoxDecoration(
           color: Colors.white,
         ),
-        child: Container(
-          width: 270.0,
+        child: AnimatedModalContainer(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -344,8 +342,7 @@ class Modal<T> {
         decoration: BoxDecoration(
           color: Colors.white,
         ),
-        child: Container(
-          width: 270.0,
+        child: AnimatedModalContainer(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -1135,5 +1132,65 @@ class _ModalPromptContentContainerState
         }
         break;
     }
+  }
+}
+
+class AnimatedModalContainer extends StatefulWidget {
+  AnimatedModalContainer({Key key, @required this.child}) : super(key: key);
+  final Widget child;
+
+  @override
+  _AnimatedModalContainerState createState() => _AnimatedModalContainerState();
+}
+
+class _AnimatedModalContainerState extends State<AnimatedModalContainer>
+    with SingleTickerProviderStateMixin {
+  Animation<double> _animation;
+  AnimationController _controller;
+  double _positionBegin = 0.0;
+  double _positionEnd = 270.0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+        duration: Duration(milliseconds: 180),
+        vsync: this,
+        animationBehavior: AnimationBehavior.preserve);
+    _animation = Tween<double>(begin: _positionBegin, end: _positionEnd)
+        .animate(_controller);
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.stop();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimationModalContainer(
+      animation: _animation,
+      widget: widget.child,
+    );
+  }
+}
+
+class AnimationModalContainer extends AnimatedWidget {
+  AnimationModalContainer({Key key, Animation<double> animation, this.widget})
+      : super(key: key, listenable: animation);
+
+  final widget;
+
+  Widget build(BuildContext context) {
+    final Animation<double> animation = listenable;
+    return Container(
+      width: animation.value,
+      child: widget,
+    );
   }
 }

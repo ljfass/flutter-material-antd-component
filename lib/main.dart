@@ -212,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           RaisedButton(
-            child: Text('action-customized buttons'),
+            child: Text('alert-customized buttons'),
             onPressed: () {
               Modal.alert(context,
                   title: 'Delete',
@@ -224,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           RaisedButton(
-            child: Text('action-more than two buttons'),
+            child: Text('alert-more than two buttons'),
             onPressed: () {
               Modal.alert(context,
                   title: 'Much Buttons',
@@ -237,7 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           RaisedButton(
-            child: Text('action-promise'),
+            child: Text('alert-promise'),
             onPressed: () {
               Modal.alert(context,
                   title: 'Delete',

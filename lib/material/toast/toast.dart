@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../activityIndicator/activityIndicator.dart';
 
 class Toast<T> {
   static ToastView preToast;
@@ -203,11 +204,12 @@ class Toast<T> {
                     SizedBox(
                       width: 20.0,
                       height: 20.0,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 1.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Theme.of(context).primaryColor),
-                      ),
+                      // child: CircularProgressIndicator(
+                      //   strokeWidth: 1.5,
+                      //   valueColor: AlwaysStoppedAnimation<Color>(
+                      //       Theme.of(context).primaryColor),
+                      // ),
+                      child: ActivityIndicator(),
                     ),
                     SizedBox(height: 5.0),
                     content
@@ -219,11 +221,12 @@ class Toast<T> {
                     SizedBox(
                       width: 20.0,
                       height: 20.0,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 1.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Theme.of(context).primaryColor),
-                      ),
+                      // child: CircularProgressIndicator(
+                      //   strokeWidth: 1.5,
+                      //   valueColor: AlwaysStoppedAnimation<Color>(
+                      //       Theme.of(context).primaryColor),
+                      // ),
+                      child: ActivityIndicator(),
                     ),
                     SizedBox(height: 5.0),
                     buildToastText(content)

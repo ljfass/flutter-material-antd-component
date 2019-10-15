@@ -19,6 +19,7 @@ import './material/steps/steps.dart';
 import './material/actionSheet/actionSheet.dart';
 import './material/modal/modal.dart';
 import './material/activityIndicator/activityIndicator.dart';
+import './material/result/result.dart';
 
 void main() => runApp(MyApp());
 
@@ -56,68 +57,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            height: 40,
-            child: Text('Without text'),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 20.0),
-            child: ActivityIndicator(
-              animating: true,
-              toast: false,
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            height: 40,
-            child: Text('With text'),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 20.0),
-            child: ActivityIndicator(
-              text: 'Loading...',
-              animating: true,
-              toast: false,
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            height: 40,
-            child: Text('With large size and customized text style'),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 20.0),
-            child: ActivityIndicator(
-              size: 'large',
-              animating: true,
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            height: 40,
-            child: Text('toast'),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 20.0),
-            child: ActivityIndicator(
-              size: 'large',
-              animating: true,
-              text: 'Loading...',
-              toast: true,
-            ),
-          ),
+          Result(
+            imgUrl:
+                'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1571138078130&di=71ed99ebc2a07e373a3789f998f5d9bb&imgtype=0&src=http%3A%2F%2Fwww.xdowns.com%2Fattachment%2Fsyapp%2Flogo%2F201807191532012573.jpg',
+            title: '验证成功',
+            message: '所提交内容已完成验证',
+            buttonType: 'primary',
+            buttonText: '按钮',
+            onButtonClick: () {
+              print('hahha');
+            },
+          )
         ],
       ),
     );

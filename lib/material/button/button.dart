@@ -6,7 +6,7 @@ class Button<T> extends StatefulWidget {
       {Key key,
       @required this.buttonText,
       this.buttonTextColor,
-      this.type,
+      this.type = 'default',
       this.size = 'large',
       this.disabled = false,
       this.onClick,
@@ -14,11 +14,11 @@ class Button<T> extends StatefulWidget {
       this.icon,
       this.radius = 5.0,
       this.showBorder = true,
+      
       this.textAlign = 'center'})
       : assert(buttonText is String || buttonText is Widget),
-        assert(type == null ||
-            (type != null &&
-                (type == 'primary' || type == 'ghost' || type == 'warning'))),
+        assert
+                (type == 'default' || type == 'primary' || type == 'ghost' || type == 'warning'),
         assert(type == null || (size == 'small' || size == 'large')),
         assert(icon == null || (icon is IconData || icon is Icon)),
         assert(radius == null ||

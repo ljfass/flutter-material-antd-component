@@ -60,7 +60,17 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
         children: <Widget>[
           SearchBar(),
+          SizedBox(
+            height: 10.0,
+          ),
           SearchBar(),
+          SizedBox(
+            height: 10.0,
+          ),
+          RaisedButton(
+            child: Text('data'),
+            onPressed: () {},
+          )
         ],
       ),
     );

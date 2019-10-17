@@ -1,6 +1,35 @@
 import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
+  SearchBar(
+      {Key key,
+      this.defaultValue = '',
+      this.placeholder = '',
+      this.cancelText = '取消',
+      this.showCancelButton = false,
+      this.disabled = false,
+      this.maxLength,
+      this.onCancel,
+      this.onChange,
+      this.onFocus,
+      this.onBlur})
+      : assert(defaultValue == null ||
+            maxLength == null ||
+            defaultValue != null &&
+                maxLength != null &&
+                defaultValue.length <= maxLength),
+        super(key: key);
+  final String defaultValue;
+  final String placeholder;
+  final String cancelText;
+  final bool showCancelButton;
+  final bool disabled;
+  final int maxLength;
+  final ValueChanged<String> onCancel;
+  final ValueChanged<String> onChange;
+  final VoidCallback onFocus;
+  final VoidCallback onBlur;
+
   @override
   _SearchBarState createState() => _SearchBarState();
 }
@@ -8,32 +37,116 @@ class SearchBar extends StatefulWidget {
 class _SearchBarState extends State<SearchBar>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
-  Animation<double> _animation;
-  Animation<double> __animation;
+  Animation<Alignment> _animation;
   Animation<double> _containerAnimation;
   Animation<double> _cancelButtonAnimation;
   FocusNode _focusNode;
+  TextEditingController _textEditingController;
+  bool _placeholderVisibile = true;
+  bool _clearIconVisibile = false;
 
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
+    _textEditingController = TextEditingController(text: widget.defaultValue);
+
     _animationController =
         AnimationController(duration: Duration(milliseconds: 320), vsync: this);
-    _animation = Tween<double>(begin: 1, end: 0.22).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.ease));
-    __animation = Tween<double>(begin: -5, end: -5.0).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.ease));
-    _containerAnimation = Tween<double>(begin: 1, end: 0.9).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.ease));
-    _cancelButtonAnimation = Tween<double>(begin: -35, end: 10).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.ease));
+
+    _animation = Tween<Alignment>(
+            begin: widget.defaultValue != ''
+                ? Alignment.centerLeft
+                : Alignment.center,
+            end: Alignment.centerLeft)
+        .animate(
+            CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _containerAnimation = Tween<double>(
+            begin: widget.defaultValue != ''
+                ? 0.9
+                : widget.showCancelButton == false ? 1.0 : 0.9,
+            end: 0.9)
+        .animate(
+            CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _cancelButtonAnimation = Tween<double>(
+            begin: widget.defaultValue != ''
+                ? 10.0
+                : widget.showCancelButton == false ? -35.0 : 10.0,
+            end: 10)
+        .animate(
+            CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    if (widget.defaultValue != '') {
+      _animationController.forward();
+      setState(() {
+        _animation =
+            Tween<Alignment>(begin: Alignment.center, end: Alignment.centerLeft)
+                .animate(CurvedAnimation(
+                    parent: _animationController, curve: Curves.ease));
+
+        if (widget.showCancelButton == true) return;
+        _containerAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+            CurvedAnimation(parent: _animationController, curve: Curves.ease));
+        _cancelButtonAnimation = Tween<double>(begin: -35.0, end: 10).animate(
+            CurvedAnimation(parent: _animationController, curve: Curves.ease));
+      });
+    }
+
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus == true) {
+        if (_textEditingController.text == '') {
+          _animationController.forward();
+          setState(() {
+            _clearIconVisibile = false;
+          });
+        }
+        if (_textEditingController.text != '') {
+          setState(() {
+            _clearIconVisibile = true;
+          });
+        }
+
+        if (widget.onFocus != null) widget.onFocus();
+      }
+
+      if (_focusNode.hasFocus == false) {
+        setState(() {
+          _clearIconVisibile = false;
+        });
+        if (widget.onBlur != null) widget.onBlur();
+        if ((widget.onCancel == null) ||
+            (widget.onCancel != null &&
+                _textEditingController.text ==
+                    '')) if (_textEditingController.text == '')
+          _animationController.reverse();
+      }
+    });
+    if (widget.defaultValue != '')
+      setState(() {
+        _placeholderVisibile = false;
+      });
+    _textEditingController.addListener(() {
+      if (_textEditingController.text != '') {
+        setState(() {
+          _placeholderVisibile = false;
+          _clearIconVisibile = true;
+        });
+      } else {
+        setState(() {
+          _placeholderVisibile = true;
+          _clearIconVisibile = false;
+        });
+      }
+    });
+  }
+
+  void _valueClear() {
+    _textEditingController.clear();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-
+    _textEditingController.dispose();
     super.dispose();
   }
 
@@ -58,12 +171,20 @@ class _SearchBarState extends State<SearchBar>
                   Flexible(
                     flex: 8,
                     child: SearchInput(
-                      animation: _animation,
-                      inputContainerAnimation: _containerAnimation,
-                      animationController: _animationController,
-                      focusNode: _focusNode,
-                      showCancelButton: (bool s) {},
-                    ),
+                        animation: _animation,
+                        inputContainerAnimation: _containerAnimation,
+                        animationController: _animationController,
+                        focusNode: _focusNode,
+                        textEditingController: _textEditingController,
+                        maxLength: widget.maxLength,
+                        placeholder: widget.placeholder,
+                        onChange: widget.onChange,
+                        onCancel: widget.onCancel,
+                        onFocus: widget.onFocus,
+                        onBlur: widget.onBlur,
+                        placeholderVisibile: _placeholderVisibile,
+                        clearIconVisibile: _clearIconVisibile,
+                        valueClear: _valueClear),
                   ),
                 ],
               )),
@@ -71,6 +192,9 @@ class _SearchBarState extends State<SearchBar>
             animation: _cancelButtonAnimation,
             animationController: _animationController,
             focusNode: _focusNode,
+            cancelText: widget.cancelText,
+            onCancel: widget.onCancel,
+            textEditingController: _textEditingController,
           )
         ],
       ),
@@ -79,16 +203,22 @@ class _SearchBarState extends State<SearchBar>
 }
 
 class CancelButtonAnimated extends AnimatedWidget {
-  CancelButtonAnimated({
-    Key key,
-    Animation<double> animation,
-    this.animationController,
-    this.widget,
-    this.focusNode,
-  }) : super(key: key, listenable: animation);
+  CancelButtonAnimated(
+      {Key key,
+      Animation<double> animation,
+      this.animationController,
+      this.widget,
+      this.focusNode,
+      this.textEditingController,
+      this.cancelText,
+      this.onCancel})
+      : super(key: key, listenable: animation);
   final widget;
   final AnimationController animationController;
   final FocusNode focusNode;
+  final String cancelText;
+  final ValueChanged<String> onCancel;
+  final TextEditingController textEditingController;
 
   Widget build(BuildContext context) {
     final Animation<double> animation = listenable;
@@ -97,75 +227,125 @@ class CancelButtonAnimated extends AnimatedWidget {
       right: animation.value,
       child: GestureDetector(
         onTap: () {
-          animationController.reverse();
           focusNode.canRequestFocus = false;
+          if (onCancel != null) {
+            onCancel(textEditingController.text);
+          } else {
+            animationController.reverse();
+            textEditingController.clear();
+          }
         },
-        child: Text('取消'),
+        child: Text(
+          cancelText,
+          style:
+              TextStyle(color: Theme.of(context).primaryColor, fontSize: 15.0),
+        ),
       ),
     );
   }
 }
 
 class SearchInput extends StatefulWidget {
-  SearchInput(
-      {Key key,
-      this.animation,
-      this.inputContainerAnimation,
-      this.animationController,
-      this.showCancelButton,
-      this.focusNode})
-      : super(key: key);
-  final Animation<double> animation;
+  SearchInput({
+    Key key,
+    this.animation,
+    this.inputContainerAnimation,
+    this.animationController,
+    this.focusNode,
+    this.textEditingController,
+    this.maxLength,
+    this.placeholder,
+    this.onChange,
+    this.onCancel,
+    this.onFocus,
+    this.onBlur,
+    this.placeholderVisibile,
+    this.clearIconVisibile,
+    this.valueClear,
+  }) : super(key: key);
+  final Animation<Alignment> animation;
   final Animation<double> inputContainerAnimation;
   final AnimationController animationController;
-  final ValueChanged<bool> showCancelButton;
   final FocusNode focusNode;
+  final TextEditingController textEditingController;
+  final int maxLength;
+  final String placeholder;
+  final ValueChanged<String> onChange;
+  final ValueChanged<String> onCancel;
+  final VoidCallback onFocus;
+  final VoidCallback onBlur;
+  final VoidCallback valueClear;
+  final bool placeholderVisibile;
+  final bool clearIconVisibile;
 
   @override
   _SearchInputState createState() => _SearchInputState();
 }
 
 class _SearchInputState extends State<SearchInput> {
-  bool visibility = true;
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SearchInputContainer(
       animation: widget.inputContainerAnimation,
-      widget: Container(
-        alignment: Alignment.centerLeft,
-        height: 28.0,
-        decoration: BoxDecoration(
-            color: Color(0xffffffff), borderRadius: BorderRadius.circular(3.0)),
-        child: Stack(
-          children: <Widget>[
-            FractionallySizedBox(
-              widthFactor: 1.0,
-              heightFactor: 1.0,
-            ),
-            SearchSynthetic(
-              animation: widget.animation,
-              animationController: widget.animationController,
-              visibility: visibility,
-            ),
-            Positioned(
-              left: 0.0,
-              right: 0.0,
-              child: Container(
-                decoration: BoxDecoration(color: Colors.transparent),
-                child: SearchInputTextField(
-                  animationController: widget.animationController,
-                  focusNode: widget.focusNode,
-                  cb: (bool res) {
-                    setState(() {
-                      visibility = res;
-                    });
-                  },
+      widget: Stack(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.centerLeft,
+            height: 28.0,
+            decoration: BoxDecoration(
+                color: Color(0xffffffff),
+                borderRadius: BorderRadius.circular(3.0)),
+            child: Stack(
+              fit: StackFit.loose,
+              children: <Widget>[
+                FractionallySizedBox(
+                  widthFactor: 1.0,
+                  heightFactor: 1.0,
                 ),
+                SearchSynthetic(
+                  animation: widget.animation,
+                  animationController: widget.animationController,
+                  visibility: widget.placeholderVisibile,
+                  placeholder: widget.placeholder,
+                ),
+                Positioned(
+                  left: 0.0,
+                  right: 0.0,
+                  child: Container(
+                    decoration: BoxDecoration(color: Colors.transparent),
+                    child: SearchInputTextField(
+                      animationController: widget.animationController,
+                      focusNode: widget.focusNode,
+                      textEditingController: widget.textEditingController,
+                      maxLength: widget.maxLength,
+                      onChange: widget.onChange,
+                      onCancel: widget.onCancel,
+                      onFocus: widget.onFocus,
+                      onBlur: widget.onBlur,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Visibility(
+            visible: widget.clearIconVisibile,
+            child: Positioned(
+              right: 6.0,
+              top: 0.0,
+              bottom: 0.0,
+              child: GestureDetector(
+                onTap: widget.valueClear,
+                child: ClearIcon(),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -185,39 +365,48 @@ class SearchInputContainer extends AnimatedWidget {
 }
 
 class SearchSynthetic extends AnimatedWidget {
-  SearchSynthetic(
-      {Key key,
-      Animation<double> animation,
-      this.widget,
-      this.animationController,
-      this.visibility = true})
-      : super(key: key, listenable: animation);
+  SearchSynthetic({
+    Key key,
+    Animation<Alignment> animation,
+    this.widget,
+    this.animationController,
+    this.placeholder,
+    this.visibility = true,
+  }) : super(key: key, listenable: animation);
   final widget;
   final AnimationController animationController;
+  final String placeholder;
   final bool visibility;
 
   Widget build(BuildContext context) {
-    final Animation<double> animation = listenable;
+    final Animation<Alignment> animation = listenable;
     return FractionallySizedBox(
-        widthFactor: animation.value,
+        widthFactor: 1.0,
         heightFactor: 1.0,
         child: Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(
-                Icons.search,
-                color: Color(0xffbbbbbb),
-                size: 20.0,
-              ),
-              Opacity(
-                opacity: visibility == true ? 1.0 : 0.0,
-                child: Text(
-                  'search',
-                  style: TextStyle(color: Color(0xffbbbbbb), fontSize: 15.0),
+          padding: EdgeInsets.only(left: 15.0),
+          child: Align(
+            alignment: animation.value,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  Icons.search,
+                  color: Color(0xffbbbbbb),
+                  size: 20.0,
                 ),
-              )
-            ],
+                Opacity(
+                  opacity: visibility == true ? 1.0 : 0.0,
+                  child: SizedBox(
+                    child: Text(
+                      this.placeholder != '' ? '$placeholder' : 'search',
+                      style:
+                          TextStyle(color: Color(0xffbbbbbb), fontSize: 15.0),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ));
   }
@@ -225,57 +414,48 @@ class SearchSynthetic extends AnimatedWidget {
 
 class SearchInputTextField extends StatefulWidget {
   SearchInputTextField(
-      {Key key, this.animationController, this.cb, this.focusNode})
+      {Key key,
+      this.animationController,
+      this.focusNode,
+      this.textEditingController,
+      this.maxLength,
+      this.onChange,
+      this.onCancel,
+      this.onFocus,
+      this.onBlur})
       : super(key: key);
   final AnimationController animationController;
-  final ValueChanged<bool> cb;
+
   final FocusNode focusNode;
+  final TextEditingController textEditingController;
+  final int maxLength;
+  final ValueChanged<String> onChange;
+  final ValueChanged<String> onCancel;
+  final VoidCallback onFocus;
+  final VoidCallback onBlur;
 
   @override
   _SearchInputTextFieldState createState() => _SearchInputTextFieldState();
 }
 
 class _SearchInputTextFieldState extends State<SearchInputTextField> {
-  TextEditingController _textEditingController;
-
   @override
   void initState() {
     super.initState();
-    _textEditingController = TextEditingController(text: '');
-
-    widget.focusNode.addListener(() {
-      if (widget.focusNode.hasFocus == true) {
-        widget.animationController.forward();
-      }
-
-      if (widget.focusNode.hasFocus == false) {
-        widget.animationController.reverse();
-      }
-    });
-    _textEditingController.addListener(() {
-      if (_textEditingController.text != '') {
-        widget.cb(false);
-      } else {
-        widget.cb(true);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       textAlign: TextAlign.left,
-      controller: _textEditingController,
+      controller: widget.textEditingController,
       focusNode: widget.focusNode,
+      maxLengthEnforced: widget.maxLength != null ? true : false,
+      maxLength:
+          widget.maxLength == null ? TextField.noMaxLength : widget.maxLength,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(
-          24.0,
+          35.0,
           0.0,
           20.0,
           14.0,
@@ -292,6 +472,31 @@ class _SearchInputTextFieldState extends State<SearchInputTextField> {
         //
       ),
       style: TextStyle(height: 1.0),
+      onChanged: widget.onChange == null
+          ? null
+          : (String change) {
+              widget.onChange(change);
+            },
+    );
+  }
+}
+
+class ClearIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 14.0,
+      height: 14.0,
+      decoration: BoxDecoration(
+          shape: BoxShape.circle, color: Color(0xff000000).withOpacity(0.3)),
+      child: Align(
+        alignment: Alignment.center,
+        child: Icon(
+          Icons.close,
+          size: 11.0,
+          color: Color(0xffffffff),
+        ),
+      ),
     );
   }
 }

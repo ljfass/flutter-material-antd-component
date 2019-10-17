@@ -63,14 +63,41 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(
             height: 10.0,
           ),
-          SearchBar(),
+          SearchBar(
+            defaultValue: 'defaultValue1',
+          ),
           SizedBox(
             height: 10.0,
           ),
-          RaisedButton(
-            child: Text('data'),
-            onPressed: () {},
-          )
+          SearchBar(
+            onCancel: (String value) {
+              print(value);
+            },
+            defaultValue: 'defaultValue2',
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          SearchBar(
+            showCancelButton: true,
+            defaultValue: 'default',
+            maxLength: 8,
+            onChange: (String change) {
+              print(change);
+            },
+            onCancel: (String value) {
+              print(value);
+            },
+            onFocus: () {
+              print('focus');
+            },
+            onBlur: () {
+              print('blur');
+            },
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
         ],
       ),
     );

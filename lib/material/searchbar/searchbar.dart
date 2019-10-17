@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
-  SearchBar(
-      {Key key,
-      this.defaultValue = '',
-      this.placeholder = '',
-      this.cancelText = '取消',
-      this.showCancelButton = false,
-      this.disabled = false,
-      this.maxLength,
-      this.onCancel,
-      this.onChange,
-      this.onFocus,
-      this.onBlur})
-      : assert(defaultValue == null ||
+  SearchBar({
+    Key key,
+    this.defaultValue = '',
+    this.placeholder = '',
+    this.cancelText = '取消',
+    this.showCancelButton = false,
+    this.disabled = false,
+    this.maxLength,
+    this.onCancel,
+    this.onChange,
+    this.onFocus,
+    this.onBlur,
+    this.onSubmit,
+  })  : assert(defaultValue == null ||
             maxLength == null ||
             defaultValue != null &&
                 maxLength != null &&
@@ -27,6 +28,7 @@ class SearchBar extends StatefulWidget {
   final int maxLength;
   final ValueChanged<String> onCancel;
   final ValueChanged<String> onChange;
+  final ValueChanged<String> onSubmit;
   final VoidCallback onFocus;
   final VoidCallback onBlur;
 
@@ -128,7 +130,7 @@ class _SearchBarState extends State<SearchBar>
       if (_textEditingController.text != '') {
         setState(() {
           _placeholderVisibile = false;
-          _clearIconVisibile = true;
+          if (_focusNode.hasFocus == true) _clearIconVisibile = true;
         });
       } else {
         setState(() {
@@ -182,13 +184,16 @@ class _SearchBarState extends State<SearchBar>
                         onCancel: widget.onCancel,
                         onFocus: widget.onFocus,
                         onBlur: widget.onBlur,
+                        onSubmit: widget.onSubmit,
                         placeholderVisibile: _placeholderVisibile,
                         clearIconVisibile: _clearIconVisibile,
-                        valueClear: _valueClear),
+                        valueClear: _valueClear,
+                        disabled: widget.disabled),
                   ),
                 ],
               )),
           CancelButtonAnimated(
+            disabled: widget.disabled,
             animation: _cancelButtonAnimation,
             animationController: _animationController,
             focusNode: _focusNode,
@@ -206,6 +211,7 @@ class CancelButtonAnimated extends AnimatedWidget {
   CancelButtonAnimated(
       {Key key,
       Animation<double> animation,
+      this.disabled,
       this.animationController,
       this.widget,
       this.focusNode,
@@ -215,6 +221,7 @@ class CancelButtonAnimated extends AnimatedWidget {
       : super(key: key, listenable: animation);
   final widget;
   final AnimationController animationController;
+  final bool disabled;
   final FocusNode focusNode;
   final String cancelText;
   final ValueChanged<String> onCancel;
@@ -226,15 +233,17 @@ class CancelButtonAnimated extends AnimatedWidget {
     return Positioned(
       right: animation.value,
       child: GestureDetector(
-        onTap: () {
-          focusNode.canRequestFocus = false;
-          if (onCancel != null) {
-            onCancel(textEditingController.text);
-          } else {
-            animationController.reverse();
-            textEditingController.clear();
-          }
-        },
+        onTap: disabled == true
+            ? null
+            : () {
+                focusNode.canRequestFocus = false;
+                if (onCancel != null) {
+                  onCancel(textEditingController.text);
+                } else {
+                  animationController.reverse();
+                  textEditingController.clear();
+                }
+              },
         child: Text(
           cancelText,
           style:
@@ -259,9 +268,11 @@ class SearchInput extends StatefulWidget {
     this.onCancel,
     this.onFocus,
     this.onBlur,
+    this.onSubmit,
     this.placeholderVisibile,
     this.clearIconVisibile,
     this.valueClear,
+    this.disabled,
   }) : super(key: key);
   final Animation<Alignment> animation;
   final Animation<double> inputContainerAnimation;
@@ -272,11 +283,13 @@ class SearchInput extends StatefulWidget {
   final String placeholder;
   final ValueChanged<String> onChange;
   final ValueChanged<String> onCancel;
+  final ValueChanged<String> onSubmit;
   final VoidCallback onFocus;
   final VoidCallback onBlur;
   final VoidCallback valueClear;
   final bool placeholderVisibile;
   final bool clearIconVisibile;
+  final bool disabled;
 
   @override
   _SearchInputState createState() => _SearchInputState();
@@ -301,7 +314,6 @@ class _SearchInputState extends State<SearchInput> {
                 color: Color(0xffffffff),
                 borderRadius: BorderRadius.circular(3.0)),
             child: Stack(
-              fit: StackFit.loose,
               children: <Widget>[
                 FractionallySizedBox(
                   widthFactor: 1.0,
@@ -319,15 +331,16 @@ class _SearchInputState extends State<SearchInput> {
                   child: Container(
                     decoration: BoxDecoration(color: Colors.transparent),
                     child: SearchInputTextField(
-                      animationController: widget.animationController,
-                      focusNode: widget.focusNode,
-                      textEditingController: widget.textEditingController,
-                      maxLength: widget.maxLength,
-                      onChange: widget.onChange,
-                      onCancel: widget.onCancel,
-                      onFocus: widget.onFocus,
-                      onBlur: widget.onBlur,
-                    ),
+                        animationController: widget.animationController,
+                        focusNode: widget.focusNode,
+                        textEditingController: widget.textEditingController,
+                        maxLength: widget.maxLength,
+                        onChange: widget.onChange,
+                        onCancel: widget.onCancel,
+                        onFocus: widget.onFocus,
+                        onBlur: widget.onBlur,
+                        onSubmit: widget.onSubmit,
+                        disabled: widget.disabled),
                   ),
                 )
               ],
@@ -419,18 +432,22 @@ class SearchInputTextField extends StatefulWidget {
       this.focusNode,
       this.textEditingController,
       this.maxLength,
+      this.disabled,
       this.onChange,
       this.onCancel,
       this.onFocus,
-      this.onBlur})
+      this.onBlur,
+      this.onSubmit})
       : super(key: key);
   final AnimationController animationController;
 
   final FocusNode focusNode;
   final TextEditingController textEditingController;
   final int maxLength;
+  final bool disabled;
   final ValueChanged<String> onChange;
   final ValueChanged<String> onCancel;
+  final ValueChanged<String> onSubmit;
   final VoidCallback onFocus;
   final VoidCallback onBlur;
 
@@ -447,6 +464,7 @@ class _SearchInputTextFieldState extends State<SearchInputTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      enabled: !widget.disabled,
       textAlign: TextAlign.left,
       controller: widget.textEditingController,
       focusNode: widget.focusNode,
@@ -475,6 +493,9 @@ class _SearchInputTextFieldState extends State<SearchInputTextField> {
           : (String change) {
               widget.onChange(change);
             },
+      onSubmitted: (String value) {
+        widget.onSubmit(value);
+      },
     );
   }
 }

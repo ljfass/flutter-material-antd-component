@@ -70,9 +70,9 @@ class _SearchBarState extends State<SearchBar>
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
     _cancelButtonAnimation = Tween<double>(
             begin: widget.defaultValue != ''
-                ? 10.0
-                : widget.showCancelButton == false ? -35.0 : 10.0,
-            end: 10)
+                ? 8.0
+                : widget.showCancelButton == false ? -35.0 : 8.0,
+            end: 8.0)
         .animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
     if (widget.defaultValue != '') {
@@ -86,7 +86,7 @@ class _SearchBarState extends State<SearchBar>
         if (widget.showCancelButton == true) return;
         _containerAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
-        _cancelButtonAnimation = Tween<double>(begin: -35.0, end: 10).animate(
+        _cancelButtonAnimation = Tween<double>(begin: -35.0, end: 8.0).animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
       });
     }
@@ -461,7 +461,6 @@ class _SearchInputTextFieldState extends State<SearchInputTextField> {
           14.0,
         ),
         fillColor: Colors.transparent,
-
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xffdddddd), width: 0.5),
         ),
@@ -469,7 +468,6 @@ class _SearchInputTextFieldState extends State<SearchInputTextField> {
           borderSide: BorderSide(color: Color(0xffdddddd), width: 0.5),
         ),
         border: OutlineInputBorder(),
-        //
       ),
       style: TextStyle(height: 1.0),
       onChanged: widget.onChange == null

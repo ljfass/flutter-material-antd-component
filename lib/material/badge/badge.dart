@@ -56,7 +56,6 @@ class _BadgeState extends State<Badge> {
     return RotationTransition(
       turns: AlwaysStoppedAnimation(45 / 360),
       child: Container(
-        key: _containerKey,
         alignment: Alignment.center,
         width: 80.0,
         height: 16.0,
@@ -69,7 +68,6 @@ class _BadgeState extends State<Badge> {
 
   Widget buildHot(content) {
     return Container(
-        key: _containerKey,
         height: 18.0,
         padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 2.0),
         decoration: BoxDecoration(
@@ -147,7 +145,6 @@ class _BadgeState extends State<Badge> {
   Widget buildUsualContent(content) {
     if (content is num) {
       return Container(
-          key: _containerKey,
           height: 18.0,
           padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
           decoration: BoxDecoration(
@@ -156,7 +153,6 @@ class _BadgeState extends State<Badge> {
           child: buildNumber(content));
     } else if (content is String) {
       return Container(
-          key: _containerKey,
           height: 18.0,
           padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
           decoration: BoxDecoration(
@@ -193,13 +189,16 @@ class _BadgeState extends State<Badge> {
         return widget.child;
       }
       return Stack(
-        overflow: Overflow.clip,
+        overflow: widget.corner == true ? Overflow.clip : Overflow.visible,
         children: <Widget>[
-          widget.child,
+          Container(
+            key: _containerKey,
+            child: widget.child,
+          ),
           widget.corner == true
               ? Positioned(
-                  right: -20.0,
-                  top: 12.0,
+                  left: -_containerSize.width / 2,
+                  top: _containerSize.height / 2,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 9.0),
                     child: widget.corner == true
@@ -210,8 +209,8 @@ class _BadgeState extends State<Badge> {
                   ),
                 )
               : Positioned(
-                  left: -(_containerSize.width / 2) + 4,
-                  top: -1.0,
+                  left: _containerSize.width - 4,
+                  top: -10.0,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 9.0),
                     child: widget.corner == true
@@ -226,13 +225,16 @@ class _BadgeState extends State<Badge> {
     } else {
       // text is String
       return Stack(
-        overflow: Overflow.clip,
+        overflow: widget.corner == true ? Overflow.clip : Overflow.visible,
         children: <Widget>[
-          widget.child,
+          Container(
+            key: _containerKey,
+            child: widget.child,
+          ),
           widget.corner == true
               ? Positioned(
-                  right: -20.0,
-                  top: 12.0,
+                  left: -_containerSize.width / 2,
+                  top: _containerSize.height / 2,
                   child: widget.corner == true
                       ? buildBadgeCorner(Text('$text',
                           textAlign: TextAlign.center,
@@ -245,8 +247,8 @@ class _BadgeState extends State<Badge> {
                           : buildUsualContent(text),
                 )
               : Positioned(
-                  left: -_containerSize.width / 2 + 4,
-                  top: -1.0,
+                  left: _containerSize.width - 4,
+                  top: -10.0,
                   child: widget.corner == true
                       ? buildBadgeCorner(Text('$text',
                           textAlign: TextAlign.center,

@@ -21,6 +21,7 @@ import './material/modal/modal.dart';
 import './material/activityIndicator/activityIndicator.dart';
 import './material/result/result.dart';
 import './material/searchbar/searchbar.dart';
+import './material/tabs/tabs.dart';
 
 void main() => runApp(MyApp());
 
@@ -56,50 +57,67 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          SearchBar(),
-          SizedBox(
-            height: 10.0,
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: Tabs(
+            initialPage: 1,
+            tabs: [
+              {'title': Text('Third Tab')},
+              {'title': Text('Third Tab')},
+              {
+                'title': Badge(
+                  dot: true,
+                  child: Text('Third Tab'),
+                )
+              },
+              {'title': Text('Third Tab')},
+              {'title': Text('Third Tab')},
+              {'title': Text('Third Tab')}
+            ],
+            tabBarView: <Widget>[
+              Container(
+                width: 50.0,
+                height: 50.0,
+                decoration: BoxDecoration(color: Colors.white),
+                child: Text('1'),
+              ),
+              Container(
+                width: 50.0,
+                height: 50.0,
+                decoration: BoxDecoration(color: Colors.white),
+                child: Text('2'),
+              ),
+              Container(
+                width: 50.0,
+                height: 50.0,
+                decoration: BoxDecoration(color: Colors.white),
+                child: Text('3'),
+              ),
+              Container(
+                width: 50.0,
+                height: 50.0,
+                decoration: BoxDecoration(color: Colors.white),
+                child: Text('1'),
+              ),
+              Container(
+                width: 50.0,
+                height: 50.0,
+                decoration: BoxDecoration(color: Colors.white),
+                child: Text('2'),
+              ),
+              Container(
+                width: 50.0,
+                height: 50.0,
+                decoration: BoxDecoration(color: Colors.white),
+                child: Text('3'),
+              )
+            ],
+            onChange: (int q) {},
+            swipeable: false,
           ),
-          SearchBar(
-            defaultValue: 'defaultValue1',
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          SearchBar(
-            onCancel: (String value) {
-              print(value);
-            },
-            defaultValue: 'defaultValue2',
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          SearchBar(
-            showCancelButton: true,
-            defaultValue: 'default',
-            maxLength: 8,
-            onChange: (String change) {
-              print(change);
-            },
-            onCancel: (String value) {
-              print(value);
-            },
-            onFocus: () {
-              print('focus');
-            },
-            onBlur: () {
-              print('blur');
-            },
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

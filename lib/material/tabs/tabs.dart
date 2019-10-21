@@ -94,7 +94,9 @@ class _TabsState extends State<Tabs> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
+      child: Flex(
+        direction: Axis.vertical,
+        mainAxisSize: MainAxisSize.min,
         verticalDirection: widget.tabBarPosition == 'top'
             ? VerticalDirection.down
             : VerticalDirection.up,
@@ -125,7 +127,7 @@ class _TabsState extends State<Tabs> with TickerProviderStateMixin {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: Container(
               child: TabBarView(
                 physics: widget.swipeable == true

@@ -69,14 +69,14 @@ class _BadgeState extends State<Badge> {
   Widget buildHot(content) {
     return Container(
         height: 18.0,
-        padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 2.0),
+        padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 1.5),
         decoration: BoxDecoration(
             color: Color(0XFFF96268),
             borderRadius: BorderRadius.circular(12.0)),
         child: content is String
             ? Text('$content',
                 style:
-                    TextStyle(color: Colors.white, height: 1.2, fontSize: 12.0))
+                    TextStyle(color: Colors.white, height: 1.2, fontSize: 11.0))
             : buildNumber(content));
   }
 
@@ -84,10 +84,10 @@ class _BadgeState extends State<Badge> {
     return number > widget.overflowCount
         ? Text('${widget.overflowCount}+',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, height: 1.2, fontSize: 12.0))
+            style: TextStyle(color: Colors.white, height: 1.2, fontSize: 11.0))
         : Text('$number',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, height: 1.2, fontSize: 12.0));
+            style: TextStyle(color: Colors.white, height: 1.2, fontSize: 11.0));
   }
 
   Widget buildDot() {
@@ -95,8 +95,8 @@ class _BadgeState extends State<Badge> {
       decoration:
           BoxDecoration(color: Color(0XFFFF5B05), shape: BoxShape.circle),
       child: Container(
-        width: widget.size == 'small' ? 8.0 : 16.0,
-        height: widget.size == 'small' ? 8.0 : 16.0,
+        width: widget.size == 'small' ? 7.5 : 15.5,
+        height: widget.size == 'small' ? 7.5 : 15.5,
       ),
     );
   }
@@ -146,7 +146,7 @@ class _BadgeState extends State<Badge> {
     if (content is num) {
       return Container(
           height: 18.0,
-          padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+          padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.5),
           decoration: BoxDecoration(
               color: Color(0XFFFF5B05),
               borderRadius: BorderRadius.circular(12.0)),
@@ -154,13 +154,13 @@ class _BadgeState extends State<Badge> {
     } else if (content is String) {
       return Container(
           height: 18.0,
-          padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+          padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.5),
           decoration: BoxDecoration(
               color: Color(0XFFFF5B05),
               borderRadius: BorderRadius.circular(12.0)),
           child: Text(content,
               style:
-                  TextStyle(color: Colors.white, height: 1.2, fontSize: 12.0)));
+                  TextStyle(color: Colors.white, height: 1.2, fontSize: 11.0)));
     }
   }
 

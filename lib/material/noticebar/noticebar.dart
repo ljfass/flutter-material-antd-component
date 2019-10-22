@@ -167,8 +167,12 @@ class AnimatedNoticeBar extends AnimatedWidget {
         padding: EdgeInsets.only(left: 4.0),
         alignment: Alignment.centerRight,
         decoration: BoxDecoration(color: Color(0xfffefcec)),
-        child:
-            widget.action == null ? Icon(Icons.chevron_right) : widget.action,
+        child: widget.action == null
+            ? Icon(
+                Icons.chevron_right,
+                size: 22.0,
+              )
+            : widget.action,
       );
     }
     return tail;
@@ -275,9 +279,9 @@ class AnimatedNoticeBar extends AnimatedWidget {
                           child: Text(
                             widget.noticeText,
                             style: TextStyle(
-                                height: 2.4,
+                                height: 2.2,
                                 color: Color(0xfff76a24),
-                                fontSize: 12.0),
+                                fontSize: 13.0),
                           ),
                         )
                       ],

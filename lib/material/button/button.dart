@@ -67,7 +67,7 @@ class _ButtonState extends State<Button> {
           break;
         case 'ghost':
           {
-            Text(
+            return Text(
               widget.buttonText,
               style: TextStyle(
                 color: widget.buttonTextColor != null
@@ -189,20 +189,7 @@ class _ButtonState extends State<Button> {
             );
           }
       }
-      DefaultTextStyle(
-        style: TextStyle(
-          color: widget.buttonTextColor != null
-              ? widget.buttonTextColor
-              : widget.disabled != true
-                  ? buttonActived == false
-                      ? Color(0XFFFFFFFF)
-                      : HSLColor.fromAHSL(0.3, 0.0, 0.0, 1.0).toColor()
-                  : HSLColor.fromAHSL(0.6, 0.0, 0.0, 1.0).toColor(),
-          fontSize: widget.size == 'large' ? 16.0 : 13.0,
-          fontWeight: FontWeight.w400,
-        ),
-        child: buttonText,
-      );
+      
     }
   }
 

@@ -276,7 +276,7 @@ class List<T> extends StatelessWidget {
   Widget buildContent() {
     return this.onClick == null
         ? ConstrainedBox(
-            constraints: BoxConstraints(minHeight: 44.0),
+            constraints: BoxConstraints(minHeight: brief == null ? 39.0 : 71.0),
             child: Container(
                 padding: this.multipleLine == true
                     ? EdgeInsets.fromLTRB(15.0, 12.5, 15, 12.5)
@@ -370,7 +370,7 @@ class List<T> extends StatelessWidget {
                       )),
           )
         : ConstrainedBox(
-            constraints: BoxConstraints(minHeight: 44.0),
+            constraints: BoxConstraints(minHeight: brief == null ? 39.0 : 71.0),
             child: Material(
               color: Color(0xffffffff),
               child: InkWell(

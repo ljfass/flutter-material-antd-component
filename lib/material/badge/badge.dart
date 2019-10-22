@@ -82,15 +82,14 @@ class _BadgeState extends State<Badge> {
 
   Widget buildHot(content) {
     return Container(
-        height: 18.0,
-        padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 1.5),
+        alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
         decoration: BoxDecoration(
             color: Color(0XFFF96268),
             borderRadius: BorderRadius.circular(12.0)),
         child: content is String
             ? Text('$content',
-                style:
-                    TextStyle(color: Colors.white, height: 1.3, fontSize: 11.0))
+                style: TextStyle(color: Colors.white, fontSize: 11.0))
             : buildNumber(content));
   }
 
@@ -134,8 +133,8 @@ class _BadgeState extends State<Badge> {
           : ConstrainedBox(
               constraints: BoxConstraints(minWidth: 9.0),
               child: Container(
-                  height: 18.0,
-                  padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.5),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
                   decoration: BoxDecoration(
                       color: Color(0XFFFF5B05),
                       borderRadius: BorderRadius.circular(12.0)),
@@ -145,14 +144,13 @@ class _BadgeState extends State<Badge> {
       return widget.hot == true
           ? buildHot(text)
           : Container(
-              height: 18.0,
-              padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 2.0),
+              padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
+              alignment: Alignment.center,
               decoration: BoxDecoration(
                   color: Color(0XFFFF5B05),
                   borderRadius: BorderRadius.circular(12.0)),
               child: Text(text,
-                  style: TextStyle(
-                      color: Colors.white, height: 1.3, fontSize: 11.0)));
+                  style: TextStyle(color: Colors.white, fontSize: 11.0)));
     }
   }
 

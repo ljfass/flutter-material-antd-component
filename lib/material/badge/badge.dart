@@ -76,7 +76,7 @@ class _BadgeState extends State<Badge> {
         child: content is String
             ? Text('$content',
                 style:
-                    TextStyle(color: Colors.white, height: 1.2, fontSize: 11.0))
+                    TextStyle(color: Colors.white, height: 1.3, fontSize: 11.0))
             : buildNumber(content));
   }
 
@@ -84,10 +84,10 @@ class _BadgeState extends State<Badge> {
     return number > widget.overflowCount
         ? Text('${widget.overflowCount}+',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, height: 1.2, fontSize: 11.0))
+            style: TextStyle(color: Colors.white, height: 1.3, fontSize: 11.0))
         : Text('$number',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, height: 1.2, fontSize: 11.0));
+            style: TextStyle(color: Colors.white, height: 1.3, fontSize: 11.0));
   }
 
   Widget buildDot() {
@@ -138,7 +138,7 @@ class _BadgeState extends State<Badge> {
                   borderRadius: BorderRadius.circular(12.0)),
               child: Text(text,
                   style: TextStyle(
-                      color: Colors.white, height: 1.2, fontSize: 12.0)));
+                      color: Colors.white, height: 1.3, fontSize: 11.0)));
     }
   }
 

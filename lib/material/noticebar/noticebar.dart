@@ -207,7 +207,7 @@ class AnimatedNoticeBar extends AnimatedWidget {
                             height: 0.0,
                           )
                         : Container(
-                            padding: EdgeInsets.only(right: 6.0),
+                            padding: EdgeInsets.only(right: 3.0),
                             decoration: BoxDecoration(color: Color(0xfffefcec)),
                             child: Icon(widget.icon),
                           ),
@@ -257,7 +257,7 @@ class AnimatedNoticeBar extends AnimatedWidget {
                           height: 0.0,
                         )
                       : Container(
-                          padding: EdgeInsets.only(right: 6.0),
+                          padding: EdgeInsets.only(right: 3.0),
                           decoration: BoxDecoration(color: Color(0xfffefcec)),
                           child: Icon(widget.icon),
                         ),

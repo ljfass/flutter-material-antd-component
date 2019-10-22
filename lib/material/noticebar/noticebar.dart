@@ -163,20 +163,13 @@ class AnimatedNoticeBar extends AnimatedWidget {
                   vd.value = false;
                 });
     } else if (widget.mode == 'link') {
-      tail = GestureDetector(
-          child: Container(
-            padding: EdgeInsets.only(left: 4.0),
-            alignment: Alignment.centerRight,
-            decoration: BoxDecoration(color: Color(0xfffefcec)),
-            child: widget.action == null
-                ? Icon(Icons.chevron_right)
-                : widget.action,
-          ),
-          onTap: widget.onClick == null
-              ? null
-              : () {
-                  widget.onClick();
-                });
+      tail = Container(
+        padding: EdgeInsets.only(left: 4.0),
+        alignment: Alignment.centerRight,
+        decoration: BoxDecoration(color: Color(0xfffefcec)),
+        child:
+            widget.action == null ? Icon(Icons.chevron_right) : widget.action,
+      );
     }
     return tail;
   }
@@ -188,55 +181,112 @@ class AnimatedNoticeBar extends AnimatedWidget {
           iconTheme: Theme.of(context)
               .iconTheme
               .copyWith(color: Color(0xfff76a24), size: 17.0)),
-      child: Container(
-        height: 36.0,
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
-        decoration: BoxDecoration(
-          color: Color(0xfffefcec),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            widget.icon == null
-                ? Container(
-                    width: 0.0,
-                    height: 0.0,
-                  )
-                : Container(
-                    padding: EdgeInsets.only(right: 6.0),
-                    decoration: BoxDecoration(color: Color(0xfffefcec)),
-                    child: Icon(widget.icon),
-                  ),
-            Expanded(
-              child: Stack(
+      child: widget.mode == 'link'
+          ? GestureDetector(
+              onTap: widget.onClick == null
+                  ? null
+                  : () {
+                      widget.onClick();
+                    },
+              child: Container(
+                height: 36.0,
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                decoration: BoxDecoration(
+                  color: Color(0xfffefcec),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    widget.icon == null
+                        ? Container(
+                            width: 0.0,
+                            height: 0.0,
+                          )
+                        : Container(
+                            padding: EdgeInsets.only(right: 6.0),
+                            decoration: BoxDecoration(color: Color(0xfffefcec)),
+                            child: Icon(widget.icon),
+                          ),
+                    Expanded(
+                      child: Stack(
+                        children: <Widget>[
+                          Container(
+                            key: containerKey,
+                            height: 36.0,
+                            child: Text(
+                              widget.noticeText,
+                              style: TextStyle(color: Colors.transparent),
+                            ),
+                          ),
+                          Positioned(
+                            left: -animation.value,
+                            top: 0.0,
+                            key: contentKey,
+                            child: Text(
+                              widget.noticeText,
+                              style: TextStyle(
+                                  height: 2.4,
+                                  color: Color(0xfff76a24),
+                                  fontSize: 12.0),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    buildTail(),
+                  ],
+                ),
+              ),
+            )
+          : Container(
+              height: 36.0,
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              decoration: BoxDecoration(
+                color: Color(0xfffefcec),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    key: containerKey,
-                    height: 36.0,
-                    child: Text(
-                      widget.noticeText,
-                      style: TextStyle(color: Colors.transparent),
+                  widget.icon == null
+                      ? Container(
+                          width: 0.0,
+                          height: 0.0,
+                        )
+                      : Container(
+                          padding: EdgeInsets.only(right: 6.0),
+                          decoration: BoxDecoration(color: Color(0xfffefcec)),
+                          child: Icon(widget.icon),
+                        ),
+                  Expanded(
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          key: containerKey,
+                          height: 36.0,
+                          child: Text(
+                            widget.noticeText,
+                            style: TextStyle(color: Colors.transparent),
+                          ),
+                        ),
+                        Positioned(
+                          left: -animation.value,
+                          top: 0.0,
+                          key: contentKey,
+                          child: Text(
+                            widget.noticeText,
+                            style: TextStyle(
+                                height: 2.4,
+                                color: Color(0xfff76a24),
+                                fontSize: 12.0),
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                  Positioned(
-                    left: -animation.value,
-                    top: 0.0,
-                    key: contentKey,
-                    child: Text(
-                      widget.noticeText,
-                      style: TextStyle(
-                          height: 2.4,
-                          color: Color(0xfff76a24),
-                          fontSize: 12.0),
-                    ),
-                  )
+                  buildTail(),
                 ],
               ),
             ),
-            buildTail(),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -138,9 +138,10 @@ class _ActivityIndicatorState extends State<ActivityIndicator>
 num degToRad(num deg) => deg * (pi / 180.0);
 
 class ProgressPainter extends CustomPainter {
-  ProgressPainter({this.startAngle, this.size});
+  ProgressPainter({this.startAngle, this.size, this.context});
   final double startAngle;
   final String size;
+  final BuildContext context;
   double strokeWidth;
   double radiusSize;
 
@@ -150,7 +151,7 @@ class ProgressPainter extends CustomPainter {
     final Offset offsetCenter =
         this.size == 'small' ? Offset(11.5, 11.5) : Offset(15.5, 15.5);
 
-    this.strokeWidth = this.size == 'small' ? 1.2 : 1.5;
+    this.strokeWidth = this.size == 'small' ? 1.0 : 1.5;
     final ringPaint = Paint()
       ..style = PaintingStyle.stroke
       ..color = Color(0xffd2d2d2)
@@ -164,7 +165,7 @@ class ProgressPainter extends CustomPainter {
     final progressPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
-      ..color = Colors.blue
+      ..color = Theme.of(context).primaryColor
       ..strokeWidth = strokeWidth;
     canvas.drawArc(arcRect, startAngle, degToRad(angle), false, progressPaint);
   }
@@ -186,7 +187,8 @@ class ActivityIndicatorAnimation extends AnimatedWidget {
   Widget build(BuildContext context) {
     final Animation<double> animation = listenable;
     return CustomPaint(
-      painter: ProgressPainter(startAngle: animation.value, size: size),
+      painter: ProgressPainter(
+          startAngle: animation.value, size: size, context: context),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class Button<T> extends StatefulWidget {
   Button(
@@ -14,16 +15,18 @@ class Button<T> extends StatefulWidget {
       this.icon,
       this.radius = 5.0,
       this.showBorder = true,
-      
       this.textAlign = 'center'})
       : assert(buttonText is String || buttonText is Widget),
-        assert
-                (type == 'default' || type == 'primary' || type == 'ghost' || type == 'warning'),
+        assert(type == 'default' ||
+            type == 'primary' ||
+            type == 'ghost' ||
+            type == 'warning'),
         assert(type == null || (size == 'small' || size == 'large')),
         assert(icon == null || (icon is IconData || icon is Icon)),
         assert(radius == null ||
             (radius != null && (0.0 <= radius && radius <= 100.0))),
-            assert(textAlign == null || textAlign == 'left' || textAlign == 'center'),
+        assert(
+            textAlign == null || textAlign == 'left' || textAlign == 'center'),
         super(key: key);
   final T buttonText;
   final String type;
@@ -47,8 +50,9 @@ class _ButtonState extends State<Button> {
   Widget buildButtonText<T>(buttonText, String type) {
     if (buttonText is String) {
       switch (type) {
-        case 'primay':
+        case 'primary':
           {
+          
             return Text(
               widget.buttonText,
               style: TextStyle(
@@ -189,7 +193,6 @@ class _ButtonState extends State<Button> {
             );
           }
       }
-      
     }
   }
 
@@ -226,33 +229,35 @@ class _ButtonState extends State<Button> {
                         : Color(0XFF0E80D2),
                 child: widget.loading == true
                     ? Row(
-                        mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
+                        mainAxisAlignment: widget.textAlign == 'center'
+                            ? MainAxisAlignment.center
+                            : MainAxisAlignment.start,
                         children: <Widget>[
                           SizedBox(
-                                width: widget.textAlign == 'center'?0.0:15.0,
-                              ),
+                            width: widget.textAlign == 'center' ? 0.0 : 15.0,
+                          ),
                           Container(
-                            width: widget.size == 'small' ? 15.0 : 18.0,
-                            height: widget.size == 'small' ? 15.0 : 18.0,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.0,
-                              backgroundColor: Colors.grey.withOpacity(0.3),
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white.withOpacity(0.2)),
+                              alignment: Alignment.topCenter,
+                            padding: EdgeInsets.only(top: widget.size == 'small' ? 4.0:1.0),
+                            child: ActivityIndicator(
+                              size: widget.size,
                             ),
                           ),
                           SizedBox(
-                            width: 10.0,
+                            width: widget.size == 'small' ? 4.0 : 1.0,
                           ),
                           buildButtonText(widget.buttonText, widget.type)
                         ],
                       )
                     : widget.icon != null
                         ? Row(
-                            mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
+                            mainAxisAlignment: widget.textAlign == 'center'
+                                ? MainAxisAlignment.center
+                                : MainAxisAlignment.start,
                             children: <Widget>[
                               SizedBox(
-                                width: widget.textAlign == 'center'?0.0:15.0,
+                                width:
+                                    widget.textAlign == 'center' ? 0.0 : 15.0,
                               ),
                               Theme(
                                   data: Theme.of(context).copyWith(
@@ -283,12 +288,18 @@ class _ButtonState extends State<Button> {
                             ],
                           )
                         : Row(
-                            mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center:MainAxisAlignment.start,
+                            mainAxisAlignment: widget.textAlign == 'center'
+                                ? MainAxisAlignment.center
+                                : MainAxisAlignment.start,
                             children: <Widget>[
-                               widget.textAlign == 'center' ?  buildButtonText(widget.buttonText, widget.type):Padding(
-                               padding: EdgeInsets.only(left: 15.0),
-                               child:  buildButtonText(widget.buttonText, widget.type),
-                             )
+                              widget.textAlign == 'center'
+                                  ? buildButtonText(
+                                      widget.buttonText, widget.type)
+                                  : Padding(
+                                      padding: EdgeInsets.only(left: 15.0),
+                                      child: buildButtonText(
+                                          widget.buttonText, widget.type),
+                                    )
                             ],
                           ),
                 onHighlightChanged: (bool value) {
@@ -329,34 +340,35 @@ class _ButtonState extends State<Button> {
                   : Colors.transparent,
               child: widget.loading == true
                   ? Row(
-                      mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
+                      mainAxisAlignment: widget.textAlign == 'center'
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.start,
                       children: <Widget>[
-                         SizedBox(
-                                width: widget.textAlign == 'center'?0.0:15.0,
-                              ),
-                        Container(
-                          width: widget.size == 'small' ? 15.0 : 18.0,
-                          height: widget.size == 'small' ? 15.0 : 18.0,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 1.0,
-                            backgroundColor: Colors.grey.withOpacity(0.3),
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Color(0XFF108EE9)),
-                          ),
-                        ),
                         SizedBox(
-                          width: 10.0,
+                          width: widget.textAlign == 'center' ? 0.0 : 15.0,
+                        ),
+                        Container(
+                            alignment: Alignment.topCenter,
+                            padding: EdgeInsets.only(top: widget.size == 'small' ? 4.0:1.0),
+                            child: ActivityIndicator(
+                              size: widget.size,
+                            ),
+                          ),
+                        SizedBox(
+                          width: widget.size == 'small' ? 4.0 : 1.0,
                         ),
                         buildButtonText(widget.buttonText, widget.type)
                       ],
                     )
                   : widget.icon != null
                       ? Row(
-                            mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
+                          mainAxisAlignment: widget.textAlign == 'center'
+                              ? MainAxisAlignment.center
+                              : MainAxisAlignment.start,
                           children: <Widget>[
                             SizedBox(
-                                width: widget.textAlign == 'center'?0.0:15.0,
-                              ),
+                              width: widget.textAlign == 'center' ? 0.0 : 15.0,
+                            ),
                             Theme(
                               data: Theme.of(context).copyWith(
                                   iconTheme: Theme.of(context)
@@ -387,10 +399,14 @@ class _ButtonState extends State<Button> {
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            widget.textAlign == 'center' ?  buildButtonText(widget.buttonText, widget.type):Padding(
-                               padding: EdgeInsets.only(left: 15.0),
-                               child:  buildButtonText(widget.buttonText, widget.type),
-                             )
+                            widget.textAlign == 'center'
+                                ? buildButtonText(
+                                    widget.buttonText, widget.type)
+                                : Padding(
+                                    padding: EdgeInsets.only(left: 15.0),
+                                    child: buildButtonText(
+                                        widget.buttonText, widget.type),
+                                  )
                           ],
                         ),
               onHighlightChanged: (bool value) {
@@ -427,34 +443,36 @@ class _ButtonState extends State<Button> {
                         : Color(0XFFD24747),
                 child: widget.loading == true
                     ? Row(
-                         mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
+                        mainAxisAlignment: widget.textAlign == 'center'
+                            ? MainAxisAlignment.center
+                            : MainAxisAlignment.start,
                         children: <Widget>[
-                           SizedBox(
-                                width: widget.textAlign == 'center'?0.0:15.0,
-                              ),
+                          SizedBox(
+                            width: widget.textAlign == 'center' ? 0.0 : 15.0,
+                          ),
                           Container(
-                            width: widget.size == 'small' ? 15.0 : 18.0,
-                            height: widget.size == 'small' ? 15.0 : 18.0,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.0,
-                              backgroundColor: Colors.grey.withOpacity(0.3),
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Color(0XFF108EE9)),
+                              alignment: Alignment.topCenter,
+                            padding: EdgeInsets.only(top: widget.size == 'small' ? 4.0:1.0),
+                            child: ActivityIndicator(
+                              size: widget.size,
                             ),
                           ),
                           SizedBox(
-                            width: 10.0,
+                           width: widget.size == 'small' ? 4.0 : 1.0,
                           ),
                           buildButtonText(widget.buttonText, widget.type)
                         ],
                       )
                     : widget.icon != null
                         ? Row(
-                            mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
+                            mainAxisAlignment: widget.textAlign == 'center'
+                                ? MainAxisAlignment.center
+                                : MainAxisAlignment.start,
                             children: <Widget>[
-                              SizedBox(
-                                width: widget.textAlign == 'center'?0.0:15.0,
-                              ),
+                                SizedBox(
+                                  width:
+                                      widget.textAlign == 'center' ? 0.0 : 15.0,
+                                ),
                                 Theme(
                                     data: Theme.of(context).copyWith(
                                         iconTheme:
@@ -482,12 +500,18 @@ class _ButtonState extends State<Button> {
                                 buildButtonText(widget.buttonText, widget.type)
                               ])
                         : Row(
-                            mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
+                            mainAxisAlignment: widget.textAlign == 'center'
+                                ? MainAxisAlignment.center
+                                : MainAxisAlignment.start,
                             children: <Widget>[
-                              widget.textAlign == 'center' ?  buildButtonText(widget.buttonText, widget.type):Padding(
-                               padding: EdgeInsets.only(left: 15.0),
-                               child:  buildButtonText(widget.buttonText, widget.type),
-                             )
+                              widget.textAlign == 'center'
+                                  ? buildButtonText(
+                                      widget.buttonText, widget.type)
+                                  : Padding(
+                                      padding: EdgeInsets.only(left: 15.0),
+                                      child: buildButtonText(
+                                          widget.buttonText, widget.type),
+                                    )
                             ],
                           ),
                 onHighlightChanged: (bool value) {
@@ -525,33 +549,35 @@ class _ButtonState extends State<Button> {
                         : Color(0XFFDDDDDD),
                 child: widget.loading == true
                     ? Row(
-                        mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
+                        mainAxisAlignment: widget.textAlign == 'center'
+                            ? MainAxisAlignment.center
+                            : MainAxisAlignment.start,
                         children: <Widget>[
                           SizedBox(
-                                width: widget.textAlign == 'center'?0.0:15.0,
-                              ),
+                            width: widget.textAlign == 'center' ? 0.0 : 15.0,
+                          ),
                           Container(
-                            width: widget.size == 'small' ? 15.0 : 18.0,
-                            height: widget.size == 'small' ? 15.0 : 18.0,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.0,
-                              backgroundColor: Colors.grey.withOpacity(0.3),
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Color(0XFF108EE9)),
+                            alignment: Alignment.topCenter,
+                            padding: EdgeInsets.only(top: widget.size == 'small' ? 4.0:1.0),
+                            child: ActivityIndicator(
+                              size: widget.size,
                             ),
                           ),
                           SizedBox(
-                            width: 10.0,
+                             width: widget.size == 'small' ? 4.0 : 1.0,
                           ),
                           buildButtonText(widget.buttonText, widget.type)
                         ],
                       )
                     : widget.icon != null
                         ? Row(
-                             mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
+                            mainAxisAlignment: widget.textAlign == 'center'
+                                ? MainAxisAlignment.center
+                                : MainAxisAlignment.start,
                             children: <Widget>[
-                               SizedBox(
-                                width: widget.textAlign == 'center'?0.0:15.0,
+                              SizedBox(
+                                width:
+                                    widget.textAlign == 'center' ? 0.0 : 15.0,
                               ),
                               Theme(
                                   data: Theme.of(context).copyWith(
@@ -577,12 +603,18 @@ class _ButtonState extends State<Button> {
                             ],
                           )
                         : Row(
-                             mainAxisAlignment: widget.textAlign == 'center' ? MainAxisAlignment.center :MainAxisAlignment.start,
+                            mainAxisAlignment: widget.textAlign == 'center'
+                                ? MainAxisAlignment.center
+                                : MainAxisAlignment.start,
                             children: <Widget>[
-                             widget.textAlign == 'center' ?  buildButtonText(widget.buttonText, widget.type):Padding(
-                               padding: EdgeInsets.only(left: 15.0),
-                               child:  buildButtonText(widget.buttonText, widget.type),
-                             )
+                              widget.textAlign == 'center'
+                                  ? buildButtonText(
+                                      widget.buttonText, widget.type)
+                                  : Padding(
+                                      padding: EdgeInsets.only(left: 15.0),
+                                      child: buildButtonText(
+                                          widget.buttonText, widget.type),
+                                    )
                             ],
                           ),
                 onHighlightChanged: (bool value) {
@@ -598,5 +630,115 @@ class _ButtonState extends State<Button> {
   @override
   Widget build(BuildContext context) {
     return buildContent();
+  }
+}
+
+class ActivityIndicator extends StatefulWidget {
+  ActivityIndicator({
+    Key key,
+    this.size = 'small',
+  })  : assert(size == 'small' || size == 'large'),
+        super(key: key);
+  final String size;
+
+  @override
+  _ActivityIndicatorState createState() => _ActivityIndicatorState();
+}
+
+class _ActivityIndicatorState extends State<ActivityIndicator>
+    with SingleTickerProviderStateMixin {
+  AnimationController rotationController;
+  Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    rotationController = AnimationController(
+        duration: const Duration(milliseconds: 4000), vsync: this);
+    _animation =
+        Tween<double>(begin: 11.0, end: 36.0).animate(rotationController);
+
+    rotationController.forward();
+    rotationController.addListener(() {
+      if (rotationController.status == AnimationStatus.completed) {
+        rotationController.repeat();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    rotationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: widget.size == 'small' ? 20.0 : 32.0,
+        height: widget.size == 'small' ? 20.0 : 32.0,
+        decoration: BoxDecoration(color: Colors.transparent),
+        child: ActivityIndicatorAnimation(
+          animation: _animation,
+          size: widget.size,
+        ));
+  }
+}
+
+num degToRad(num deg) => deg * (pi / 180.0);
+
+class ProgressPainter extends CustomPainter {
+  ProgressPainter({this.startAngle, this.size, this.context});
+  final double startAngle;
+  final String size;
+  final BuildContext context;
+  double strokeWidth;
+  double radiusSize;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    this.size == 'small' ? radiusSize = 6.0 : radiusSize = 9.0;
+    final Offset offsetCenter =
+        this.size == 'small' ? Offset(11.5, 11.5) : Offset(15.5, 15.5);
+
+    this.strokeWidth = this.size == 'small' ? 0.8 : 1.1;
+    final ringPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..color = Color(0xffd2d2d2)
+      ..strokeWidth = strokeWidth;
+    canvas.drawCircle(offsetCenter, radiusSize, ringPaint);
+
+    final angle = 360 * 0.2;
+    final Rect arcRect = Rect.fromCircle(
+        center: this.size == 'small' ? Offset(11.5, 11.5) : Offset(15.5, 15.5),
+        radius: radiusSize);
+    final progressPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..color = Theme.of(context).primaryColor
+      ..strokeWidth = strokeWidth;
+    canvas.drawArc(arcRect, startAngle, degToRad(angle), false, progressPaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class ActivityIndicatorAnimation extends AnimatedWidget {
+  ActivityIndicatorAnimation(
+      {Key key, Animation<double> animation, this.widget, this.size})
+      : super(key: key, listenable: animation);
+
+  final widget;
+  final String size;
+
+  Widget build(BuildContext context) {
+    final Animation<double> animation = listenable;
+    return CustomPaint(
+      painter: ProgressPainter(
+          startAngle: animation.value, size: size, context: context),
+    );
   }
 }

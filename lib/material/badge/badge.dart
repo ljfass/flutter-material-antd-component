@@ -29,7 +29,9 @@ class Badge<T> extends StatefulWidget {
 
 class _BadgeState extends State<Badge> {
   GlobalKey _containerKey = GlobalKey();
+  GlobalKey _cornerKey = GlobalKey();
   Size _containerSize = Size(0, 0);
+  Size _cornerSize = Size(0, 0);
 
   @override
   void initState() {
@@ -41,12 +43,23 @@ class _BadgeState extends State<Badge> {
 
   _onBuildCompleted(_) {
     _getContainerSize();
+    if (widget.corner == true) _getCornerSize();
+  }
+
+  _getCornerSize() {
+    final RenderBox conrnerRenderBox =
+        _cornerKey.currentContext.findRenderObject();
+    final cornerSize = conrnerRenderBox.size;
+    setState(() {
+      _cornerSize = cornerSize;
+    });
   }
 
   _getContainerSize() {
     final RenderBox containerRenderBox =
         _containerKey.currentContext.findRenderObject();
     final containerSize = containerRenderBox.size;
+
     setState(() {
       _containerSize = containerSize;
     });
@@ -54,8 +67,9 @@ class _BadgeState extends State<Badge> {
 
   Widget buildBadgeCorner(Widget _child) {
     return RotationTransition(
-      turns: AlwaysStoppedAnimation(45 / 360),
+      turns: AlwaysStoppedAnimation(045 / 360),
       child: Container(
+        key: _cornerKey,
         alignment: Alignment.center,
         width: 80.0,
         height: 16.0,
@@ -121,7 +135,7 @@ class _BadgeState extends State<Badge> {
               constraints: BoxConstraints(minWidth: 9.0),
               child: Container(
                   height: 18.0,
-                  padding: EdgeInsets.symmetric(horizontal: 9.0, vertical: 2.0),
+                  padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.5),
                   decoration: BoxDecoration(
                       color: Color(0XFFFF5B05),
                       borderRadius: BorderRadius.circular(12.0)),
@@ -172,9 +186,12 @@ class _BadgeState extends State<Badge> {
       return Stack(
         overflow: Overflow.visible,
         children: <Widget>[
-          widget.child,
+          Container(
+            key: _containerKey,
+            child: widget.child,
+          ),
           Positioned(
-            right: -6.0,
+            right: -4.0,
             top: -4.0,
             child: buildDot(),
           )
@@ -197,8 +214,8 @@ class _BadgeState extends State<Badge> {
           ),
           widget.corner == true
               ? Positioned(
-                  left: -_containerSize.width / 2,
-                  top: _containerSize.height / 2,
+                  left: _containerSize.width - _cornerSize.width * 0.7,
+                  top: _cornerSize.height * 0.9,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(minWidth: 9.0),
                     child: widget.corner == true
@@ -233,8 +250,8 @@ class _BadgeState extends State<Badge> {
           ),
           widget.corner == true
               ? Positioned(
-                  left: -_containerSize.width / 2,
-                  top: _containerSize.height / 2,
+                  left: _containerSize.width - _cornerSize.width * 0.7,
+                  top: _cornerSize.height * 0.9,
                   child: widget.corner == true
                       ? buildBadgeCorner(Text('$text',
                           textAlign: TextAlign.center,

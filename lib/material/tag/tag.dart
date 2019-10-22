@@ -100,14 +100,11 @@ class _TagState extends State<Tag> {
                       ),
                     ),
                     Positioned(
-                      left: -22.0,
-                      top: -22.0,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.cancel,
-                          color: Color(0xffbbbbbb),
-                        ),
-                        onPressed: widget.onClose == null
+                      left: -10.0,
+                      top: -7.0,
+                     
+                      child: TagCloseButton(
+                        onClick: widget.onClose == null
                             ? () {
                                 setState(() {
                                   _visible = false;
@@ -156,5 +153,64 @@ class _TagState extends State<Tag> {
                   ),
                 ),
               );
+  }
+}
+
+class TagCloseButton extends StatelessWidget {
+  TagCloseButton({Key key, this.onClick}) : super(key: key);
+  final VoidCallback onClick;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onClick,
+      child: Container(
+        width: 16.0,
+        height: 16.0,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Color(0xffbbbbbb), width: 1),
+            shape: BoxShape.circle),
+        child: RotationTransition(
+          turns: AlwaysStoppedAnimation(45 / 360),
+          child: Container(
+            width: 9.0,
+            height: 9.0,
+            child: CustomPaint(
+              painter: CrossPainter(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CrossPainter extends CustomPainter {
+  CrossPainter({this.size});
+
+  final String size;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p1 = Offset(4.5, 0.0);
+    final p2 = Offset(4.5, 9.0);
+    final paint = Paint()
+      ..color = Color(0xffbbbbbb)
+      ..strokeWidth = 1.2;
+    canvas.drawLine(p1, p2, paint);
+
+    final _p1 = Offset(0.0, 4.5);
+    final _p2 = Offset(9.0, 4.5);
+    final _paint = Paint()
+      ..color = Color(0xffbbbbbb)
+      ..strokeWidth = 1.2;
+    canvas.drawLine(_p1, _p2, _paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
   }
 }

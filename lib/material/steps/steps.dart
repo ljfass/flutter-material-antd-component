@@ -471,7 +471,7 @@ class StepItem<T> extends StatelessWidget {
         color: status == 'error' ? Color(0xfff4333c) : Color(0xff000000),
         fontSize: 15.0);
     double _top = size == 'small' ? 0.0 : description == null ? 4.0 : 2.0;
-    return description == 'vertical'
+    return direction == 'vertical'
         ? Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

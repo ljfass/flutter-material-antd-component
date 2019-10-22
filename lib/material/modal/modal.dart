@@ -879,6 +879,8 @@ class _ModalPromptContentContainerState
                     if (cb is Future) {
                       cb.then((data) {
                         widget.maskView.dismiss();
+                      }).catchError((err) {
+                        print(err);
                       });
                     } else {
                       widget.maskView.dismiss();
@@ -963,8 +965,8 @@ class _ModalPromptContentContainerState
   void initState() {
     super.initState();
     defaultTextValue = widget.defaultValue != null ? widget.defaultValue : '';
-    _textEditingController =
-        TextEditingController(text: widget.type == 'default' ? '100' : '');
+    _textEditingController = TextEditingController(
+        text: widget.type == 'default' ? defaultTextValue : '');
     if (widget.type == 'login-password')
       _passwordEditingController = TextEditingController();
   }

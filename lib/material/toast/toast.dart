@@ -30,7 +30,13 @@ class Toast<T> {
                       child: Material(
                     color: Colors.white.withOpacity(0),
                     child: Container(
-                      child: buildWidget(type, content, context),
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                            iconTheme: Theme.of(context)
+                                .iconTheme
+                                .copyWith(size: 40.0)),
+                        child: buildWidget(type, content, context),
+                      ),
                       decoration: BoxDecoration(
                         color: Color(0xff3a3a3a).withOpacity(0.9),
                         borderRadius: BorderRadius.all(
@@ -61,7 +67,13 @@ class Toast<T> {
                         ignoring: true,
                         child: Center(
                             child: Container(
-                          child: buildWidget(type, content, context),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                                iconTheme: Theme.of(context)
+                                    .iconTheme
+                                    .copyWith(size: 40.0)),
+                            child: buildWidget(type, content, context),
+                          ),
                           decoration: BoxDecoration(
                             color: Color(0xff3a3a3a).withOpacity(0.9),
                             borderRadius: BorderRadius.all(
@@ -125,7 +137,7 @@ class Toast<T> {
                       color: Colors.white,
                     ),
                     SizedBox(height: 5.0),
-                    content
+                    content,
                   ],
                 )
               : Column(
@@ -200,36 +212,32 @@ class Toast<T> {
           return content is Widget
               ? Column(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    SizedBox(height: 10.0),
                     SizedBox(
-                      width: 20.0,
-                      height: 20.0,
-                      // child: CircularProgressIndicator(
-                      //   strokeWidth: 1.5,
-                      //   valueColor: AlwaysStoppedAnimation<Color>(
-                      //       Theme.of(context).primaryColor),
-                      // ),
-                      child: ActivityIndicator(),
+                      child: ActivityIndicator(
+                        size: 'large',
+                      ),
                     ),
+                    SizedBox(height: 8.0),
+                    content,
                     SizedBox(height: 5.0),
-                    content
                   ],
                 )
               : Column(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    SizedBox(height: 10.0),
                     SizedBox(
-                      width: 20.0,
-                      height: 20.0,
-                      // child: CircularProgressIndicator(
-                      //   strokeWidth: 1.5,
-                      //   valueColor: AlwaysStoppedAnimation<Color>(
-                      //       Theme.of(context).primaryColor),
-                      // ),
-                      child: ActivityIndicator(),
+                      child: ActivityIndicator(
+                        size: 'large',
+                      ),
                     ),
+                    SizedBox(height: 8.0),
+                    buildToastText(content),
                     SizedBox(height: 5.0),
-                    buildToastText(content)
                   ],
                 );
         }

@@ -21,6 +21,7 @@
     -->
     <application
         android:name="io.flutter.app.FlutterApplication"
+        android:appComponentFactory="android.support.v4.app.CoreComponentFactory"
         android:debuggable="true"
         android:icon="@mipmap/ic_launcher"
         android:label="material_antd" >

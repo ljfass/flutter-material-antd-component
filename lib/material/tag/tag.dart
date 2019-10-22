@@ -78,7 +78,8 @@ class _TagState extends State<Tag> {
                                   setState(() {
                                     _selected = !_selected;
                                   });
-                                  widget.onChange(_selected);
+                                  if (widget.onChange != null)
+                                    widget.onChange(_selected);
                                 },
                       child: Container(
                         decoration: boxDecoration,
@@ -102,7 +103,6 @@ class _TagState extends State<Tag> {
                     Positioned(
                       left: -10.0,
                       top: -7.0,
-                     
                       child: TagCloseButton(
                         onClick: widget.onClose == null
                             ? () {
@@ -132,7 +132,7 @@ class _TagState extends State<Tag> {
                         setState(() {
                           _selected = !_selected;
                         });
-                        widget.onChange(_selected);
+                        if (widget.onChange != null) widget.onChange(_selected);
                       },
                 child: Container(
                   decoration: boxDecoration,

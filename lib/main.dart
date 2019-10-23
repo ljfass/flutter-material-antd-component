@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import './pages/Menu/menu.dart';
 import './pages/SegmentedControl/segmentedControl.dart';
 import './pages/TabBar/tabBar.dart';
@@ -20,6 +21,11 @@ import './pages/Progress/progress.dart';
 import './pages/Toast/toast.dart';
 import './pages/Result/result.dart';
 import './pages/Steps/steps.dart';
+import 'dart:io';
+import 'dart:async';
+// import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() => runApp(MyApp());
 
@@ -53,6 +59,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  SlidableController slidableController;
   int content;
   bool navigation = false;
   bool dataEntry = false;
@@ -60,469 +67,237 @@ class _MyHomePageState extends State<MyHomePage> {
   bool feedback = false;
   bool combination = false;
 
+  Duration timer = const Duration();
+  DateTime date = DateTime(2017, 9, 7, 17, 30);
+  int _selectedColorIndex = 0;
+  List<String> coolColorNames = <String>[
+    'Sarcoline',
+    'Coquelicot',
+    'Smaragdine',
+    'Mikado',
+    'Glaucous',
+    'Wenge',
+    'Fulvous',
+    'Xanadu',
+    'Falu',
+    'Eburnean',
+    'Amaranth',
+    'Australien',
+    'Banan',
+    'Falu',
+    'Gingerline',
+    'Incarnadine',
+    'Labrador',
+    'Nattier',
+    'Pervenche',
+    'Sinoper',
+    'Verditer',
+    'Watchet',
+    'Zaffre',
+  ];
+
   @override
   void initState() {
     super.initState();
   }
 
+  Widget _buildBottomPicker(Widget picker) {
+    return Container(
+      height: 316.0,
+      decoration: BoxDecoration(color: Colors.white),
+      padding: const EdgeInsets.only(top: 6.0),
+      // color: CupertinoColors.white,
+      child: DefaultTextStyle(
+        style: const TextStyle(
+          color: CupertinoColors.systemYellow,
+          fontSize: 22.0,
+        ),
+        child: GestureDetector(
+          // Blocks taps from propagating to the modal sheet and popping.
+          onTap: () {},
+          child: SafeArea(
+            top: false,
+            child: picker,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenu(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(
+        color: CupertinoTheme.of(context).scaffoldBackgroundColor,
+        border: const Border(
+          top: BorderSide(color: Color(0xFFBCBBC1), width: 0.0),
+          bottom: BorderSide(color: Color(0xFFBCBBC1), width: 0.0),
+        ),
+      ),
+      height: 44.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: children,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildColorPicker(BuildContext context) {
+    final FixedExtentScrollController scrollController =
+        FixedExtentScrollController(initialItem: _selectedColorIndex);
+    final FixedExtentScrollController _scrollController =
+        FixedExtentScrollController(initialItem: _selectedColorIndex);
+
+    return GestureDetector(
+      onTap: () async {
+        await showCupertinoModalPopup<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: _buildBottomPicker(
+                      CupertinoPicker(
+                        // diameterRatio: 10.0,
+                        scrollController: scrollController,
+                        // offAxisFraction: 2.2,
+                        // magnification: 20.0,
+                        itemExtent: 40.0,
+                        backgroundColor: CupertinoColors.white,
+                        onSelectedItemChanged: (int index) {
+                          setState(() => _selectedColorIndex = index);
+                        },
+                        children: List<Widget>.generate(coolColorNames.length,
+                            (int index) {
+                          return Center(
+                            child: Text(
+                              coolColorNames[index],
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildBottomPicker(
+                      CupertinoPicker(
+                        // diameterRatio: 10.0,
+                        scrollController: _scrollController,
+                        // offAxisFraction: 2.2,
+                        // magnification: 20.0,
+                        itemExtent: 40.0,
+                        backgroundColor: CupertinoColors.white,
+                        onSelectedItemChanged: (int index) {
+                          setState(() => _selectedColorIndex = index);
+                        },
+                        children: List<Widget>.generate(coolColorNames.length,
+                            (int index) {
+                          return Center(
+                            child: Text(
+                              coolColorNames[index],
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+      child: _buildMenu(
+        <Widget>[
+          const Text('Favorite Color'),
+          Text(
+            coolColorNames[_selectedColorIndex],
+            style: const TextStyle(color: CupertinoColors.inactiveGray),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCountdownTimerPicker(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        showCupertinoModalPopup<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return _buildBottomPicker(
+              CupertinoTimerPicker(
+                initialTimerDuration: timer,
+                onTimerDurationChanged: (Duration newTimer) {
+                  setState(() => timer = newTimer);
+                },
+              ),
+            );
+          },
+        );
+      },
+      child: _buildMenu(
+        <Widget>[
+          const Text('Countdown Timer'),
+          Text(
+            '${timer.inHours}:'
+            '${(timer.inMinutes % 60).toString().padLeft(2, '0')}:'
+            '${(timer.inSeconds % 60).toString().padLeft(2, '0')}',
+            style: const TextStyle(color: CupertinoColors.inactiveGray),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDatePicker(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        showCupertinoModalPopup<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return _buildBottomPicker(
+              CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                use24hFormat: true,
+                initialDateTime: date,
+                onDateTimeChanged: (DateTime newDateTime) {
+                  setState(() => date = newDateTime);
+                },
+              ),
+            );
+          },
+        );
+      },
+      child: _buildMenu(<Widget>[
+        const Text('Date'),
+        Text(
+          DateFormat.yMMMMd().format(date),
+          style: const TextStyle(color: CupertinoColors.inactiveGray),
+        ),
+      ]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: Column(
+    return ListView(
       children: <Widget>[
-        ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              navigation = !navigation;
-            });
-          },
-          children: [
-            ExpansionPanel(
-                headerBuilder: (_, __) {
-                  return Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Text('导航 Navigation'),
-                  );
-                },
-                body: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageMenu();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('Menu 菜单',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageSegmentedControl();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('SegmentedControl 分段器',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageTabBar();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('TabBar 标签栏',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageTabs();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('Tabs 标签页',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                isExpanded: navigation)
-          ],
-        ),
-        SizedBox(
-          height: 15.0,
-        ),
-        ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              dataEntry = !dataEntry;
-            });
-          },
-          children: [
-            ExpansionPanel(
-                headerBuilder: (_, __) {
-                  return Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
-                    child: Text('数据录入 Data Entry'),
-                  );
-                },
-                body: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageButton();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text(
-                          'Button 按钮',
-                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                        ),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageCheckbox();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('Checkbox 复选框',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageRadio();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('Radio 单选框',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageSearchBox();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('SearchBar 搜索栏',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                isExpanded: dataEntry)
-          ],
-        ),
-        SizedBox(
-          height: 15.0,
-        ),
-        ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              dataDisplay = !dataDisplay;
-            });
-          },
-          children: [
-            ExpansionPanel(
-                headerBuilder: (_, __) {
-                  return Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
-                    child: Text('数据展示 Data Display'),
-                  );
-                },
-                body: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageBadge();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text(
-                          'Badge 徽标数',
-                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                        ),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageCard();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('Card 卡片',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageList();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('List 列表',
-                            style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.grey.withOpacity(0.9))),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageNoticeBar();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('NoticeBar 通告栏',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageSteps();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('Steps 步骤条',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageTag();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('Tag 标签',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                isExpanded: dataDisplay)
-          ],
-        ),
-        SizedBox(
-          height: 15.0,
-        ),
-        ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              feedback = !feedback;
-            });
-          },
-          children: [
-            ExpansionPanel(
-                headerBuilder: (_, __) {
-                  return Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
-                    child: Text('操作反馈 Feedback'),
-                  );
-                },
-                body: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageActionSheet();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text(
-                          'ActionSheet 动作画板',
-                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                        ),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageActivityIndicator();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('ActivityIndicator 活动指示器',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageModal();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('Modal 对话框',
-                            style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.grey.withOpacity(0.9))),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageProgress();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('Progress 进度条',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageToast();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text('Toast 轻提示',
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.grey)),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                isExpanded: feedback)
-          ],
-        ),
-        SizedBox(
-          height: 15.0,
-        ),
-        ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              combination = !combination;
-            });
-          },
-          children: [
-            ExpansionPanel(
-                headerBuilder: (_, __) {
-                  return Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
-                    child: Text('组合组件 Combination'),
-                  );
-                },
-                body: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return PageResult();
-                        }));
-                      },
-                      child: ListTile(
-                        title: Text(
-                          'Result 结果页',
-                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                        ),
-                        trailing: Container(
-                          child: Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                isExpanded: combination)
-          ],
-        )
+        const Padding(padding: EdgeInsets.only(top: 32.0)),
+        _buildColorPicker(context),
+        _buildCountdownTimerPicker(context),
+        _buildDatePicker(context),
       ],
-    ));
+    );
   }
 }

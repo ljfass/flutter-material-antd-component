@@ -1,31 +1,87 @@
+// import 'package:flutter/material.dart';
+// import 'package:flutter/rendering.dart';
+// import './pages/Menu/menu.dart';
+// import './pages/SegmentedControl/segmentedControl.dart';
+// import './pages/TabBar/tabBar.dart';
+// import './pages/Tabs/tabs.dart';
+// import './pages/Button/button.dart';
+// import './pages/Checkbox/checkbox.dart';
+// import './pages/Radio/radio.dart';
+// import './pages/SearchBox/searchBox.dart';
+// import './pages/Badge/badge.dart';
+// import './pages/Card/card.dart';
+// import './pages/List/list.dart';
+// import './pages/NoticeBar/noticeBar.dart';
+// import './pages/Tag/tag.dart';
+// import './pages/ActionSheet/actionSheet.dart';
+// import './pages/ActivityIndicator/activityIndicator.dart';
+// import './pages/Modal/modal.dart';
+// import './pages/Progress/progress.dart';
+// import './pages/Toast/toast.dart';
+// import './pages/Result/result.dart';
+// import './pages/Steps/steps.dart';
+// import './material/pullToRefresh/pullToRefresh.dart';
+
+// void main() => runApp(MyApp());
+
+// class MyApp extends StatelessWidget {
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         brightness: Brightness.light,
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: Text('demo'),
+//         ),
+//         body: MyHomePage(title: 'Flutter Demo Home Page'),
+//       ),
+//     );
+//   }
+// }
+
+// class MyHomePage extends StatefulWidget {
+//   MyHomePage({Key key, this.title}) : super(key: key);
+
+//   final String title;
+
+//   @override
+//   _MyHomePageState createState() => _MyHomePageState();
+// }
+
+// class _MyHomePageState extends State<MyHomePage> {
+//   int content;
+//   bool navigation = false;
+//   bool dataEntry = false;
+//   bool dataDisplay = false;
+//   bool feedback = false;
+//   bool combination = false;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return PullToRefresh(
+//       onRefresh: () {},
+//     );
+//   }
+// }
+
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import './pages/Menu/menu.dart';
-import './pages/SegmentedControl/segmentedControl.dart';
-import './pages/TabBar/tabBar.dart';
-import './pages/Tabs/tabs.dart';
-import './pages/Button/button.dart';
-import './pages/Checkbox/checkbox.dart';
-import './pages/Radio/radio.dart';
-import './pages/SearchBox/searchBox.dart';
-import './pages/Badge/badge.dart';
-import './pages/Card/card.dart';
-import './pages/List/list.dart';
-import './pages/NoticeBar/noticeBar.dart';
-import './pages/Tag/tag.dart';
-import './pages/ActionSheet/actionSheet.dart';
-import './pages/ActivityIndicator/activityIndicator.dart';
-import './pages/Modal/modal.dart';
-import './pages/Progress/progress.dart';
-import './pages/Toast/toast.dart';
-import './pages/Result/result.dart';
-import './pages/Steps/steps.dart';
-import 'dart:io';
-import 'dart:async';
-// import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
+import './pulltorefresh.dart';
+import './material/pullToRefresh/pullToRefresh.dart';
 
 void main() => runApp(MyApp());
 
@@ -43,261 +99,277 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('demo'),
         ),
-        body: MyHomePage(title: 'Flutter Demo Home Page'),
+        body: PullToRefresh(
+            listView: ListView.builder(
+                physics: RefreshAlwaysScrollPhysics(),
+                itemCount: 100,
+                itemExtent: 50.0,
+                itemBuilder: (context, index) {
+                  return ListTile(title: Text("$index"));
+                }),
+            onRefresh: () {}),
       ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+// import 'dart:convert';
+// import 'dart:io';
+// import 'dart:ui';
 
-  final String title;
+// import 'package:flutter/material.dart';
+// import 'package:flutter/rendering.dart';
+// import './pulltorefresh.dart';
 
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
+// void main() => runApp(MyApp());
 
-class _MyHomePageState extends State<MyHomePage> {
-  SlidableController slidableController;
-  int content;
-  bool navigation = false;
-  bool dataEntry = false;
-  bool dataDisplay = false;
-  bool feedback = false;
-  bool combination = false;
+// class MyApp extends StatelessWidget {
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         brightness: Brightness.light,
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: Text('demo'),
+//         ),
+//         body: PullAndPushTest(),
+//       ),
+//     );
+//   }
+// }
 
-  Duration timer = const Duration();
-  DateTime date = DateTime(2017, 9, 7, 17, 30);
-  int _selectedColorIndex = 0;
-  List<String> coolColorNames = <String>[
-    'Sarcoline',
-    'Coquelicot',
-    'Smaragdine',
-    'Mikado',
-    'Glaucous',
-    'Wenge',
-    'Fulvous',
-    'Xanadu',
-    'Falu',
-    'Eburnean',
-    'Amaranth',
-    'Australien',
-    'Banan',
-    'Falu',
-    'Gingerline',
-    'Incarnadine',
-    'Labrador',
-    'Nattier',
-    'Pervenche',
-    'Sinoper',
-    'Verditer',
-    'Watchet',
-    'Zaffre',
-  ];
+// class PullAndPushTest extends StatefulWidget {
+//   @override
+//   State<StatefulWidget> createState() {
+//     return new PullAndPushTestState();
+//   }
+// }
 
-  @override
-  void initState() {
-    super.initState();
-  }
+// ///PullAndPush可以使用默认的样式，在此样式的基础上可以使用default**系列的属性改变显示效果，也可以自定义RefreshBox的样式（footerRefreshBox or headerRefreshBox）,也就是说可以定义其中一个，另一个用默认的，也可以全部自定义
+// ///isPullEnable;isPushEnable属性可以控制RefreshBox 是否可用，无论是自定义的还是默认的
+// ///PullAndPush can use the default style，Based on this style, you can use the properties of the default** series to change the display，
+// ///You can also customize the style of the RefreshBox (footerRefreshBox or headerRefreshBox), which means you can define one of them, and the other can be customized by default or all.
+// class PullAndPushTestState extends State<PullAndPushTest>
+//     with TickerProviderStateMixin {
+//   List<String> addStrs = [
+//     "a",
+//     "b",
+//     "c",
+//     "d",
+//     "e",
+//     "f",
+//     "g",
+//     "h",
+//     "i",
+//     "j",
+//     "k",
+//     "l",
+//     "m",
+//     "n",
+//     "o",
+//     "p",
+//     "q",
+//     "r",
+//     "s",
+//     "t",
+//     "u",
+//     "v",
+//     "w",
+//     "x",
+//     "y",
+//     "z"
+//   ];
+//   List<String> strs = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+//   ScrollController controller = new ScrollController();
+//   //For compatibility with ios ,must use RefreshAlwaysScrollPhysics ;为了兼容ios 必须使用RefreshAlwaysScrollPhysics
+//   ScrollPhysics scrollPhysics = new RefreshAlwaysScrollPhysics();
+//   //使用系统的请求
+//   var httpClient = new HttpClient();
+//   var url = "https://github.com/";
+//   var _result = "";
+//   String customRefreshBoxIconPath = "images/icon_arrow.png";
+//   AnimationController customBoxWaitAnimation;
+//   int rotationAngle = 0;
+//   String customHeaderTipText = "快尼玛给老子松手！";
+//   String defaultRefreshBoxTipText = "快尼玛给老子松手！";
 
-  Widget _buildBottomPicker(Widget picker) {
-    return Container(
-      height: 316.0,
-      decoration: BoxDecoration(color: Colors.white),
-      padding: const EdgeInsets.only(top: 6.0),
-      // color: CupertinoColors.white,
-      child: DefaultTextStyle(
-        style: const TextStyle(
-          color: CupertinoColors.systemYellow,
-          fontSize: 22.0,
-        ),
-        child: GestureDetector(
-          // Blocks taps from propagating to the modal sheet and popping.
-          onTap: () {},
-          child: SafeArea(
-            top: false,
-            child: picker,
-          ),
-        ),
-      ),
-    );
-  }
+//   ///button等其他方式，通过方法调用触发下拉刷新
+//   TriggerPullController triggerPullController = new TriggerPullController();
 
-  Widget _buildMenu(List<Widget> children) {
-    return Container(
-      decoration: BoxDecoration(
-        color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-        border: const Border(
-          top: BorderSide(color: Color(0xFFBCBBC1), width: 0.0),
-          bottom: BorderSide(color: Color(0xFFBCBBC1), width: 0.0),
-        ),
-      ),
-      height: 44.0,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: SafeArea(
-          top: false,
-          bottom: false,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: children,
-          ),
-        ),
-      ),
-    );
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     //这个是刷新时控件旋转的动画，用来使刷新的Icon动起来
+//     customBoxWaitAnimation = new AnimationController(
+//         duration: const Duration(milliseconds: 1000 * 100), vsync: this);
+//     //第一次layout后会被调用
+//     //WidgetsBinding.instance.addPostFrameCallback((context){
+//     //  triggerPullController.triggerPull();
+//     //});
+//   }
 
-  Widget _buildColorPicker(BuildContext context) {
-    final FixedExtentScrollController scrollController =
-        FixedExtentScrollController(initialItem: _selectedColorIndex);
-    final FixedExtentScrollController _scrollController =
-        FixedExtentScrollController(initialItem: _selectedColorIndex);
+//   @override
+//   Widget build(BuildContext context) {
+//     return new Scaffold(
+//         appBar: new AppBar(
+//           title: new Text("上下拉刷新"),
+//         ),
+//         body: new PullAndPush(
+//           //如果你headerRefreshBox和footerRefreshBox全都自定义了，则default**系列的属性均无效，假如有一个RefreshBox是用默认的（在该RefreshBox Enable的情况下）则default**系列的属性均有效
+//           //If your headerRefreshBox and footerRefreshBox are all customizable，then the default** attributes of the series are invalid，
+//           // If there is a RefreshBox is the default（In the case of the RefreshBox Enable）then the default** attributes of the series are valid
+//           defaultRefreshBoxTipText: defaultRefreshBoxTipText,
+//           headerRefreshBox: _getCustomHeaderBox(),
+//           triggerPullController: triggerPullController,
 
-    return GestureDetector(
-      onTap: () async {
-        await showCupertinoModalPopup<void>(
-          context: context,
-          builder: (BuildContext context) {
-            return Container(
-              width: MediaQuery.of(context).size.width,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: _buildBottomPicker(
-                      CupertinoPicker(
-                        // diameterRatio: 10.0,
-                        scrollController: scrollController,
-                        // offAxisFraction: 2.2,
-                        // magnification: 20.0,
-                        itemExtent: 40.0,
-                        backgroundColor: CupertinoColors.white,
-                        onSelectedItemChanged: (int index) {
-                          setState(() => _selectedColorIndex = index);
-                        },
-                        children: List<Widget>.generate(coolColorNames.length,
-                            (int index) {
-                          return Center(
-                            child: Text(
-                              coolColorNames[index],
-                              style: TextStyle(fontSize: 14.0),
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildBottomPicker(
-                      CupertinoPicker(
-                        // diameterRatio: 10.0,
-                        scrollController: _scrollController,
-                        // offAxisFraction: 2.2,
-                        // magnification: 20.0,
-                        itemExtent: 40.0,
-                        backgroundColor: CupertinoColors.white,
-                        onSelectedItemChanged: (int index) {
-                          setState(() => _selectedColorIndex = index);
-                        },
-                        children: List<Widget>.generate(coolColorNames.length,
-                            (int index) {
-                          return Center(
-                            child: Text(
-                              coolColorNames[index],
-                              style: TextStyle(fontSize: 14.0),
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-      child: _buildMenu(
-        <Widget>[
-          const Text('Favorite Color'),
-          Text(
-            coolColorNames[_selectedColorIndex],
-            style: const TextStyle(color: CupertinoColors.inactiveGray),
-          ),
-        ],
-      ),
-    );
-  }
+//           //你也可以自定义底部的刷新栏；you can customize the bottom refresh box
+//           animationStateChangedCallback: (AnimationStates animationStates,
+//               RefreshBoxDirectionStatus refreshBoxDirectionStatus) {
+//             _handleStateCallback(animationStates, refreshBoxDirectionStatus);
+//           },
+//           listView: new ListView.builder(
+//               //ListView的Item
+//               itemCount: strs.length, //+2,
+//               controller: controller,
+//               physics: scrollPhysics,
+//               itemBuilder: (BuildContext context, int index) {
+//                 return new Container(
+//                   height: 35.0,
+//                   child: new Center(
+//                     child: new Text(
+//                       strs[index],
+//                       style: new TextStyle(fontSize: 18.0),
+//                     ),
+//                   ),
+//                 );
+//               }),
+//           loadData: (isPullDown) async {
+//             await _loadData(isPullDown);
+//           },
+//           scrollPhysicsChanged: (ScrollPhysics physics) {
+//             //这个不用改，照抄即可；This does not need to change，only copy it
+//             setState(() {
+//               scrollPhysics = physics;
+//             });
+//           },
+//         ));
+//   }
 
-  Widget _buildCountdownTimerPicker(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showCupertinoModalPopup<void>(
-          context: context,
-          builder: (BuildContext context) {
-            return _buildBottomPicker(
-              CupertinoTimerPicker(
-                initialTimerDuration: timer,
-                onTimerDurationChanged: (Duration newTimer) {
-                  setState(() => timer = newTimer);
-                },
-              ),
-            );
-          },
-        );
-      },
-      child: _buildMenu(
-        <Widget>[
-          const Text('Countdown Timer'),
-          Text(
-            '${timer.inHours}:'
-            '${(timer.inMinutes % 60).toString().padLeft(2, '0')}:'
-            '${(timer.inSeconds % 60).toString().padLeft(2, '0')}',
-            style: const TextStyle(color: CupertinoColors.inactiveGray),
-          ),
-        ],
-      ),
-    );
-  }
+//   Widget _getCustomHeaderBox() {
+//     return new Container(
+//         color: Colors.grey,
+//         child: new Row(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             new Align(
+//               alignment: Alignment.centerLeft,
+//               child: new RotatedBox(
+//                 quarterTurns: rotationAngle,
+//                 child: new RotationTransition(
+//                   //布局中加载时动画的weight
+//                   child: new Image.asset(
+//                     customRefreshBoxIconPath,
+//                     height: 45.0,
+//                     width: 45.0,
+//                     fit: BoxFit.cover,
+//                   ),
+//                   turns: new Tween(begin: 100.0, end: 0.0)
+//                       .animate(customBoxWaitAnimation)
+//                         ..addStatusListener((animationStatus) {
+//                           if (animationStatus == AnimationStatus.completed) {
+//                             customBoxWaitAnimation.repeat();
+//                           }
+//                         }),
+//                 ),
+//               ),
+//             ),
+//             new Align(
+//               alignment: Alignment.centerRight,
+//               child: new ClipRect(
+//                 child: new Text(
+//                   customHeaderTipText,
+//                   style:
+//                       new TextStyle(fontSize: 18.0, color: Color(0xffe6e6e6)),
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ));
+//   }
 
-  Widget _buildDatePicker(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showCupertinoModalPopup<void>(
-          context: context,
-          builder: (BuildContext context) {
-            return _buildBottomPicker(
-              CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                use24hFormat: true,
-                initialDateTime: date,
-                onDateTimeChanged: (DateTime newDateTime) {
-                  setState(() => date = newDateTime);
-                },
-              ),
-            );
-          },
-        );
-      },
-      child: _buildMenu(<Widget>[
-        const Text('Date'),
-        Text(
-          DateFormat.yMMMMd().format(date),
-          style: const TextStyle(color: CupertinoColors.inactiveGray),
-        ),
-      ]),
-    );
-  }
+//   void _handleStateCallback(AnimationStates animationStates,
+//       RefreshBoxDirectionStatus refreshBoxDirectionStatus) {
+//     switch (animationStates) {
+//       //RefreshBox高度达到50,上下拉刷新可用;RefreshBox height reached 50，the function of load data is  available
+//       case AnimationStates.DragAndRefreshEnabled:
+//         setState(() {
+//           //3.141592653589793是弧度，角度为180度,旋转180度；3.141592653589793 is radians，angle is 180⁰，Rotate 180⁰
+//           rotationAngle = 2;
+//         });
+//         break;
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        const Padding(padding: EdgeInsets.only(top: 32.0)),
-        _buildColorPicker(context),
-        _buildCountdownTimerPicker(context),
-        _buildDatePicker(context),
-      ],
-    );
-  }
-}
+//       //开始加载数据时；When loading data starts
+//       case AnimationStates.StartLoadData:
+//         setState(() {
+//           customRefreshBoxIconPath = "images/refresh.png";
+//           customHeaderTipText = "正尼玛在拼命加载.....";
+//         });
+//         customBoxWaitAnimation.forward();
+//         break;
+
+//       //加载完数据时；RefreshBox会留在屏幕2秒，并不马上消失，这里可以提示用户加载成功或者失败
+//       // After loading the data，RefreshBox will stay on the screen for 2 seconds, not disappearing immediately，Here you can prompt the user to load successfully or fail.
+//       case AnimationStates.LoadDataEnd:
+//         customBoxWaitAnimation.reset();
+//         setState(() {
+//           rotationAngle = 0;
+//           if (refreshBoxDirectionStatus == RefreshBoxDirectionStatus.PULL) {
+//             customRefreshBoxIconPath = "images/icon_cry.png";
+//             customHeaderTipText = "加载失败！请重试";
+//           } else if (refreshBoxDirectionStatus ==
+//               RefreshBoxDirectionStatus.PUSH) {
+//             defaultRefreshBoxTipText = "可提示用户加载成功Or失败";
+//           }
+//         });
+//         break;
+
+//       //RefreshBox已经消失，并且闲置；RefreshBox has disappeared and is idle
+//       case AnimationStates.RefreshBoxIdle:
+//         setState(() {
+//           rotationAngle = 0;
+//           defaultRefreshBoxTipText = customHeaderTipText = "快尼玛给老子松手！";
+//           customRefreshBoxIconPath = "images/icon_arrow.png";
+//         });
+//         break;
+//     }
+//   }
+
+//   Future _loadData(bool isPullDown) async {
+//     try {
+//       var request = await httpClient.getUrl(Uri.parse(url));
+//       var response = await request.close();
+//       if (response.statusCode == HttpStatus.ok) {
+//         _result = await utf8.decoder.bind(response).join();
+//         setState(() {
+//           //拿到数据后，对数据进行梳理
+//           if (isPullDown) {
+//             strs.clear();
+//             strs.addAll(addStrs);
+//           } else {
+//             strs.addAll(addStrs);
+//           }
+//         });
+//       } else {
+//         _result = 'error code : ${response.statusCode}';
+//       }
+//     } catch (exception) {
+//       _result = '网络异常';
+//     }
+//     print(_result);
+//   }
+// }

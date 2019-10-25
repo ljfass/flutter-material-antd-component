@@ -1,87 +1,26 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart';
-// import './pages/Menu/menu.dart';
-// import './pages/SegmentedControl/segmentedControl.dart';
-// import './pages/TabBar/tabBar.dart';
-// import './pages/Tabs/tabs.dart';
-// import './pages/Button/button.dart';
-// import './pages/Checkbox/checkbox.dart';
-// import './pages/Radio/radio.dart';
-// import './pages/SearchBox/searchBox.dart';
-// import './pages/Badge/badge.dart';
-// import './pages/Card/card.dart';
-// import './pages/List/list.dart';
-// import './pages/NoticeBar/noticeBar.dart';
-// import './pages/Tag/tag.dart';
-// import './pages/ActionSheet/actionSheet.dart';
-// import './pages/ActivityIndicator/activityIndicator.dart';
-// import './pages/Modal/modal.dart';
-// import './pages/Progress/progress.dart';
-// import './pages/Toast/toast.dart';
-// import './pages/Result/result.dart';
-// import './pages/Steps/steps.dart';
-// import './material/pullToRefresh/pullToRefresh.dart';
-
-// void main() => runApp(MyApp());
-
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         brightness: Brightness.light,
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text('demo'),
-//         ),
-//         body: MyHomePage(title: 'Flutter Demo Home Page'),
-//       ),
-//     );
-//   }
-// }
-
-// class MyHomePage extends StatefulWidget {
-//   MyHomePage({Key key, this.title}) : super(key: key);
-
-//   final String title;
-
-//   @override
-//   _MyHomePageState createState() => _MyHomePageState();
-// }
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   int content;
-//   bool navigation = false;
-//   bool dataEntry = false;
-//   bool dataDisplay = false;
-//   bool feedback = false;
-//   bool combination = false;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return PullToRefresh(
-//       onRefresh: () {},
-//     );
-//   }
-// }
-
-import 'dart:convert';
-import 'dart:io';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import './pulltorefresh.dart';
-import './material/pullToRefresh/pullToRefresh.dart';
+import './pages/Menu/menu.dart';
+import './pages/SegmentedControl/segmentedControl.dart';
+import './pages/TabBar/tabBar.dart';
+import './pages/Tabs/tabs.dart';
+import './pages/Button/button.dart';
+import './pages/Checkbox/checkbox.dart';
+import './pages/Radio/radio.dart';
+import './pages/SearchBox/searchBox.dart';
+import './pages/Badge/badge.dart';
+import './pages/Card/card.dart';
+import './pages/List/list.dart';
+import './pages/NoticeBar/noticeBar.dart';
+import './pages/Tag/tag.dart';
+import './pages/ActionSheet/actionSheet.dart';
+import './pages/ActivityIndicator/activityIndicator.dart';
+import './pages/Modal/modal.dart';
+import './pages/Progress/progress.dart';
+import './pages/Toast/toast.dart';
+import './pages/Result/result.dart';
+import './pages/Steps/steps.dart';
+import './pages/PullToRefresh/pullToRefresh.dart';
 
 void main() => runApp(MyApp());
 
@@ -99,277 +38,536 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('demo'),
         ),
-        body: PullToRefresh(
-            listView: ListView.builder(
-                physics: RefreshAlwaysScrollPhysics(),
-                itemCount: 100,
-                itemExtent: 50.0,
-                itemBuilder: (context, index) {
-                  return ListTile(title: Text("$index"));
-                }),
-            onRefresh: () {}),
+        body: MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
   }
 }
 
-// import 'dart:convert';
-// import 'dart:io';
-// import 'dart:ui';
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
 
-// import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart';
-// import './pulltorefresh.dart';
+  final String title;
 
-// void main() => runApp(MyApp());
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
 
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         brightness: Brightness.light,
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text('demo'),
-//         ),
-//         body: PullAndPushTest(),
-//       ),
-//     );
-//   }
-// }
+class _MyHomePageState extends State<MyHomePage> {
+  int content;
+  bool navigation = false;
+  bool dataEntry = false;
+  bool dataDisplay = false;
+  bool feedback = false;
+  bool combination = false;
+  bool gesture = false;
 
-// class PullAndPushTest extends StatefulWidget {
-//   @override
-//   State<StatefulWidget> createState() {
-//     return new PullAndPushTestState();
-//   }
-// }
+  @override
+  void initState() {
+    super.initState();
+  }
 
-// ///PullAndPush可以使用默认的样式，在此样式的基础上可以使用default**系列的属性改变显示效果，也可以自定义RefreshBox的样式（footerRefreshBox or headerRefreshBox）,也就是说可以定义其中一个，另一个用默认的，也可以全部自定义
-// ///isPullEnable;isPushEnable属性可以控制RefreshBox 是否可用，无论是自定义的还是默认的
-// ///PullAndPush can use the default style，Based on this style, you can use the properties of the default** series to change the display，
-// ///You can also customize the style of the RefreshBox (footerRefreshBox or headerRefreshBox), which means you can define one of them, and the other can be customized by default or all.
-// class PullAndPushTestState extends State<PullAndPushTest>
-//     with TickerProviderStateMixin {
-//   List<String> addStrs = [
-//     "a",
-//     "b",
-//     "c",
-//     "d",
-//     "e",
-//     "f",
-//     "g",
-//     "h",
-//     "i",
-//     "j",
-//     "k",
-//     "l",
-//     "m",
-//     "n",
-//     "o",
-//     "p",
-//     "q",
-//     "r",
-//     "s",
-//     "t",
-//     "u",
-//     "v",
-//     "w",
-//     "x",
-//     "y",
-//     "z"
-//   ];
-//   List<String> strs = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-//   ScrollController controller = new ScrollController();
-//   //For compatibility with ios ,must use RefreshAlwaysScrollPhysics ;为了兼容ios 必须使用RefreshAlwaysScrollPhysics
-//   ScrollPhysics scrollPhysics = new RefreshAlwaysScrollPhysics();
-//   //使用系统的请求
-//   var httpClient = new HttpClient();
-//   var url = "https://github.com/";
-//   var _result = "";
-//   String customRefreshBoxIconPath = "images/icon_arrow.png";
-//   AnimationController customBoxWaitAnimation;
-//   int rotationAngle = 0;
-//   String customHeaderTipText = "快尼玛给老子松手！";
-//   String defaultRefreshBoxTipText = "快尼玛给老子松手！";
-
-//   ///button等其他方式，通过方法调用触发下拉刷新
-//   TriggerPullController triggerPullController = new TriggerPullController();
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     //这个是刷新时控件旋转的动画，用来使刷新的Icon动起来
-//     customBoxWaitAnimation = new AnimationController(
-//         duration: const Duration(milliseconds: 1000 * 100), vsync: this);
-//     //第一次layout后会被调用
-//     //WidgetsBinding.instance.addPostFrameCallback((context){
-//     //  triggerPullController.triggerPull();
-//     //});
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return new Scaffold(
-//         appBar: new AppBar(
-//           title: new Text("上下拉刷新"),
-//         ),
-//         body: new PullAndPush(
-//           //如果你headerRefreshBox和footerRefreshBox全都自定义了，则default**系列的属性均无效，假如有一个RefreshBox是用默认的（在该RefreshBox Enable的情况下）则default**系列的属性均有效
-//           //If your headerRefreshBox and footerRefreshBox are all customizable，then the default** attributes of the series are invalid，
-//           // If there is a RefreshBox is the default（In the case of the RefreshBox Enable）then the default** attributes of the series are valid
-//           defaultRefreshBoxTipText: defaultRefreshBoxTipText,
-//           headerRefreshBox: _getCustomHeaderBox(),
-//           triggerPullController: triggerPullController,
-
-//           //你也可以自定义底部的刷新栏；you can customize the bottom refresh box
-//           animationStateChangedCallback: (AnimationStates animationStates,
-//               RefreshBoxDirectionStatus refreshBoxDirectionStatus) {
-//             _handleStateCallback(animationStates, refreshBoxDirectionStatus);
-//           },
-//           listView: new ListView.builder(
-//               //ListView的Item
-//               itemCount: strs.length, //+2,
-//               controller: controller,
-//               physics: scrollPhysics,
-//               itemBuilder: (BuildContext context, int index) {
-//                 return new Container(
-//                   height: 35.0,
-//                   child: new Center(
-//                     child: new Text(
-//                       strs[index],
-//                       style: new TextStyle(fontSize: 18.0),
-//                     ),
-//                   ),
-//                 );
-//               }),
-//           loadData: (isPullDown) async {
-//             await _loadData(isPullDown);
-//           },
-//           scrollPhysicsChanged: (ScrollPhysics physics) {
-//             //这个不用改，照抄即可；This does not need to change，only copy it
-//             setState(() {
-//               scrollPhysics = physics;
-//             });
-//           },
-//         ));
-//   }
-
-//   Widget _getCustomHeaderBox() {
-//     return new Container(
-//         color: Colors.grey,
-//         child: new Row(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             new Align(
-//               alignment: Alignment.centerLeft,
-//               child: new RotatedBox(
-//                 quarterTurns: rotationAngle,
-//                 child: new RotationTransition(
-//                   //布局中加载时动画的weight
-//                   child: new Image.asset(
-//                     customRefreshBoxIconPath,
-//                     height: 45.0,
-//                     width: 45.0,
-//                     fit: BoxFit.cover,
-//                   ),
-//                   turns: new Tween(begin: 100.0, end: 0.0)
-//                       .animate(customBoxWaitAnimation)
-//                         ..addStatusListener((animationStatus) {
-//                           if (animationStatus == AnimationStatus.completed) {
-//                             customBoxWaitAnimation.repeat();
-//                           }
-//                         }),
-//                 ),
-//               ),
-//             ),
-//             new Align(
-//               alignment: Alignment.centerRight,
-//               child: new ClipRect(
-//                 child: new Text(
-//                   customHeaderTipText,
-//                   style:
-//                       new TextStyle(fontSize: 18.0, color: Color(0xffe6e6e6)),
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ));
-//   }
-
-//   void _handleStateCallback(AnimationStates animationStates,
-//       RefreshBoxDirectionStatus refreshBoxDirectionStatus) {
-//     switch (animationStates) {
-//       //RefreshBox高度达到50,上下拉刷新可用;RefreshBox height reached 50，the function of load data is  available
-//       case AnimationStates.DragAndRefreshEnabled:
-//         setState(() {
-//           //3.141592653589793是弧度，角度为180度,旋转180度；3.141592653589793 is radians，angle is 180⁰，Rotate 180⁰
-//           rotationAngle = 2;
-//         });
-//         break;
-
-//       //开始加载数据时；When loading data starts
-//       case AnimationStates.StartLoadData:
-//         setState(() {
-//           customRefreshBoxIconPath = "images/refresh.png";
-//           customHeaderTipText = "正尼玛在拼命加载.....";
-//         });
-//         customBoxWaitAnimation.forward();
-//         break;
-
-//       //加载完数据时；RefreshBox会留在屏幕2秒，并不马上消失，这里可以提示用户加载成功或者失败
-//       // After loading the data，RefreshBox will stay on the screen for 2 seconds, not disappearing immediately，Here you can prompt the user to load successfully or fail.
-//       case AnimationStates.LoadDataEnd:
-//         customBoxWaitAnimation.reset();
-//         setState(() {
-//           rotationAngle = 0;
-//           if (refreshBoxDirectionStatus == RefreshBoxDirectionStatus.PULL) {
-//             customRefreshBoxIconPath = "images/icon_cry.png";
-//             customHeaderTipText = "加载失败！请重试";
-//           } else if (refreshBoxDirectionStatus ==
-//               RefreshBoxDirectionStatus.PUSH) {
-//             defaultRefreshBoxTipText = "可提示用户加载成功Or失败";
-//           }
-//         });
-//         break;
-
-//       //RefreshBox已经消失，并且闲置；RefreshBox has disappeared and is idle
-//       case AnimationStates.RefreshBoxIdle:
-//         setState(() {
-//           rotationAngle = 0;
-//           defaultRefreshBoxTipText = customHeaderTipText = "快尼玛给老子松手！";
-//           customRefreshBoxIconPath = "images/icon_arrow.png";
-//         });
-//         break;
-//     }
-//   }
-
-//   Future _loadData(bool isPullDown) async {
-//     try {
-//       var request = await httpClient.getUrl(Uri.parse(url));
-//       var response = await request.close();
-//       if (response.statusCode == HttpStatus.ok) {
-//         _result = await utf8.decoder.bind(response).join();
-//         setState(() {
-//           //拿到数据后，对数据进行梳理
-//           if (isPullDown) {
-//             strs.clear();
-//             strs.addAll(addStrs);
-//           } else {
-//             strs.addAll(addStrs);
-//           }
-//         });
-//       } else {
-//         _result = 'error code : ${response.statusCode}';
-//       }
-//     } catch (exception) {
-//       _result = '网络异常';
-//     }
-//     print(_result);
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+        child: Column(
+      children: <Widget>[
+        ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) {
+            setState(() {
+              navigation = !navigation;
+            });
+          },
+          children: [
+            ExpansionPanel(
+                headerBuilder: (_, __) {
+                  return Padding(
+                    padding: EdgeInsets.all(15.0),
+                    child: Text('导航 Navigation'),
+                  );
+                },
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageMenu();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Menu 菜单',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageSegmentedControl();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('SegmentedControl 分段器',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageTabBar();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('TabBar 标签栏',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageTabs();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Tabs 标签页',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                isExpanded: navigation)
+          ],
+        ),
+        SizedBox(
+          height: 15.0,
+        ),
+        ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) {
+            setState(() {
+              dataEntry = !dataEntry;
+            });
+          },
+          children: [
+            ExpansionPanel(
+                headerBuilder: (_, __) {
+                  return Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
+                    child: Text('数据录入 Data Entry'),
+                  );
+                },
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageButton();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'Button 按钮',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageCheckbox();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Checkbox 复选框',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageRadio();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Radio 单选框',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageSearchBox();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('SearchBar 搜索栏',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                isExpanded: dataEntry)
+          ],
+        ),
+        SizedBox(
+          height: 15.0,
+        ),
+        ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) {
+            setState(() {
+              dataDisplay = !dataDisplay;
+            });
+          },
+          children: [
+            ExpansionPanel(
+                headerBuilder: (_, __) {
+                  return Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
+                    child: Text('数据展示 Data Display'),
+                  );
+                },
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageBadge();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'Badge 徽标数',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageCard();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Card 卡片',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageList();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('List 列表',
+                            style: TextStyle(
+                                fontSize: 14.0,
+                                color: Colors.grey.withOpacity(0.9))),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageNoticeBar();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('NoticeBar 通告栏',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageSteps();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Steps 步骤条',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageTag();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Tag 标签',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                isExpanded: dataDisplay)
+          ],
+        ),
+        SizedBox(
+          height: 15.0,
+        ),
+        ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) {
+            setState(() {
+              feedback = !feedback;
+            });
+          },
+          children: [
+            ExpansionPanel(
+                headerBuilder: (_, __) {
+                  return Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
+                    child: Text('操作反馈 Feedback'),
+                  );
+                },
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageActionSheet();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'ActionSheet 动作画板',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageActivityIndicator();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('ActivityIndicator 活动指示器',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageModal();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Modal 对话框',
+                            style: TextStyle(
+                                fontSize: 14.0,
+                                color: Colors.grey.withOpacity(0.9))),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageProgress();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Progress 进度条',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageToast();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Toast 轻提示',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                isExpanded: feedback)
+          ],
+        ),
+        SizedBox(
+          height: 15.0,
+        ),
+        ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) {
+            setState(() {
+              combination = !combination;
+            });
+          },
+          children: [
+            ExpansionPanel(
+                headerBuilder: (_, __) {
+                  return Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
+                    child: Text('组合组件 Combination'),
+                  );
+                },
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageResult();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'Result 结果页',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                isExpanded: combination)
+          ],
+        ),
+        SizedBox(
+          height: 15.0,
+        ),
+        ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) {
+            setState(() {
+              gesture = !gesture;
+            });
+          },
+          children: [
+            ExpansionPanel(
+                headerBuilder: (_, __) {
+                  return Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
+                    child: Text('手势 Gesture'),
+                  );
+                },
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PagePullToRefresh();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'PullToRefresh 拉动刷新',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                isExpanded: gesture)
+          ],
+        )
+      ],
+    ));
+  }
+}

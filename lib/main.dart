@@ -22,6 +22,7 @@ import './pages/Result/result.dart';
 import './pages/Steps/steps.dart';
 import './pages/PullToRefresh/pullToRefresh.dart';
 import './pages/SwipeAction/swipeAction.dart';
+import './pages/Carousel/carsousel.dart';
 
 void main() => runApp(MyApp());
 
@@ -281,6 +282,23 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: ListTile(
                         title: Text(
                           'Badge 徽标数',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageCarousel();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'Carousel 走马灯',
                           style: TextStyle(fontSize: 14.0, color: Colors.grey),
                         ),
                         trailing: Container(
@@ -589,423 +607,359 @@ class _MyHomePageState extends State<MyHomePage> {
     ));
   }
 }
+
+// import 'package:carousel_slider/carousel_slider.dart';
 // import 'package:flutter/material.dart';
-// import 'package:flutter_slidable/flutter_slidable.dart';
 
-// void main() => runApp(MyApp());
+// final List<String> imgList = [
+//   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
+//   'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
+//   'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
+//   'https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=89719a0d55dd05e2deae4120227e6efc&auto=format&fit=crop&w=1953&q=80',
+//   'https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80',
+//   'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
+// ];
 
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Slidable Demo',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: MyHomePage(title: 'Flutter Slidable Demo'),
-//     );
-//   }
-// }
+// void main() => runApp(CarouselDemo());
 
-// class MyHomePage extends StatefulWidget {
-//   MyHomePage({Key key, this.title}) : super(key: key);
+// final Widget placeholder = Container(color: Colors.grey);
 
-//   final String title;
-
-//   @override
-//   _MyHomePageState createState() => _MyHomePageState();
-// }
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   SlidableController slidableController;
-//   final List<_HomeItem> items = List.generate(
-//     20,
-//     (i) => _HomeItem(
-//       i,
-//       'Tile n°$i',
-//       _getSubtitle(i),
-//       _getAvatarColor(i),
-//     ),
-//   );
-
-//   @protected
-//   void initState() {
-//     slidableController = SlidableController(
-//       onSlideAnimationChanged: handleSlideAnimationChanged,
-//       onSlideIsOpenChanged: handleSlideIsOpenChanged,
-//     );
-//     super.initState();
-//   }
-
-//   Animation<double> _rotationAnimation;
-//   Color _fabColor = Colors.blue;
-
-//   void handleSlideAnimationChanged(Animation<double> slideAnimation) {
-//     setState(() {
-//       _rotationAnimation = slideAnimation;
-//     });
-//   }
-
-//   void handleSlideIsOpenChanged(bool isOpen) {
-//     setState(() {
-//       _fabColor = isOpen ? Colors.green : Colors.blue;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(widget.title),
-//       ),
-//       body: Center(
-//         child: OrientationBuilder(
-//           builder: (context, orientation) => _buildList(
-//               context,
-//               orientation == Orientation.portrait
-//                   ? Axis.vertical
-//                   : Axis.horizontal),
-//         ),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         backgroundColor: _fabColor,
-//         onPressed: null,
-//         child: _rotationAnimation == null
-//             ? Icon(Icons.add)
-//             : RotationTransition(
-//                 turns: _rotationAnimation,
-//                 child: Icon(Icons.add),
-//               ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildList(BuildContext context, Axis direction) {
-//     return ListView.builder(
-//       scrollDirection: direction,
-//       itemBuilder: (context, index) {
-//         final Axis slidableDirection =
-//             direction == Axis.horizontal ? Axis.vertical : Axis.horizontal;
-//         var item = items[index];
-//         if (item.index < 8) {
-//           return _getSlidableWithLists(context, index, slidableDirection);
-//         } else {
-//           return _getSlidableWithDelegates(context, index, slidableDirection);
-//         }
-//       },
-//       itemCount: items.length,
-//     );
-//   }
-
-//   Widget _getSlidableWithLists(
-//       BuildContext context, int index, Axis direction) {
-//     final _HomeItem item = items[index];
-//     //final int t = index;
-//     return Slidable(
-//       key: Key(item.title),
-//       controller: slidableController,
-//       direction: direction,
-//       dismissal: SlidableDismissal(
-//         child: SlidableDrawerDismissal(),
-//         onDismissed: (actionType) {
-//           _showSnackBar(
-//               context,
-//               actionType == SlideActionType.primary
-//                   ? 'Dismiss Archive'
-//                   : 'Dimiss Delete');
-//           setState(() {
-//             items.removeAt(index);
-//           });
-//         },
-//       ),
-//       actionPane: _getActionPane(item.index),
-//       actionExtentRatio: 0.25,
-//       child: direction == Axis.horizontal
-//           ? VerticalListItem(items[index])
-//           : HorizontalListItem(items[index]),
-//       actions: <Widget>[
-//         IconSlideAction(
-//           caption: 'Archive',
-//           color: Colors.blue,
-//           icon: Icons.archive,
-//           onTap: () => _showSnackBar(context, 'Archive'),
-//         ),
-//         IconSlideAction(
-//           caption: 'Share',
-//           color: Colors.indigo,
-//           icon: Icons.share,
-//           onTap: () => _showSnackBar(context, 'Share'),
-//         ),
-//       ],
-//       secondaryActions: <Widget>[
-//         Container(
-//           height: 800,
-//           color: Colors.green,
-//           child: Text('a'),
-//         ),
-//         IconSlideAction(
-//           caption: 'More',
-//           color: Colors.grey.shade200,
-//           icon: Icons.more_horiz,
-//           onTap: () => _showSnackBar(context, 'More'),
-//           closeOnTap: false,
-//         ),
-//         IconSlideAction(
-//           caption: 'Delete',
-//           color: Colors.red,
-//           icon: Icons.delete,
-//           onTap: () => _showSnackBar(context, 'Delete'),
-//         ),
-//       ],
-//     );
-//   }
-
-//   Widget _getSlidableWithDelegates(
-//       BuildContext context, int index, Axis direction) {
-//     final _HomeItem item = items[index];
-
-//     return Slidable.builder(
-//       key: Key(item.title),
-//       controller: slidableController,
-//       direction: direction,
-//       dismissal: SlidableDismissal(
-//         child: SlidableDrawerDismissal(),
-//         closeOnCanceled: true,
-//         onWillDismiss: (item.index != 10)
-//             ? null
-//             : (actionType) {
-//                 return showDialog<bool>(
-//                   context: context,
-//                   builder: (context) {
-//                     return AlertDialog(
-//                       title: Text('Delete'),
-//                       content: Text('Item will be deleted'),
-//                       actions: <Widget>[
-//                         FlatButton(
-//                           child: Text('Cancel'),
-//                           onPressed: () => Navigator.of(context).pop(false),
-//                         ),
-//                         FlatButton(
-//                           child: Text('Ok'),
-//                           onPressed: () => Navigator.of(context).pop(true),
-//                         ),
-//                       ],
-//                     );
-//                   },
-//                 );
-//               },
-//         onDismissed: (actionType) {
-//           _showSnackBar(
-//               context,
-//               actionType == SlideActionType.primary
-//                   ? 'Dismiss Archive'
-//                   : 'Dimiss Delete');
-//           setState(() {
-//             items.removeAt(index);
-//           });
-//         },
-//       ),
-//       actionPane: _getActionPane(item.index),
-//       actionExtentRatio: 0.25,
-//       child: direction == Axis.horizontal
-//           ? VerticalListItem(items[index])
-//           : HorizontalListItem(items[index]),
-//       actionDelegate: SlideActionBuilderDelegate(
-//           actionCount: 2,
-//           builder: (context, index, animation, renderingMode) {
-//             if (index == 0) {
-//               return IconSlideAction(
-//                 caption: 'Archive',
-//                 color: renderingMode == SlidableRenderingMode.slide
-//                     ? Colors.blue.withOpacity(animation.value)
-//                     : (renderingMode == SlidableRenderingMode.dismiss
-//                         ? Colors.blue
-//                         : Colors.green),
-//                 icon: Icons.archive,
-//                 onTap: () async {
-//                   var state = Slidable.of(context);
-//                   var dismiss = await showDialog<bool>(
-//                     context: context,
-//                     builder: (context) {
-//                       return AlertDialog(
-//                         title: Text('Delete'),
-//                         content: Text('Item will be deleted'),
-//                         actions: <Widget>[
-//                           FlatButton(
-//                             child: Text('Cancel'),
-//                             onPressed: () => Navigator.of(context).pop(false),
-//                           ),
-//                           FlatButton(
-//                             child: Text('Ok'),
-//                             onPressed: () => Navigator.of(context).pop(true),
-//                           ),
-//                         ],
-//                       );
-//                     },
-//                   );
-
-//                   if (dismiss) {
-//                     state.dismiss();
-//                   }
-//                 },
-//               );
-//             } else {
-//               return IconSlideAction(
-//                 caption: 'Share',
-//                 color: renderingMode == SlidableRenderingMode.slide
-//                     ? Colors.indigo.withOpacity(animation.value)
-//                     : Colors.indigo,
-//                 icon: Icons.share,
-//                 onTap: () => _showSnackBar(context, 'Share'),
-//               );
-//             }
-//           }),
-//       secondaryActionDelegate: SlideActionBuilderDelegate(
-//           actionCount: 2,
-//           builder: (context, index, animation, renderingMode) {
-//             if (index == 0) {
-//               return IconSlideAction(
-//                 caption: 'More',
-//                 color: renderingMode == SlidableRenderingMode.slide
-//                     ? Colors.grey.shade200.withOpacity(animation.value)
-//                     : Colors.grey.shade200,
-//                 icon: Icons.more_horiz,
-//                 onTap: () => _showSnackBar(context, 'More'),
-//                 closeOnTap: false,
-//               );
-//             } else {
-//               return IconSlideAction(
-//                 caption: 'Delete',
-//                 color: renderingMode == SlidableRenderingMode.slide
-//                     ? Colors.red.withOpacity(animation.value)
-//                     : Colors.red,
-//                 icon: Icons.delete,
-//                 onTap: () => _showSnackBar(context, 'Delete'),
-//               );
-//             }
-//           }),
-//     );
-//   }
-
-//   static Widget _getActionPane(int index) {
-//     switch (index % 4) {
-//       case 0:
-//         return SlidableBehindActionPane();
-//       case 1:
-//         return SlidableStrechActionPane();
-//       case 2:
-//         return SlidableScrollActionPane();
-//       case 3:
-//         return SlidableDrawerActionPane();
-//       default:
-//         return null;
-//     }
-//   }
-
-//   static Color _getAvatarColor(int index) {
-//     switch (index % 4) {
-//       case 0:
-//         return Colors.red;
-//       case 1:
-//         return Colors.green;
-//       case 2:
-//         return Colors.blue;
-//       case 3:
-//         return Colors.indigoAccent;
-//       default:
-//         return null;
-//     }
-//   }
-
-//   static String _getSubtitle(int index) {
-//     switch (index % 4) {
-//       case 0:
-//         return 'SlidableBehindActionPane';
-//       case 1:
-//         return 'SlidableStrechActionPane';
-//       case 2:
-//         return 'SlidableScrollActionPane';
-//       case 3:
-//         return 'SlidableDrawerActionPane';
-//       default:
-//         return null;
-//     }
-//   }
-
-//   void _showSnackBar(BuildContext context, String text) {
-//     Scaffold.of(context).showSnackBar(SnackBar(content: Text(text)));
-//   }
-// }
-
-// class HorizontalListItem extends StatelessWidget {
-//   HorizontalListItem(this.item);
-//   final _HomeItem item;
-//   @override
-//   Widget build(BuildContext context) {
+// final List child = map<Widget>(
+//   imgList,
+//   (index, i) {
 //     return Container(
-//       color: Colors.white,
-//       width: 160.0,
-//       child: Column(
-//         mainAxisSize: MainAxisSize.max,
-//         children: <Widget>[
-//           Expanded(
-//             child: CircleAvatar(
-//               backgroundColor: item.color,
-//               child: Text('${item.index}'),
-//               foregroundColor: Colors.white,
-//             ),
-//           ),
-//           Expanded(
-//             child: Center(
+//       margin: EdgeInsets.all(5.0),
+//       child: ClipRRect(
+//         borderRadius: BorderRadius.all(Radius.circular(5.0)),
+//         child: Stack(children: <Widget>[
+//           Image.network(i, fit: BoxFit.cover, width: 1000.0),
+//           Positioned(
+//             bottom: 0.0,
+//             left: 0.0,
+//             right: 0.0,
+//             child: Container(
+//               decoration: BoxDecoration(
+//                 gradient: LinearGradient(
+//                   colors: [
+//                     Color.fromARGB(200, 0, 0, 0),
+//                     Color.fromARGB(0, 0, 0, 0)
+//                   ],
+//                   begin: Alignment.bottomCenter,
+//                   end: Alignment.topCenter,
+//                 ),
+//               ),
+//               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
 //               child: Text(
-//                 item.subtitle,
+//                 'No. $index image',
+//                 style: TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 20.0,
+//                   fontWeight: FontWeight.bold,
+//                 ),
 //               ),
 //             ),
 //           ),
-//         ],
+//         ]),
 //       ),
 //     );
+//   },
+// ).toList();
+
+// List<T> map<T>(List list, Function handler) {
+//   List<T> result = [];
+//   for (var i = 0; i < list.length; i++) {
+//     result.add(handler(i, list[i]));
 //   }
+
+//   return result;
 // }
 
-// class VerticalListItem extends StatelessWidget {
-//   VerticalListItem(this.item);
-//   final _HomeItem item;
+// class CarouselWithIndicator extends StatefulWidget {
+//   @override
+//   _CarouselWithIndicatorState createState() => _CarouselWithIndicatorState();
+// }
+
+// class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
+//   int _current = 0;
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: () =>
-//           Slidable.of(context)?.renderingMode == SlidableRenderingMode.none
-//               ? Slidable.of(context)?.open()
-//               : Slidable.of(context)?.close(),
-//       child: Container(
-//         color: Colors.white,
-//         child: ListTile(
-//           leading: CircleAvatar(
-//             backgroundColor: item.color,
-//             child: Text('${item.index}'),
-//             foregroundColor: Colors.white,
+//     return Column(children: [
+//       CarouselSlider(
+//         items: child,
+//         autoPlay: true,
+//         enlargeCenterPage: true,
+//         aspectRatio: 2.0,
+//         onPageChanged: (index) {
+//           setState(() {
+//             _current = index;
+//           });
+//         },
+//       ),
+//       Row(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: map<Widget>(
+//           imgList,
+//           (index, url) {
+//             return Container(
+//               width: 8.0,
+//               height: 8.0,
+//               margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+//               decoration: BoxDecoration(
+//                   shape: BoxShape.circle,
+//                   color: _current == index
+//                       ? Color.fromRGBO(0, 0, 0, 0.9)
+//                       : Color.fromRGBO(0, 0, 0, 0.4)),
+//             );
+//           },
+//         ),
+//       ),
+//     ]);
+//   }
+// }
+
+// class CarouselDemo extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     //Manually operated Carousel
+//     final CarouselSlider manualCarouselDemo = CarouselSlider(
+//       items: child,
+//       autoPlay: false,
+//       enlargeCenterPage: false,
+//       viewportFraction: 0.9,
+//       enableInfiniteScroll: true,
+//       aspectRatio: 2.0,
+//       initialPage: 2,
+//     );
+
+//     //Auto playing carousel
+//     final CarouselSlider autoPlayDemo = CarouselSlider(
+//       viewportFraction: 0.9,
+//       aspectRatio: 2.0,
+//       autoPlay: true,
+//       enlargeCenterPage: true,
+//       items: imgList.map(
+//         (url) {
+//           return Container(
+//             margin: EdgeInsets.all(5.0),
+//             child: ClipRRect(
+//               borderRadius: BorderRadius.all(Radius.circular(5.0)),
+//               child: Image.network(
+//                 url,
+//                 fit: BoxFit.cover,
+//                 width: 1000.0,
+//               ),
+//             ),
+//           );
+//         },
+//       ).toList(),
+//     );
+
+//     //Button controlled carousel
+//     Widget buttonDemo() {
+//       final basicSlider = CarouselSlider(
+//         items: child,
+//         autoPlay: false,
+//         enlargeCenterPage: true,
+//         viewportFraction: 0.9,
+//         aspectRatio: 2.0,
+//       );
+//       return Column(children: [
+//         basicSlider,
+//         Row(children: [
+//           Expanded(
+//             child: Padding(
+//               padding: EdgeInsets.symmetric(horizontal: 15.0),
+//               child: RaisedButton(
+//                 onPressed: () => basicSlider.previousPage(
+//                     duration: Duration(milliseconds: 300),
+//                     curve: Curves.linear),
+//                 child: Text('prev slider'),
+//               ),
+//             ),
 //           ),
-//           title: Text(item.title),
-//           subtitle: Text(item.subtitle),
+//           Expanded(
+//             child: Padding(
+//               padding: EdgeInsets.symmetric(horizontal: 15.0),
+//               child: RaisedButton(
+//                 onPressed: () => basicSlider.nextPage(
+//                     duration: Duration(milliseconds: 300),
+//                     curve: Curves.linear),
+//                 child: Text('next slider'),
+//               ),
+//             ),
+//           ),
+//         ]),
+//       ]);
+//     }
+
+//     //Pages covers entire carousel
+//     final CarouselSlider coverScreenExample = CarouselSlider(
+//       viewportFraction: 1.0,
+//       aspectRatio: 2.0,
+//       autoPlay: false,
+//       enlargeCenterPage: false,
+//       items: map<Widget>(
+//         imgList,
+//         (index, i) {
+//           return Container(
+//             decoration: BoxDecoration(
+//               image: DecorationImage(image: NetworkImage(i), fit: BoxFit.cover),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+
+//     //User input pauses carousels automatic playback
+//     final CarouselSlider touchDetectionDemo = CarouselSlider(
+//       viewportFraction: 0.9,
+//       aspectRatio: 2.0,
+//       autoPlay: true,
+//       enlargeCenterPage: true,
+//       pauseAutoPlayOnTouch: Duration(seconds: 3),
+//       items: imgList.map(
+//         (url) {
+//           return Container(
+//             margin: EdgeInsets.all(5.0),
+//             child: ClipRRect(
+//               borderRadius: BorderRadius.all(Radius.circular(5.0)),
+//               child: Image.network(
+//                 url,
+//                 fit: BoxFit.cover,
+//                 width: 1000.0,
+//               ),
+//             ),
+//           );
+//         },
+//       ).toList(),
+//     );
+
+//     //Non-looping manual Carousel
+//     final CarouselSlider nonLoopingCarousel = CarouselSlider(
+//       items: child,
+//       scrollPhysics: BouncingScrollPhysics(),
+//       enableInfiniteScroll: false,
+//       autoPlay: false,
+//       enlargeCenterPage: true,
+//       viewportFraction: 0.9,
+//       aspectRatio: 2.0,
+//     );
+
+//     //Vertical carousel
+//     final CarouselSlider verticalScrollCarousel = CarouselSlider(
+//       scrollDirection: Axis.vertical,
+//       aspectRatio: 2.0,
+//       autoPlay: true,
+//       enlargeCenterPage: true,
+//       viewportFraction: 0.9,
+//       pauseAutoPlayOnTouch: Duration(seconds: 3),
+//       items: imgList.map(
+//         (url) {
+//           return Container(
+//             margin: EdgeInsets.all(5.0),
+//             child: ClipRRect(
+//               borderRadius: BorderRadius.all(Radius.circular(5.0)),
+//               child: Image.network(
+//                 url,
+//                 fit: BoxFit.cover,
+//                 width: 1000.0,
+//               ),
+//             ),
+//           );
+//         },
+//       ).toList(),
+//     );
+
+//     //create full screen Carousel with context
+//     CarouselSlider getFullScreenCarousel(BuildContext mediaContext) {
+//       return CarouselSlider(
+//         autoPlay: true,
+//         viewportFraction: 1.0,
+//         aspectRatio: MediaQuery.of(mediaContext).size.aspectRatio,
+//         items: imgList.map(
+//           (url) {
+//             return Container(
+//               child: ClipRRect(
+//                 borderRadius: BorderRadius.all(Radius.circular(0.0)),
+//                 child: Image.network(
+//                   url,
+//                   fit: BoxFit.cover,
+//                   width: 1000.0,
+//                 ),
+//               ),
+//             );
+//           },
+//         ).toList(),
+//       );
+//     }
+
+//     return MaterialApp(
+//       title: 'demo',
+//       home: Scaffold(
+//         appBar: AppBar(title: Text('Carousel slider demo')),
+//         body: ListView(
+//           children: <Widget>[
+//             Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 15.0),
+//                 child: Column(children: [
+//                   Text('Manuell Carousel'),
+//                   manualCarouselDemo,
+//                 ])),
+//             Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 15.0),
+//                 child: Column(children: [
+//                   Text('Auto Playing Carousel'),
+//                   autoPlayDemo,
+//                 ])),
+//             Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 15.0),
+//                 child: Column(children: [
+//                   Text('Button Controlled Carousel'),
+//                   buttonDemo(),
+//                 ])),
+//             Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 15.0),
+//                 child: Column(children: [
+//                   Text('Full Screen Carousel'),
+//                   coverScreenExample,
+//                 ])),
+//             Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 15.0),
+//                 child: Column(children: [
+//                   Text('Carousel With Indecator'),
+//                   CarouselWithIndicator(),
+//                 ])),
+//             Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 15.0),
+//                 child: Column(children: [
+//                   Text('Pause When Touched Carousel'),
+//                   touchDetectionDemo,
+//                 ])),
+//             Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 15.0),
+//                 child: Column(children: [
+//                   Text('No infinity scroll carousel'),
+//                   nonLoopingCarousel,
+//                 ])),
+//             Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 15.0),
+//                 child: Column(children: [
+//                   Text('Vertical scroll carousel'),
+//                   verticalScrollCarousel,
+//                 ])),
+//             Padding(
+//                 padding: EdgeInsets.only(top: 15.0),
+//                 //Builder needed to provide mediaQuery context from material app
+//                 child: Builder(builder: (context) {
+//                   return Column(children: [
+//                     Text('Full screen carousel'),
+//                     getFullScreenCarousel(context),
+//                   ]);
+//                 })),
+//           ],
 //         ),
 //       ),
 //     );
 //   }
-// }
-
-// class _HomeItem {
-//   const _HomeItem(
-//     this.index,
-//     this.title,
-//     this.subtitle,
-//     this.color,
-//   );
-
-//   final int index;
-//   final String title;
-//   final String subtitle;
-//   final Color color;
 // }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
@@ -16,6 +17,7 @@ class Carousel extends StatefulWidget {
       this.afterChange,
       this.cellSpacing,
       this.slideWidth,
+      this.easing = Curves.easeOutCirc,
       this.beforeChange})
       : assert(items != null && items.length > 0),
         assert(selectedIndex <= items.length - 1),
@@ -32,6 +34,7 @@ class Carousel extends StatefulWidget {
   final ValueChanged<int> afterChange;
   final double cellSpacing;
   final double slideWidth;
+  final Curve easing;
   final ValueChanged<Map<String, int>> beforeChange;
   // 模拟可无限滚动
 
@@ -45,7 +48,6 @@ class _CarouselState extends State<Carousel>
   PageController pageController;
   num realPage = 10000;
   Duration playAnimation = Duration(milliseconds: 800);
-  Curve playCurves = Curves.easeOut;
   double aspectRatio = 16 / 9;
   int currentIndex;
 
@@ -53,14 +55,15 @@ class _CarouselState extends State<Carousel>
   void initState() {
     super.initState();
     timer = getTimer();
-
     currentIndex = widget.selectedIndex;
-
     pageController = PageController(
         viewportFraction: widget.frameOverflow == true ? 0.8 : 1.0,
         initialPage: widget.infinite
             ? realPage + widget.selectedIndex
             : widget.selectedIndex);
+    realPage = widget.infinite
+        ? realPage + widget.selectedIndex
+        : widget.selectedIndex;
   }
 
   @override
@@ -73,11 +76,12 @@ class _CarouselState extends State<Carousel>
     return Timer.periodic(
         Duration(milliseconds: widget.autoplayInterval.toInt()), (_) {
       if (widget.autoplay) {
-        pageController.nextPage(duration: playAnimation, curve: playCurves);
+        pageController.nextPage(duration: playAnimation, curve: widget.easing);
       }
     });
   }
 
+  // 指示圆点
   List<Widget> getDots() {
     List<Widget> dots = [];
     widget.items.asMap().forEach((int index, item) {
@@ -96,31 +100,31 @@ class _CarouselState extends State<Carousel>
   }
 
   Widget getWrapper(Widget child) {
-    return Stack(
-      // alignment: Alignment.bottomCenter,
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: aspectRatio,
-          child: child,
-        ),
-        Positioned(
-          bottom: 0.0,
-          left: 0.0,
-          right: 0.0,
-          child: Wrap(
-            runSpacing: 5.0,
-            alignment: WrapAlignment.center,
-            children: widget.dots == true ? getDots() : [],
+    return Container(
+      width: widget.slideWidth ?? null,
+      child: Stack(
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: aspectRatio,
+            child: child,
           ),
-        )
-      ],
+          Positioned(
+            bottom: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: Wrap(
+              runSpacing: 5.0,
+              alignment: WrapAlignment.center,
+              children: widget.dots == true ? getDots() : [],
+            ),
+          )
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    realPage =
-        widget.infinite ? 10000 + widget.selectedIndex : widget.selectedIndex;
     return getWrapper(PageView.builder(
       physics: PageScrollPhysics(),
       scrollDirection:
@@ -171,8 +175,15 @@ class _CarouselState extends State<Carousel>
               value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
               final double distortionValue =
                   widget.frameOverflow ? Curves.easeOut.transform(value) : 1.0;
-              final double height =
-                  MediaQuery.of(context).size.width * (1 / aspectRatio);
+
+              final double height = (widget.slideWidth == null
+                      ? MediaQuery.of(context).size.width
+                      : widget.slideWidth) *
+                  (1 / aspectRatio);
+              final double width = distortionValue *
+                  (widget.slideWidth == null
+                      ? MediaQuery.of(context).size.width
+                      : widget.slideWidth);
 
               return widget.vertical == false
                   ? Center(
@@ -184,8 +195,7 @@ class _CarouselState extends State<Carousel>
                   : Center(
                       child: SizedBox(
                         height: height,
-                        width:
-                            distortionValue * MediaQuery.of(context).size.width,
+                        width: width,
                         child: child,
                       ),
                     );

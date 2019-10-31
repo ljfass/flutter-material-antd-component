@@ -18,6 +18,7 @@ class Carousel extends StatefulWidget {
       this.cellSpacing,
       this.slideWidth,
       this.easing = Curves.easeOutCirc,
+      this.isGrid = false,
       this.beforeChange})
       : assert(items != null && items.length > 0),
         assert(selectedIndex <= items.length - 1),
@@ -35,6 +36,7 @@ class Carousel extends StatefulWidget {
   final double cellSpacing;
   final double slideWidth;
   final Curve easing;
+  final bool isGrid;
   final ValueChanged<Map<String, int>> beforeChange;
   // 模拟可无限滚动
 
@@ -48,13 +50,14 @@ class _CarouselState extends State<Carousel>
   PageController pageController;
   num realPage = 10000;
   Duration playAnimation = Duration(milliseconds: 800);
-  double aspectRatio = 16 / 9;
+  double aspectRatio;
   int currentIndex;
 
   @override
   void initState() {
     super.initState();
     timer = getTimer();
+    aspectRatio = widget.isGrid == false ? 16 / 9 : 1.0;
     currentIndex = widget.selectedIndex;
     pageController = PageController(
         viewportFraction: widget.frameOverflow == true ? 0.8 : 1.0,
@@ -188,7 +191,9 @@ class _CarouselState extends State<Carousel>
               return widget.vertical == false
                   ? Center(
                       child: SizedBox(
-                        height: distortionValue * height,
+                        height: widget.isGrid == true
+                            ? null
+                            : distortionValue * height,
                         child: child,
                       ),
                     )

@@ -10,12 +10,25 @@ class PageGrid extends StatelessWidget {
           title: Text('Grid'),
         ),
         body: Container(
-          padding: EdgeInsets.all(10.0),
+          height: 159.0,
+          // decoration: BoxDecoration(color: Colors.yellow),
           width: MediaQuery.of(context).size.width,
           child: Grid(
             hasLine: true,
-            columnNum: 2,
+            infinite: true,
+            dots: true,
+            columnNum: 5,
+            autoplay: true,
             isCarousel: true,
+            renderItem: Container(
+              width: 30.0,
+              height: 60.0,
+              child: Image.network(
+                  'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png'),
+            ),
+            afterChange: (int value) {
+              print(value);
+            },
             onClick: (value) {
               print(value);
             },
@@ -64,6 +77,26 @@ class PageGrid extends StatelessWidget {
                 'icon':
                     'https://gw.alipayobjects.com/zos/rmsportal/WXoqXTHrSnRcUwEaQgXJ.png',
                 'text': 'title9'
+              },
+              {
+                'icon':
+                    'https://gw.alipayobjects.com/zos/rmsportal/WXoqXTHrSnRcUwEaQgXJ.png',
+                'text': 'title10'
+              },
+              {
+                'icon':
+                    'https://gw.alipayobjects.com/zos/rmsportal/WXoqXTHrSnRcUwEaQgXJ.png',
+                'text': 'title11'
+              },
+              {
+                'icon':
+                    'https://gw.alipayobjects.com/zos/rmsportal/WXoqXTHrSnRcUwEaQgXJ.png',
+                'text': 'title12'
+              },
+              {
+                'icon':
+                    'https://gw.alipayobjects.com/zos/rmsportal/WXoqXTHrSnRcUwEaQgXJ.png',
+                'text': 'title13'
               }
             ],
           ),

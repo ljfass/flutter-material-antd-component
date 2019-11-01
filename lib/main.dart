@@ -23,6 +23,7 @@ import './pages/Steps/steps.dart';
 import './pages/PullToRefresh/pullToRefresh.dart';
 import './pages/SwipeAction/swipeAction.dart';
 import './pages/Carousel/carsousel.dart';
+import './pages/Grid/grid.dart';
 
 void main() => runApp(MyApp());
 
@@ -317,6 +318,23 @@ class _MyHomePageState extends State<MyHomePage> {
                         title: Text('Card 卡片',
                             style:
                                 TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageGrid();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Grid 宫格',
+                            style: TextStyle(
+                                fontSize: 14.0,
+                                color: Colors.grey.withOpacity(0.9))),
                         trailing: Container(
                           child: Icon(Icons.chevron_right),
                         ),

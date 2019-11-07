@@ -33,14 +33,34 @@ class PagePicker extends StatelessWidget {
                           Text('红色')
                         ],
                       ),
-                      // 'children': [
-                      //   {
-                      //     'label': '红色-child',
-                      //     // 'children': [
-                      //     //   {'label': '红色-child-child'}
-                      //     // ]
-                      //   }
-                      // ]
+                      'children': [
+                        {
+                          'label': '红色-child-1',
+                          'children': [
+                            {
+                              'label': '红色-1',
+                              'children': [
+                                {'label': 'xxx1'}
+                              ]
+                            },
+                            {
+                              'label': '红色-2',
+                              'children': [
+                                {'label': 'xxx2'}
+                              ]
+                            },
+                            {
+                              'label': '红色-3',
+                            }
+                          ]
+                        },
+                        {
+                          'label': '红色-child-2',
+                          'children': [
+                            {'label': '红色-4'}
+                          ]
+                        },
+                      ]
                     },
                     {
                       'label': Row(
@@ -56,16 +76,19 @@ class PagePicker extends StatelessWidget {
                       ),
                       'children': [
                         {
-                          'label': '绿色-child',
+                          'label': '绿色-child-1',
                           'children': [
                             {
-                              'label': '绿色-child-child',
-                              'children': [
-                                {'label': '绿色-child-child-child'}
-                              ]
+                              'label': '绿色-1',
                             }
                           ]
-                        }
+                        },
+                        {
+                          'label': '绿色-child-2',
+                          'children': [
+                            {'label': '绿色-2'}
+                          ]
+                        },
                       ]
                     },
                     {
@@ -79,7 +102,10 @@ class PagePicker extends StatelessWidget {
                           ),
                           Text('篮色')
                         ],
-                      )
+                      ),
+                      // 'children': [
+                      //   {'label': 'xx'}
+                      // ]
                     }
                   ]);
                 },

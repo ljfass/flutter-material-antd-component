@@ -33,31 +33,36 @@ class PagePicker extends StatelessWidget {
                           Text('红色')
                         ],
                       ),
+                      'value': '2013',
                       'children': [
                         {
-                          'label': '红色-child-1',
+                          'label': '2016',
+                          'value': '2016',
                           'children': [
                             {
-                              'label': '红色-1',
+                              'label': '2546',
+                              'value': '2546',
                               'children': [
-                                {'label': 'xxx1'}
+                                {'label': '5542', 'value': '5542'},
+                                {'label': '8541', 'value': '8541'}
                               ]
                             },
-                            {
-                              'label': '红色-2',
-                              'children': [
-                                {'label': 'xxx2'}
-                              ]
-                            },
-                            {
-                              'label': '红色-3',
-                            }
+                            {'label': '6542', 'value': '6542'},
+                            {'label': '7894', 'value': '7894'}
                           ]
                         },
                         {
-                          'label': '红色-child-2',
+                          'label': '2046',
+                          'value': '2046',
                           'children': [
-                            {'label': '红色-4'}
+                            {
+                              'label': '2015',
+                              'value': '2015',
+                            },
+                            {
+                              'label': '2014',
+                              'value': '2014',
+                            }
                           ]
                         },
                       ]
@@ -74,24 +79,32 @@ class PagePicker extends StatelessWidget {
                           Text('绿色')
                         ],
                       ),
+                      'value': '2012',
                       'children': [
                         {
-                          'label': '绿色-child-1',
+                          'label': '2222',
+                          'value': '2222',
                           'children': [
                             {
-                              'label': '绿色-1',
+                              'label': '6541',
+                              'value': '6541',
                             }
                           ]
                         },
                         {
-                          'label': '绿色-child-2',
+                          'label': '3333',
+                          'value': '3333',
                           'children': [
-                            {'label': '绿色-2'}
+                            {
+                              'label': '7845',
+                              'value': '7845',
+                            }
                           ]
                         },
                       ]
                     },
                     {
+                      'value': '2011',
                       'label': Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[

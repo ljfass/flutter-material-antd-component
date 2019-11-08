@@ -24,6 +24,7 @@ import './pages/PullToRefresh/pullToRefresh.dart';
 import './pages/SwipeAction/swipeAction.dart';
 import './pages/Carousel/carsousel.dart';
 import './pages/Grid/grid.dart';
+import './pages/picker/picker.dart';
 
 void main() => runApp(MyApp());
 
@@ -208,6 +209,22 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       child: ListTile(
                         title: Text('Checkbox 复选框',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PagePicker();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('Picker 选择器',
                             style:
                                 TextStyle(fontSize: 14.0, color: Colors.grey)),
                         trailing: Container(

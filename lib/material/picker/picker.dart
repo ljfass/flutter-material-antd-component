@@ -1,5 +1,3 @@
-import 'dart:wasm';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -12,7 +10,9 @@ class Picker {
       String okText = '确定',
       String dismissText = '取消',
       String title,
-      ValueChanged<String> onChange,
+      ValueChanged<String> onPickerChange,
+      ValueChanged<String> onOk,
+      VoidCallback onDismiss,
       bool cascade = true}) {
     return showCupertinoModalPopup<void>(
         context: context,
@@ -32,14 +32,17 @@ class Picker {
             }
           }
           return PickerContainer(
-              data: data,
-              value: value ?? [],
-              cols: cols,
-              okText: okText,
-              dismissText: dismissText,
-              title: title,
-              cascade: cascade,
-              onChange: onChange);
+            data: data,
+            value: value ?? [],
+            cols: cols,
+            okText: okText,
+            dismissText: dismissText,
+            title: title,
+            cascade: cascade,
+            onPickerChange: onPickerChange,
+            onOk: onOk,
+            onDismiss: onDismiss,
+          );
         });
   }
 }
@@ -54,7 +57,9 @@ class PickerContainer extends StatefulWidget {
       this.dismissText,
       this.title,
       this.cascade,
-      this.onChange})
+      this.onPickerChange,
+      this.onOk,
+      this.onDismiss})
       : super(key: key);
   final List<dynamic> data;
   final List<String> value;
@@ -63,7 +68,9 @@ class PickerContainer extends StatefulWidget {
   final String dismissText;
   final String title;
   final bool cascade;
-  final ValueChanged<String> onChange;
+  final ValueChanged<String> onPickerChange;
+  final ValueChanged<String> onOk;
+  final VoidCallback onDismiss;
 
   @override
   _PickerContainerState createState() => _PickerContainerState();
@@ -79,6 +86,7 @@ class _PickerContainerState extends State<PickerContainer> {
   List<FixedExtentScrollController> _scrollControllerList = [];
   List<List<Map<String, dynamic>>> _colDataValueList = [];
   List<String> initialValueList = [];
+  List<List<Map<String, dynamic>>> _data = [];
   int loopTime = 0;
 
   @override
@@ -91,11 +99,11 @@ class _PickerContainerState extends State<PickerContainer> {
     List<Map<String, dynamic>> children,
     int index,
   ) {
+    bool flag = false;
     if (loopTime >= widget.cols) return;
     for (int i = 0; i < children.length; i++) {
       var _value = children[i]['value'];
       var _children = children[i]['children'];
-
       if (loopTime >= initialValueList.length) {
         initialValueList.add(children[0]['value']);
         _colDataValueList.add(children);
@@ -110,6 +118,7 @@ class _PickerContainerState extends State<PickerContainer> {
         break;
       } else {
         if (_value == initialValueList[_colDataValueList.length]) {
+          flag = true;
           _colDataValueList.add(children);
           _scrollControllerList
               .add(FixedExtentScrollController(initialItem: i));
@@ -122,19 +131,21 @@ class _PickerContainerState extends State<PickerContainer> {
           }
           break;
         } else {
-          initialValueList[_colDataValueList.length] = _value;
-          _colDataValueList.add(children);
-          _scrollControllerList
-              .add(FixedExtentScrollController(initialItem: 0));
-          loopTime++;
-          if (_children != null && _children.length > 0) {
-            _buildChildren(
-              _children,
-              loopTime,
-            );
-          }
-          break;
+          continue;
         }
+      }
+    }
+    if (flag == false) {
+      initialValueList[_colDataValueList.length] = children[0]['value'];
+      _colDataValueList.add(children);
+      _scrollControllerList.add(FixedExtentScrollController(initialItem: 0));
+      loopTime++;
+      if (children[0]['children'] != null &&
+          children[0]['children'].length > 0) {
+        _buildChildren(
+          children[0]['children'],
+          loopTime,
+        );
       }
     }
   }
@@ -161,6 +172,7 @@ class _PickerContainerState extends State<PickerContainer> {
       var firstColumnData = _buildColData(widget.data);
       _colDataValueList.add(firstColumnData);
       if (initialValueList.length == 0) {
+        //没有传入默认数据值
         initialValueList.add(firstColumnData[0]['value']);
         _scrollControllerList.add(FixedExtentScrollController(initialItem: 0));
         var _children = widget.data[0]['children'];
@@ -200,8 +212,14 @@ class _PickerContainerState extends State<PickerContainer> {
       }
     } else {
       if (widget.data != null && widget.data.length > 0) {
-        widget.data.asMap().forEach((int index, item) {
-          if (index >= widget.cols) return false;
+        widget.data.forEach((item) {
+          if (item.length > 0) _data.add(item);
+        });
+
+        for (int index = 0; index < _data.length; index++) {
+          var item = _data[index];
+          if (index >= widget.cols) break;
+          if (item.length == 0) continue;
           var colData = _buildColData(item);
           var flag = false;
           for (int i = 0, l = colData.length; i < l; i++) {
@@ -220,7 +238,7 @@ class _PickerContainerState extends State<PickerContainer> {
             _scrollControllerList
                 .add(FixedExtentScrollController(initialItem: 0));
             if (initialValueList.length == 0) {
-              initialValueList[index] = colData[0]['value'];
+              initialValueList.add(colData[0]['value']);
             } else {
               if (index >= initialValueList.length) {
                 initialValueList.add(colData[0]['value']);
@@ -231,7 +249,7 @@ class _PickerContainerState extends State<PickerContainer> {
           }
 
           _colDataValueList.add(colData);
-        });
+        }
       }
     }
   }
@@ -251,6 +269,24 @@ class _PickerContainerState extends State<PickerContainer> {
             fontSize: 17.0, fontWeight: FontWeight.w500, color: Colors.black),
         child: label,
       );
+    }
+  }
+
+  void handlePickerChange() {
+    if (widget.onPickerChange != null) {
+      if (initialValueList.length > _colDataValueList.length)
+        initialValueList =
+            initialValueList.getRange(0, _colDataValueList.length).toList();
+      widget.onPickerChange(initialValueList.join(','));
+    }
+  }
+
+  void handleOnOk() {
+    if (widget.onOk != null) {
+      if (initialValueList.length > _colDataValueList.length)
+        initialValueList =
+            initialValueList.getRange(0, _colDataValueList.length).toList();
+      widget.onOk(initialValueList.join(','));
     }
   }
 
@@ -274,11 +310,15 @@ class _PickerContainerState extends State<PickerContainer> {
                 return _buildLabel(item[index]['label']);
               },
               onSelectedItemChanged: (int index) {
-                var selectedItemValue = item[index]['value'];
+                var selectedItemValue = item[index]['value']; // 当前列选中的value值
 
                 // 如何知第几个controller
                 var keyIndex = _index; // 滚动第几个controller
-                if (keyIndex + 1 >= _colDataValueList.length) return;
+                if (keyIndex + 1 >= _colDataValueList.length) {
+                  initialValueList[keyIndex] = selectedItemValue;
+                  handlePickerChange();
+                  return;
+                }
                 if (_colDataValueList[keyIndex].length == 0) return;
 
                 for (int j = 0; j < widget.cols; j++) {
@@ -292,18 +332,21 @@ class _PickerContainerState extends State<PickerContainer> {
                     var _value = _colDataValueList[j][i]['value'];
                     var _children = _colDataValueList[j][i]['children'];
                     if (selectedItemValue == _value) {
+                      initialValueList[j] = selectedItemValue;
                       if (_children != null && _children.length > 0) {
                         if (j + 1 >= _colDataValueList.length) break;
                         _colDataValueList[j + 1] = _buildColData(_children);
-
                         selectedItemValue = _children[0]['value'];
                         _scrollControllerList[j + 1].jumpToItem(0);
+                        initialValueList[j + 1] = _children[0]['value'];
+                        handlePickerChange();
                         setState(() {});
                         break;
                       } else {
                         if (j + 1 >= _colDataValueList.length) break;
                         _colDataValueList[j + 1] = [];
-
+                        initialValueList[j + 1] = '';
+                        handlePickerChange();
                         setState(() {});
                       }
                     }
@@ -342,7 +385,11 @@ class _PickerContainerState extends State<PickerContainer> {
               itemBuilder: (_, int index) {
                 return _buildLabel(item[index]['label']);
               },
-              onSelectedItemChanged: null,
+              onSelectedItemChanged: (int index) {
+                var selectedItemValue = item[index]['value']; // 当前列选中的value值
+                var keyIndex = _index; // 滚动第几个controller
+                initialValueList[keyIndex] = selectedItemValue;
+              },
             ),
           ));
         } else {
@@ -381,10 +428,14 @@ class _PickerContainerState extends State<PickerContainer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop(true);
+                      if (widget.onDismiss != null) widget.onDismiss();
+                    },
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 9.0, horizontal: 15.0),
-                      child: Text(widget.okText),
+                      child: Text(widget.dismissText),
                     ),
                   ),
                   Text(
@@ -392,10 +443,14 @@ class _PickerContainerState extends State<PickerContainer> {
                     style: TextStyle(color: Colors.black),
                   ),
                   GestureDetector(
+                    onTap: () {
+                      if (widget.onOk != null) handleOnOk();
+                      Navigator.of(context).pop(true);
+                    },
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 9.0, horizontal: 15.0),
-                      child: Text(widget.dismissText),
+                      child: Text(widget.okText),
                     ),
                   )
                 ],

@@ -81,6 +81,7 @@ class _PickerContainerState extends State<PickerContainer> {
   double _itemExtent = 25.0;
   double _squeeze = 1.0;
   double _magnification = 1.2;
+  double _diameterRatio = 20.0;
   Color _background = Colors.white;
 
   List<FixedExtentScrollController> _scrollControllerList = [];
@@ -306,6 +307,7 @@ class _PickerContainerState extends State<PickerContainer> {
               childCount: item.length,
               squeeze: _squeeze,
               magnification: _magnification,
+              diameterRatio: _diameterRatio,
               itemBuilder: (BuildContext context, int index) {
                 return _buildLabel(item[index]['label']);
               },
@@ -362,6 +364,7 @@ class _PickerContainerState extends State<PickerContainer> {
               itemExtent: _itemExtent,
               squeeze: _squeeze,
               magnification: _magnification,
+              diameterRatio: _diameterRatio,
               childCount: 0,
               itemBuilder: (_, int index) {
                 return Text('');
@@ -381,6 +384,7 @@ class _PickerContainerState extends State<PickerContainer> {
               itemExtent: _itemExtent,
               squeeze: _squeeze,
               magnification: _magnification,
+              diameterRatio: _diameterRatio,
               childCount: item.length,
               itemBuilder: (_, int index) {
                 return _buildLabel(item[index]['label']);
@@ -399,6 +403,7 @@ class _PickerContainerState extends State<PickerContainer> {
               itemExtent: _itemExtent,
               squeeze: _squeeze,
               magnification: _magnification,
+              diameterRatio: _diameterRatio,
               childCount: 0,
               itemBuilder: (_, int index) {
                 return Text('');

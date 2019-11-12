@@ -188,12 +188,14 @@ class _PickerContainerState extends State<PickerContainer> {
           );
         }
       } else {
+        bool flag = false;
         for (int i = 0, l = widget.data.length; i < l; i++) {
           var _value = widget.data[i]['value'];
           var _children = widget.data[i]['children'];
           if (i + 1 >= widget.cols) break;
           if (initialValueList.contains(_value) &&
               initialValueList[0] == _value) {
+            flag = true;
             _scrollControllerList
                 .add(FixedExtentScrollController(initialItem: i));
             if (_children != null && _children.length > 0) {
@@ -203,14 +205,17 @@ class _PickerContainerState extends State<PickerContainer> {
 
             break;
           } else {
-            initialValueList[i] = firstColumnData[0]['value'];
-            _scrollControllerList
-                .add(FixedExtentScrollController(initialItem: 0));
-            if (_children != null && _children.length > 0) {
-              loopTime++;
-              _buildChildren(_children, loopTime);
-            }
-            break;
+            continue;
+          }
+        }
+        if (flag == false) {
+          initialValueList[0] = firstColumnData[0]['value'];
+          _scrollControllerList
+              .add(FixedExtentScrollController(initialItem: 0));
+          if (firstColumnData[0]['children'] != null &&
+              firstColumnData[0]['children'].length > 0) {
+            loopTime++;
+            _buildChildren(firstColumnData[0]['children'], loopTime);
           }
         }
       }

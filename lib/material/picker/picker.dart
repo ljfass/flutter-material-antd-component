@@ -82,6 +82,8 @@ class _PickerContainerState extends State<PickerContainer> {
   double _squeeze = 1.0;
   double _diameterRatio = 2.0;
   Color _background = Colors.white;
+  Color _activeTextColor = Colors.black;
+  Color _inActiveTextColor = Colors.grey;
 
   List<FixedExtentScrollController> _scrollControllerList = [];
   List<List<Map<String, dynamic>>> _colDataValueList = [];
@@ -136,16 +138,18 @@ class _PickerContainerState extends State<PickerContainer> {
       }
     }
     if (flag == false) {
-      initialValueList[_colDataValueList.length] = children[0]['value'];
-      _colDataValueList.add(children);
-      _scrollControllerList.add(FixedExtentScrollController(initialItem: 0));
-      loopTime++;
-      if (children[0]['children'] != null &&
-          children[0]['children'].length > 0) {
-        _buildChildren(
-          children[0]['children'],
-          loopTime,
-        );
+      if (_colDataValueList.length < initialValueList.length) {
+        initialValueList[_colDataValueList.length] = children[0]['value'];
+        _colDataValueList.add(children);
+        _scrollControllerList.add(FixedExtentScrollController(initialItem: 0));
+        loopTime++;
+        if (children[0]['children'] != null &&
+            children[0]['children'].length > 0) {
+          _buildChildren(
+            children[0]['children'],
+            loopTime,
+          );
+        }
       }
     }
   }
@@ -254,19 +258,23 @@ class _PickerContainerState extends State<PickerContainer> {
     }
   }
 
-  Widget _buildLabel(label) {
+  Widget _buildLabel(label, {bool active = true}) {
     if (label is String) {
       return DefaultTextStyle(
         textAlign: TextAlign.center,
         style: TextStyle(
-            fontSize: 17.0, fontWeight: FontWeight.w400, color: Colors.black),
+            fontSize: 17.0,
+            fontWeight: FontWeight.w400,
+            color: active == true ? _activeTextColor : _inActiveTextColor),
         child: Text(label),
       );
     } else {
       return DefaultTextStyle(
         textAlign: TextAlign.center,
         style: TextStyle(
-            fontSize: 17.0, fontWeight: FontWeight.w400, color: Colors.black),
+            fontSize: 17.0,
+            fontWeight: FontWeight.w400,
+            color: active == true ? _activeTextColor : _inActiveTextColor),
         child: label,
       );
     }
@@ -311,7 +319,9 @@ class _PickerContainerState extends State<PickerContainer> {
                   return Container(
                     height: _itemExtent,
                     alignment: Alignment.center,
-                    child: _buildLabel(item[index]['label']),
+                    child: _buildLabel(item[index]['label'],
+                        active:
+                            _scrollControllerList[_index].initialItem == index),
                   );
                 },
                 onSelectedItemChanged: (int index) {
@@ -319,6 +329,10 @@ class _PickerContainerState extends State<PickerContainer> {
 
                   // 如何知第几个controller
                   var keyIndex = _index; // 滚动第几个controller
+                  setState(() {
+                    _scrollControllerList[keyIndex] =
+                        FixedExtentScrollController(initialItem: index);
+                  });
                   if (keyIndex + 1 >= _colDataValueList.length) {
                     initialValueList[keyIndex] = selectedItemValue;
                     handlePickerChange();
@@ -396,12 +410,18 @@ class _PickerContainerState extends State<PickerContainer> {
                   return Container(
                     height: _itemExtent,
                     alignment: Alignment.center,
-                    child: _buildLabel(item[index]['label']),
+                    child: _buildLabel(item[index]['label'],
+                        active:
+                            _scrollControllerList[_index].initialItem == index),
                   );
                 },
                 onSelectedItemChanged: (int index) {
                   var selectedItemValue = item[index]['value']; // 当前列选中的value值
                   var keyIndex = _index; // 滚动第几个controller
+                  setState(() {
+                    _scrollControllerList[keyIndex] =
+                        FixedExtentScrollController(initialItem: index);
+                  });
                   initialValueList[keyIndex] = selectedItemValue;
                 },
               ),

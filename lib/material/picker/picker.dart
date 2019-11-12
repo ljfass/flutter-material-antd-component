@@ -78,10 +78,9 @@ class PickerContainer extends StatefulWidget {
 
 class _PickerContainerState extends State<PickerContainer> {
   double _containerHeight;
-  double _itemExtent = 25.0;
+  double _itemExtent = 28.0;
   double _squeeze = 1.0;
-  double _magnification = 1.2;
-  double _diameterRatio = 20.0;
+  double _diameterRatio = 2.0;
   Color _background = Colors.white;
 
   List<FixedExtentScrollController> _scrollControllerList = [];
@@ -260,14 +259,14 @@ class _PickerContainerState extends State<PickerContainer> {
       return DefaultTextStyle(
         textAlign: TextAlign.center,
         style: TextStyle(
-            fontSize: 17.0, fontWeight: FontWeight.w500, color: Colors.black),
+            fontSize: 17.0, fontWeight: FontWeight.w400, color: Colors.black),
         child: Text(label),
       );
     } else {
       return DefaultTextStyle(
         textAlign: TextAlign.center,
         style: TextStyle(
-            fontSize: 17.0, fontWeight: FontWeight.w500, color: Colors.black),
+            fontSize: 17.0, fontWeight: FontWeight.w400, color: Colors.black),
         child: label,
       );
     }
@@ -299,62 +298,69 @@ class _PickerContainerState extends State<PickerContainer> {
         if (item.length > 0) {
           widgetList.add(Flexible(
             flex: 1,
-            child: CupertinoPicker.builder(
-              key: ValueKey('$_index'),
-              scrollController: _scrollControllerList[_index],
-              backgroundColor: _background,
-              itemExtent: _itemExtent, // 高度
-              childCount: item.length,
-              squeeze: _squeeze,
-              magnification: _magnification,
-              diameterRatio: _diameterRatio,
-              itemBuilder: (BuildContext context, int index) {
-                return _buildLabel(item[index]['label']);
-              },
-              onSelectedItemChanged: (int index) {
-                var selectedItemValue = item[index]['value']; // 当前列选中的value值
+            child: Container(
+              child: CupertinoPicker.builder(
+                key: ValueKey('$_index'),
+                scrollController: _scrollControllerList[_index],
+                backgroundColor: _background,
+                itemExtent: _itemExtent, // 高度
+                childCount: item.length,
+                squeeze: _squeeze,
+                diameterRatio: _diameterRatio,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    height: _itemExtent,
+                    alignment: Alignment.center,
+                    child: _buildLabel(item[index]['label']),
+                  );
+                },
+                onSelectedItemChanged: (int index) {
+                  var selectedItemValue = item[index]['value']; // 当前列选中的value值
 
-                // 如何知第几个controller
-                var keyIndex = _index; // 滚动第几个controller
-                if (keyIndex + 1 >= _colDataValueList.length) {
-                  initialValueList[keyIndex] = selectedItemValue;
-                  handlePickerChange();
-                  return;
-                }
-                if (_colDataValueList[keyIndex].length == 0) return;
-
-                for (int j = 0; j < widget.cols; j++) {
-                  if (j < keyIndex) continue;
-                  if (j + 1 >= _colDataValueList.length) break;
-                  if (_colDataValueList[j].length == 0) {
-                    _colDataValueList[j + 1] = [];
-                    continue;
+                  // 如何知第几个controller
+                  var keyIndex = _index; // 滚动第几个controller
+                  if (keyIndex + 1 >= _colDataValueList.length) {
+                    initialValueList[keyIndex] = selectedItemValue;
+                    handlePickerChange();
+                    return;
                   }
-                  for (int i = 0, l = _colDataValueList[j].length; i < l; i++) {
-                    var _value = _colDataValueList[j][i]['value'];
-                    var _children = _colDataValueList[j][i]['children'];
-                    if (selectedItemValue == _value) {
-                      initialValueList[j] = selectedItemValue;
-                      if (_children != null && _children.length > 0) {
-                        if (j + 1 >= _colDataValueList.length) break;
-                        _colDataValueList[j + 1] = _buildColData(_children);
-                        selectedItemValue = _children[0]['value'];
-                        _scrollControllerList[j + 1].jumpToItem(0);
-                        initialValueList[j + 1] = _children[0]['value'];
-                        handlePickerChange();
-                        setState(() {});
-                        break;
-                      } else {
-                        if (j + 1 >= _colDataValueList.length) break;
-                        _colDataValueList[j + 1] = [];
-                        initialValueList[j + 1] = '';
-                        handlePickerChange();
-                        setState(() {});
+                  if (_colDataValueList[keyIndex].length == 0) return;
+
+                  for (int j = 0; j < widget.cols; j++) {
+                    if (j < keyIndex) continue;
+                    if (j + 1 >= _colDataValueList.length) break;
+                    if (_colDataValueList[j].length == 0) {
+                      _colDataValueList[j + 1] = [];
+                      continue;
+                    }
+                    for (int i = 0, l = _colDataValueList[j].length;
+                        i < l;
+                        i++) {
+                      var _value = _colDataValueList[j][i]['value'];
+                      var _children = _colDataValueList[j][i]['children'];
+                      if (selectedItemValue == _value) {
+                        initialValueList[j] = selectedItemValue;
+                        if (_children != null && _children.length > 0) {
+                          if (j + 1 >= _colDataValueList.length) break;
+                          _colDataValueList[j + 1] = _buildColData(_children);
+                          selectedItemValue = _children[0]['value'];
+                          _scrollControllerList[j + 1].jumpToItem(0);
+                          initialValueList[j + 1] = _children[0]['value'];
+                          handlePickerChange();
+                          setState(() {});
+                          break;
+                        } else {
+                          if (j + 1 >= _colDataValueList.length) break;
+                          _colDataValueList[j + 1] = [];
+                          initialValueList[j + 1] = '';
+                          handlePickerChange();
+                          setState(() {});
+                        }
                       }
                     }
                   }
-                }
-              },
+                },
+              ),
             ),
           ));
         } else {
@@ -363,7 +369,6 @@ class _PickerContainerState extends State<PickerContainer> {
               backgroundColor: _background,
               itemExtent: _itemExtent,
               squeeze: _squeeze,
-              magnification: _magnification,
               diameterRatio: _diameterRatio,
               childCount: 0,
               itemBuilder: (_, int index) {
@@ -378,22 +383,28 @@ class _PickerContainerState extends State<PickerContainer> {
       _colDataValueList.asMap().forEach((int _index, item) {
         if (item.length > 0) {
           widgetList.add(Flexible(
-            child: CupertinoPicker.builder(
-              scrollController: _scrollControllerList[_index],
-              backgroundColor: _background,
-              itemExtent: _itemExtent,
-              squeeze: _squeeze,
-              magnification: _magnification,
-              diameterRatio: _diameterRatio,
-              childCount: item.length,
-              itemBuilder: (_, int index) {
-                return _buildLabel(item[index]['label']);
-              },
-              onSelectedItemChanged: (int index) {
-                var selectedItemValue = item[index]['value']; // 当前列选中的value值
-                var keyIndex = _index; // 滚动第几个controller
-                initialValueList[keyIndex] = selectedItemValue;
-              },
+            child: Container(
+              decoration: BoxDecoration(color: Colors.white),
+              child: CupertinoPicker.builder(
+                scrollController: _scrollControllerList[_index],
+                backgroundColor: _background,
+                itemExtent: _itemExtent,
+                squeeze: _squeeze,
+                diameterRatio: _diameterRatio,
+                childCount: item.length,
+                itemBuilder: (_, int index) {
+                  return Container(
+                    height: _itemExtent,
+                    alignment: Alignment.center,
+                    child: _buildLabel(item[index]['label']),
+                  );
+                },
+                onSelectedItemChanged: (int index) {
+                  var selectedItemValue = item[index]['value']; // 当前列选中的value值
+                  var keyIndex = _index; // 滚动第几个controller
+                  initialValueList[keyIndex] = selectedItemValue;
+                },
+              ),
             ),
           ));
         } else {
@@ -402,7 +413,6 @@ class _PickerContainerState extends State<PickerContainer> {
               backgroundColor: _background,
               itemExtent: _itemExtent,
               squeeze: _squeeze,
-              magnification: _magnification,
               diameterRatio: _diameterRatio,
               childCount: 0,
               itemBuilder: (_, int index) {

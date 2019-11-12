@@ -150,7 +150,6 @@ class _PickerViewState extends State<PickerView> {
         for (int i = 0, l = widget.data.length; i < l; i++) {
           var _value = widget.data[i]['value'];
           var _children = widget.data[i]['children'];
-          if (i + 1 >= widget.cols) break;
           if (initialValueList.contains(_value) &&
               initialValueList[0] == _value) {
             flag = true;
@@ -304,14 +303,15 @@ class _PickerViewState extends State<PickerView> {
                           selectedItemValue = _children[0]['value'];
                           _scrollControllerList[j + 1].jumpToItem(0);
                           initialValueList[j + 1] = _children[0]['value'];
-
+                          loopTime = _colDataValueList.length;
+                          _buildChildren(_children, _colDataValueList.length);
                           setState(() {});
                           break;
                         } else {
                           if (j + 1 >= _colDataValueList.length) break;
-                          _colDataValueList[j + 1] = [];
-                          initialValueList[j + 1] = '';
-
+                          _scrollControllerList.removeAt(j + 1);
+                          _colDataValueList.removeAt(j + 1);
+                          initialValueList.removeAt(j + 1);
                           setState(() {});
                         }
                       }

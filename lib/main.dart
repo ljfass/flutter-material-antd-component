@@ -25,6 +25,7 @@ import './pages/SwipeAction/swipeAction.dart';
 import './pages/Carousel/carsousel.dart';
 import './pages/Grid/grid.dart';
 import './pages/picker/picker.dart';
+import './pages/PickerView/pickerView.dart';
 
 void main() => runApp(MyApp());
 
@@ -209,6 +210,22 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       child: ListTile(
                         title: Text('Checkbox 复选框',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PagePickerView();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('PickerView 选择器',
                             style:
                                 TextStyle(fontSize: 14.0, color: Colors.grey)),
                         trailing: Container(
@@ -642,3 +659,106 @@ class _MyHomePageState extends State<MyHomePage> {
     ));
   }
 }
+
+// import 'package:flutter/material.dart';
+
+// import './picker/date_picker_bottom_sheet.dart';
+// import './picker/date_picker_in_page.dart';
+// import './picker/datetime_picker_bottom_sheet.dart';
+// import './picker/datetime_picker_in_page.dart';
+// import './picker/time_picker_bottom_sheet.dart';
+// import './picker/time_picker_in_page.dart';
+
+// void main() => runApp(MyApp());
+
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Date Picker Demo',
+//       theme: ThemeData(primarySwatch: Colors.blue),
+//       home: MyHomePage(),
+//     );
+//   }
+// }
+
+// class MyHomePage extends StatelessWidget {
+//   MyHomePage({Key key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     TextStyle textStyle = TextStyle(color: Colors.white, fontSize: 16.0);
+//     return Scaffold(
+//       appBar: AppBar(title: Text('Date Picker Demo')),
+//       body: Container(
+//         width: double.infinity,
+//         padding: EdgeInsets.all(16.0),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.stretch,
+//           children: <Widget>[
+//             RaisedButton(
+//               color: Colors.blue,
+//               child: Text("DatePicker Bottom Sheet", style: textStyle),
+//               onPressed: () {
+//                 Navigator.of(context)
+//                     .push(MaterialPageRoute(builder: (context) {
+//                   return DatePickerBottomSheet();
+//                 }));
+//               },
+//             ),
+//             RaisedButton(
+//               color: Colors.blue,
+//               child: Text("DatePicker In Page", style: textStyle),
+//               onPressed: () {
+//                 Navigator.of(context)
+//                     .push(MaterialPageRoute(builder: (context) {
+//                   return DatePickerInPage();
+//                 }));
+//               },
+//             ),
+//             RaisedButton(
+//               color: Colors.blue,
+//               child: Text("TimePicker Bottom Sheet", style: textStyle),
+//               onPressed: () {
+//                 Navigator.of(context)
+//                     .push(MaterialPageRoute(builder: (context) {
+//                   return TimePickerBottomSheet();
+//                 }));
+//               },
+//             ),
+//             RaisedButton(
+//               color: Colors.blue,
+//               child: Text("TimePicker In Page", style: textStyle),
+//               onPressed: () {
+//                 Navigator.of(context)
+//                     .push(MaterialPageRoute(builder: (context) {
+//                   return TimePickerInPage();
+//                 }));
+//               },
+//             ),
+//             RaisedButton(
+//               color: Colors.blue,
+//               child: Text("DateTimePicker Bottom Sheet", style: textStyle),
+//               onPressed: () {
+//                 Navigator.of(context)
+//                     .push(MaterialPageRoute(builder: (context) {
+//                   return DateTimePickerBottomSheet();
+//                 }));
+//               },
+//             ),
+//             RaisedButton(
+//               color: Colors.blue,
+//               child: Text("DateTimePicker In Page", style: textStyle),
+//               onPressed: () {
+//                 Navigator.of(context)
+//                     .push(MaterialPageRoute(builder: (context) {
+//                   return DateTimePickerInPage();
+//                 }));
+//               },
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

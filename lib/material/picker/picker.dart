@@ -287,8 +287,10 @@ class _PickerContainerState extends State<PickerContainer> {
   void handlePickerChange() {
     if (widget.onPickerChange != null) {
       if (initialValueList.length > _colDataValueList.length)
-        initialValueList =
-            initialValueList.getRange(0, _colDataValueList.length).toList();
+        setState(() {
+          initialValueList =
+              initialValueList.getRange(0, _colDataValueList.length).toList();
+        });
       widget.onPickerChange(initialValueList.join(','));
     }
   }
@@ -333,48 +335,40 @@ class _PickerContainerState extends State<PickerContainer> {
 
                   // 如何知第几个controller
                   var keyIndex = _index; // 滚动第几个controller
-                  setState(() {
-                    _scrollControllerList[keyIndex] =
-                        FixedExtentScrollController(initialItem: index);
-                  });
+
                   if (keyIndex + 1 >= _colDataValueList.length) {
                     initialValueList[keyIndex] = selectedItemValue;
-                    handlePickerChange();
+                    // handlePickerChange();
                     return;
                   }
                   if (_colDataValueList[keyIndex].length == 0) return;
-
-                  for (int j = 0; j < widget.cols; j++) {
+                  for (int j = 0; j < _colDataValueList.length; j++) {
                     if (j < keyIndex) continue;
-                    if (j + 1 >= _colDataValueList.length) break;
-                    if (_colDataValueList[j].length == 0) {
-                      _colDataValueList[j + 1] = [];
-                      continue;
-                    }
                     for (int i = 0, l = _colDataValueList[j].length;
                         i < l;
                         i++) {
                       var _value = _colDataValueList[j][i]['value'];
                       var _children = _colDataValueList[j][i]['children'];
                       if (selectedItemValue == _value) {
-                        initialValueList[j] = selectedItemValue;
+                        initialValueList[keyIndex] = selectedItemValue;
                         if (_children != null && _children.length > 0) {
-                          if (j + 1 >= _colDataValueList.length) break;
                           _colDataValueList[j + 1] = _buildColData(_children);
-                          selectedItemValue = _children[0]['value'];
                           _scrollControllerList[j + 1].jumpToItem(0);
-                          initialValueList[j + 1] = _children[0]['value'];
-                          handlePickerChange();
-                          _buildChildren(_children, _colDataValueList.length);
-                          setState(() {});
+                          selectedItemValue = _children[0]['value'];
+                          // loopTime = _colDataValueList.length;
+                          // if(_colDataValueList.length)
+                          // if()
+                          // _buildChildren(_children, initialValueList.length);
+
                           break;
                         } else {
-                          if (j + 1 >= _colDataValueList.length) break;
-                          _colDataValueList[j + 1] = [];
-                          initialValueList[j + 1] = '';
-                          handlePickerChange();
-                          setState(() {});
+                          _colDataValueList[j] = [];
+                          initialValueList[j] = '';
                         }
+                        setState(() {});
+                        break;
+                      } else {
+                        continue;
                       }
                     }
                   }

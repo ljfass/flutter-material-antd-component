@@ -308,7 +308,7 @@ const district = [
           {"value": "810204", "label": "黄大仙区", "children": []},
           {"value": "810201", "label": "九龙城区", "children": []},
           {"value": "810203", "label": "深水埗区", "children": []},
-          {"value": "810202", "label": "油尖旺��������������", "children": []}
+          {"value": "810202", "label": "油尖旺�����������������", "children": []}
         ]
       },
       {
@@ -639,11 +639,10 @@ class _PagePickerState extends State<PagePicker> {
                     print(value);
                   }, onPickerChange: (String value) {
                     print(value);
-                  }, value: [
-                    '340000',
-                    '341500',
-                    '341502',
-                  ], data: district);
+                  },
+                      value: ['340000', '341500', '341526'],
+                      cols: 3,
+                      data: district);
                 },
               ),
               AntList.List(

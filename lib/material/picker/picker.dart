@@ -268,7 +268,7 @@ class _PickerContainerState extends State<PickerContainer> {
       return DefaultTextStyle(
         textAlign: TextAlign.center,
         style: TextStyle(
-            fontSize: 17.0,
+            fontSize: 16.0,
             fontWeight: FontWeight.w400,
             color: active == true ? _activeTextColor : _inActiveTextColor),
         child: Text(label),
@@ -277,7 +277,7 @@ class _PickerContainerState extends State<PickerContainer> {
       return DefaultTextStyle(
         textAlign: TextAlign.center,
         style: TextStyle(
-            fontSize: 17.0,
+            fontSize: 16.0,
             fontWeight: FontWeight.w400,
             color: active == true ? _activeTextColor : _inActiveTextColor),
         child: label,

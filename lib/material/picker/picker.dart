@@ -192,7 +192,6 @@ class _PickerContainerState extends State<PickerContainer> {
         for (int i = 0, l = widget.data.length; i < l; i++) {
           var _value = widget.data[i]['value'];
           var _children = widget.data[i]['children'];
-          if (i + 1 >= widget.cols) break;
           if (initialValueList.contains(_value) &&
               initialValueList[0] == _value) {
             flag = true;
@@ -366,6 +365,7 @@ class _PickerContainerState extends State<PickerContainer> {
                           _scrollControllerList[j + 1].jumpToItem(0);
                           initialValueList[j + 1] = _children[0]['value'];
                           handlePickerChange();
+                          _buildChildren(_children, _colDataValueList.length);
                           setState(() {});
                           break;
                         } else {

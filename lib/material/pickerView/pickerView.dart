@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 
 class PickerView extends StatefulWidget {
   PickerView(
-      {Key key, this.data, this.value, this.cascade = true, this.cols = 3})
+      {Key key,
+      this.data,
+      this.value,
+      this.cascade = true,
+      this.cols = 3,
+      this.onChange})
       : assert(cols > 0),
         assert(() {
           var flag = true;
@@ -25,6 +30,8 @@ class PickerView extends StatefulWidget {
   final List<String> value;
   final bool cascade;
   final int cols;
+  final ValueChanged<String> onChange;
+
   @override
   _PickerViewState createState() => _PickerViewState();
 }
@@ -109,6 +116,21 @@ class _PickerViewState extends State<PickerView> {
           );
         }
       }
+    }
+  }
+
+  void handleChange() {
+    if (widget.onChange != null) {
+      if (initialValueList.length > _colDataValueList.length)
+        setState(() {
+          initialValueList =
+              initialValueList.getRange(0, _colDataValueList.length).toList();
+        });
+      List<String> filledList = [];
+      initialValueList.forEach((item) {
+        if (item != '') filledList.add(item);
+      });
+      widget.onChange(filledList.join(','));
     }
   }
 
@@ -279,7 +301,19 @@ class _PickerViewState extends State<PickerView> {
                   });
                   if (keyIndex + 1 >= _colDataValueList.length) {
                     initialValueList[keyIndex] = selectedItemValue;
-
+                    if (_colDataValueList[keyIndex][index]['children'] !=
+                            null &&
+                        _colDataValueList[keyIndex][index]['children'].length >
+                            0) {
+                      _colDataValueList.add(_buildColData(
+                          _colDataValueList[keyIndex][index]['children']));
+                      initialValueList.add(_colDataValueList[keyIndex][index]
+                          ['children'][0]['value']);
+                      _scrollControllerList
+                          .add(FixedExtentScrollController(initialItem: 0));
+                      setState(() {});
+                    }
+                    handleChange();
                     return;
                   }
                   if (_colDataValueList[keyIndex].length == 0) return;
@@ -304,6 +338,7 @@ class _PickerViewState extends State<PickerView> {
                         if (_children != null && _children.length > 0) {
                           if (j + 1 >= _colDataValueList.length) {
                             if (j + 1 >= widget.cols) {
+                              handleChange();
                               setState(() {});
                               break;
                             }
@@ -314,6 +349,7 @@ class _PickerViewState extends State<PickerView> {
                                 FixedExtentScrollController(initialItem: 0));
                           } else {
                             if (j + 1 >= widget.cols) {
+                              handleChange();
                               setState(() {});
                               break;
                             }
@@ -333,6 +369,7 @@ class _PickerViewState extends State<PickerView> {
                           }
                           initialValueList[j] = selectedItemValue;
                         }
+                        handleChange();
                         setState(() {});
                         break;
                       } else {
@@ -388,6 +425,7 @@ class _PickerViewState extends State<PickerView> {
                     _scrollControllerList[keyIndex] =
                         FixedExtentScrollController(initialItem: index);
                   });
+                  handleChange();
                 },
               ),
             ),

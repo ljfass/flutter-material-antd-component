@@ -516,6 +516,28 @@ const district = [
     ]
   }
 ];
+const seasons = [
+  [
+    {
+      'label': '2013',
+      'value': '2013',
+    },
+    {
+      'label': '2014',
+      'value': '2014',
+    },
+  ],
+  [
+    {
+      'label': '春',
+      'value': '春',
+    },
+    {
+      'label': '夏',
+      'value': '夏',
+    },
+  ],
+];
 
 class PagePickerView extends StatelessWidget {
   @override
@@ -525,51 +547,39 @@ class PagePickerView extends StatelessWidget {
           title: Text('PickerView'),
         ),
         body: Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            height: 120.0,
-            child: PickerView(
-                cascade: true,
-                value: [
-                  '820000',
-                  '820100',
-                ],
-                // data: [
-                //   [
-                //     {
-                //       'label': '地方',
-                //       'value': '2011',
-                //     },
-                //     {
-                //       'label': '2012',
-                //       'value': '2012',
-                //     },
-                //     {
-                //       'label': '2015',
-                //       'value': '2015',
-                //     },
-                //     {
-                //       'label': '2016',
-                //       'value': '2016',
-                //     },
-                //     {
-                //       'label': '2017',
-                //       'value': '2017',
-                //     },
-                //   ],
-                //   [
-                //     {
-                //       'label': '2013',
-                //       'value': '2013',
-                //     },
-                //     {
-                //       'label': '2014',
-                //       'value': '2014',
-                //     },
-                //   ],
-                // ],
-                data: district),
+          child: Column(
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                height: 120.0,
+                child: PickerView(
+                    cascade: true,
+                    value: [
+                      '820000',
+                      '820100',
+                    ],
+                    data: district),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                height: 120.0,
+                child: PickerView(
+                    cascade: false,
+                    onChange: (String selectedValue) {
+                      print(selectedValue);
+                    },
+                    value: [
+                      '2014',
+                      '820100',
+                    ],
+                    data: seasons),
+              )
+            ],
           ),
         ));
   }

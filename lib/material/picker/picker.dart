@@ -413,10 +413,8 @@ class _PickerContainerState extends State<PickerContainer> {
 
                           initialValueList[j] = selectedItemValue;
                         }
-
                         handlePickerChange();
                         setState(() {});
-                        // break;
                       } else {
                         continue;
                       }
@@ -472,6 +470,7 @@ class _PickerContainerState extends State<PickerContainer> {
                         FixedExtentScrollController(initialItem: index);
                   });
                   initialValueList[keyIndex] = selectedItemValue;
+                  handlePickerChange();
                 },
               ),
             ),

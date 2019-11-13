@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:material_antd/material/button/button.dart';
-import '../../material/list/list.dart' as AntList;
-import '../../material/picker/picker.dart';
+import '../../material/pickerView/pickerView.dart';
 
 const district = [
   {
@@ -13,13 +11,7 @@ const district = [
         "value": "341500",
         "label": "六安市",
         "children": [
-          {
-            "value": "341522",
-            "label": "霍邱县",
-            "children": [
-              {"value": "3415224", "label": "逻辑县", "children": []}
-            ]
-          },
+          {"value": "341522", "label": "霍邱县", "children": []},
           {
             "value": "341525",
             "label": "霍山县",
@@ -27,13 +19,7 @@ const district = [
               {"value": "3415224", "label": "罗落县", "children": []}
             ]
           },
-          {
-            "value": "341502",
-            "label": "金安区",
-            "children": [
-              {"value": "3415124", "label": "层面县", "children": []}
-            ]
-          },
+          {"value": "341502", "label": "金安区", "children": []},
           {"value": "341524", "label": "金寨县", "children": []},
           {"value": "341526", "label": "其它区", "children": []},
           {"value": "341521", "label": "寿县", "children": []},
@@ -531,228 +517,59 @@ const district = [
   }
 ];
 
-const province = [
-  {'value': '11', 'label': '北京市', 'spell': 'BeiJingShi'},
-  {'value': '12', 'label': '天津市', 'spell': 'TianJinShi'},
-  {'value': '13', 'label': '河北省', 'spell': 'HeBeiSheng'},
-  {'value': '14', 'label': '山西省', 'spell': 'ShanXiSheng'},
-  {'value': '15', 'label': '内蒙古自治区', 'spell': 'NeiMengGuZiZhiQu'},
-  {'value': '21', 'label': '辽宁省', 'spell': 'LiaoNingSheng'},
-  {'value': '22', 'label': '吉林省', 'spell': 'JiLinSheng'},
-  {'value': '23', 'label': '黑龙江省', 'spell': 'HeiLongJiangSheng'},
-  {'value': '31', 'label': '上海市', 'spell': 'ShangHaiShi'},
-  {'value': '32', 'label': '江苏省', 'spell': 'JiangSuSheng'},
-  {'value': '33', 'label': '浙江省', 'spell': 'ZheJiangSheng', 'children': []},
-  {'value': '34', 'label': '安徽省', 'spell': 'AnHuiSheng'},
-  {'value': '35', 'label': '福建省', 'spell': 'FuJianSheng'},
-  {'value': '36', 'label': '江西省', 'spell': 'JiangXiSheng'},
-  {'value': '37', 'label': '山东省', 'spell': 'ShanDongSheng'},
-  {'value': '41', 'label': '河南省', 'spell': 'HeNanSheng'},
-  {'value': '42', 'label': '湖北省', 'spell': 'HuBeiSheng'},
-  {'value': '43', 'label': '湖南省', 'spell': 'HuNanSheng'},
-  {'value': '44', 'label': '广东省', 'spell': 'GuangDongSheng'},
-  {'value': '45', 'label': '广西壮族自治区', 'spell': 'GuangXiZhuangZuZiZhiQu'},
-  {'value': '46', 'label': '海南省', 'spell': 'HaiNanSheng'},
-  {'value': '50', 'label': '重庆市', 'spell': 'ChongQingShi'},
-  {'value': '51', 'label': '四川省', 'spell': 'SiChuanSheng'},
-  {'value': '52', 'label': '贵州省', 'spell': 'GuiZhouSheng'},
-  {'value': '53', 'label': '云南省', 'spell': 'YunNanSheng'},
-  {'value': '54', 'label': '西藏自治区', 'spell': 'XiCangZiZhiQu'},
-  {'value': '61', 'label': '陕西省', 'spell': 'ShanXiSheng'},
-  {'value': '62', 'label': '甘肃省', 'spell': 'GanSuSheng'},
-  {'value': '63', 'label': '青海省', 'spell': 'QingHaiSheng'},
-  {'value': '64', 'label': '宁夏回族自治区', 'spell': 'NingXiaHuiZuZiZhiQu'},
-  {'value': '65', 'label': '新疆维吾尔自治区', 'spell': 'XinJiangWeiWuErZiZhiQu'}
-];
-
-const province1 = [
-  {'value': '11', 'label': '北京市', 'spell': 'BeiJingShi'},
-  {'value': '12', 'label': '天津市', 'spell': 'TianJinShi'},
-  {'value': '13', 'label': '河北省', 'spell': 'HeBeiSheng'},
-  {'value': '14', 'label': '山西省', 'spell': 'ShanXiSheng'},
-  {'value': '15', 'label': '内蒙古自治区', 'spell': 'NeiMengGuZiZhiQu'},
-  {'value': '21', 'label': '辽宁省', 'spell': 'LiaoNingSheng'},
-  {'value': '22', 'label': '吉林省', 'spell': 'JiLinSheng'},
-  {'value': '23', 'label': '黑龙江省', 'spell': 'HeiLongJiangSheng'},
-  {'value': '31', 'label': '上海市', 'spell': 'ShangHaiShi'},
-  {'value': '32', 'label': '江苏省', 'spell': 'JiangSuSheng'},
-  {
-    'value': '33',
-    'label': '浙江省',
-    'spell': 'ZheJiangSheng',
-    'children': [
-      {'value': '133', 'label': '133'}
-    ]
-  },
-  {'value': '34', 'label': '安徽省', 'spell': 'AnHuiSheng'},
-  {'value': '35', 'label': '福建省', 'spell': 'FuJianSheng'},
-  {'value': '36', 'label': '江西省', 'spell': 'JiangXiSheng'},
-  {'value': '37', 'label': '山东省', 'spell': 'ShanDongSheng'},
-  {'value': '41', 'label': '河南省', 'spell': 'HeNanSheng'},
-  {'value': '42', 'label': '湖北省', 'spell': 'HuBeiSheng'},
-  {'value': '43', 'label': '湖南省', 'spell': 'HuNanSheng'},
-  {'value': '44', 'label': '广东省', 'spell': 'GuangDongSheng'},
-  {'value': '45', 'label': '广西壮族自治区', 'spell': 'GuangXiZhuangZuZiZhiQu'},
-  {'value': '46', 'label': '海南省', 'spell': 'HaiNanSheng'},
-  {'value': '50', 'label': '重庆市', 'spell': 'ChongQingShi'},
-  {'value': '51', 'label': '四川省', 'spell': 'SiChuanSheng'},
-  {'value': '52', 'label': '贵州省', 'spell': 'GuiZhouSheng'},
-  {'value': '53', 'label': '云南省', 'spell': 'YunNanSheng'},
-  {'value': '54', 'label': '西藏自治区', 'spell': 'XiCangZiZhiQu'},
-  {'value': '61', 'label': '陕西省', 'spell': 'ShanXiSheng'},
-  {'value': '62', 'label': '甘肃省', 'spell': 'GanSuSheng'},
-  {'value': '63', 'label': '青海省', 'spell': 'QingHaiSheng'},
-  {'value': '64', 'label': '宁夏回族自治区', 'spell': 'NingXiaHuiZuZiZhiQu'},
-  {'value': '65', 'label': '新疆维吾尔自治区', 'spell': 'XinJiangWeiWuErZiZhiQu'}
-];
-
-const seasons = [
-  [
-    {
-      'label': '2013',
-      'value': '2013',
-    },
-    {
-      'label': '2014',
-      'value': '2014',
-    },
-  ],
-  [
-    {
-      'label': '春',
-      'value': '春',
-    },
-    {
-      'label': '夏',
-      'value': '夏',
-    },
-  ],
-];
-
-class PagePicker extends StatefulWidget {
-  @override
-  _PagePickerState createState() => _PagePickerState();
-}
-
-class _PagePickerState extends State<PagePicker> {
-  bool flag = false;
-
+class PagePickerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Picker'),
+          title: Text('PickerView'),
         ),
-        body: Container(
-          width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.symmetric(horizontal: 15.0),
-          height: 400.0,
-          child: Column(
-            children: <Widget>[
-              AntList.List(
-                itemContent: Text('Multiple & cascader'),
-                arrow: 'horizontal',
-                onClick: () {
-                  Picker.showPicker(context, title: 'Areas', cascade: true,
-                      onOk: (String value) {
-                    print(value);
-                  }, onPickerChange: (String value) {
-                    print(value);
-                  },
-                      cols: 4,
-                      value: [
-                        // '820000',
-                        // '820100',
-                      ],
-                      data: district);
-                },
-              ),
-              AntList.List(
-                itemContent: Text('Multiple'),
-                arrow: 'horizontal',
-                onClick: () {
-                  Picker.showPicker(context, title: '选择季节', cascade: false,
-                      onOk: (String value) {
-                    print(value);
-                  }, onPickerChange: (String value) {
-                    print(value);
-                  }, value: [], data: seasons);
-                },
-              ),
-              AntList.List(
-                itemContent: Text('Single'),
-                arrow: 'horizontal',
-                onClick: () {
-                  Picker.showPicker(context, cols: 1, cascade: true,
-                      onOk: (String value) {
-                    print(value);
-                  }, onPickerChange: (String value) {
-                    print(value);
-                  }, value: [], data: district);
-                },
-              ),
-              AntList.List(
-                itemContent: Text('Complex Labels'),
-                arrow: 'horizontal',
-                onClick: () {
-                  Picker.showPicker(context, onOk: (String value) {
-                    print(value);
-                  }, value: [], data: [
-                    {
-                      'value': 'red',
-                      'label': Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            width: 25.0,
-                            height: 25.0,
-                            decoration: BoxDecoration(color: Colors.red),
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Text('红色')
-                        ],
-                      )
-                    },
-                    {
-                      'value': 'green',
-                      'label': Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            width: 25.0,
-                            height: 25.0,
-                            decoration: BoxDecoration(color: Colors.green),
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Text('绿色')
-                        ],
-                      )
-                    },
-                    {
-                      'value': 'blue',
-                      'label': Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            width: 25.0,
-                            height: 25.0,
-                            decoration: BoxDecoration(color: Colors.blue),
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Text('蓝色')
-                        ],
-                      )
-                    }
-                  ]);
-                },
-              ),
-            ],
+        body: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.symmetric(horizontal: 15.0),
+            height: 120.0,
+            child: PickerView(
+                cascade: true,
+                value: [
+                  '820000',
+                  '820100',
+                ],
+                // data: [
+                //   [
+                //     {
+                //       'label': '地方',
+                //       'value': '2011',
+                //     },
+                //     {
+                //       'label': '2012',
+                //       'value': '2012',
+                //     },
+                //     {
+                //       'label': '2015',
+                //       'value': '2015',
+                //     },
+                //     {
+                //       'label': '2016',
+                //       'value': '2016',
+                //     },
+                //     {
+                //       'label': '2017',
+                //       'value': '2017',
+                //     },
+                //   ],
+                //   [
+                //     {
+                //       'label': '2013',
+                //       'value': '2013',
+                //     },
+                //     {
+                //       'label': '2014',
+                //       'value': '2014',
+                //     },
+                //   ],
+                // ],
+                data: district),
           ),
         ));
   }

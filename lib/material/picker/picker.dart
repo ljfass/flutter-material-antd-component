@@ -291,7 +291,11 @@ class _PickerContainerState extends State<PickerContainer> {
           initialValueList =
               initialValueList.getRange(0, _colDataValueList.length).toList();
         });
-      widget.onPickerChange(initialValueList.join(','));
+      List<String> filledList = [];
+      initialValueList.forEach((item) {
+        if (item != '') filledList.add(item);
+      });
+      widget.onPickerChange(filledList.join(','));
     }
   }
 
@@ -335,38 +339,84 @@ class _PickerContainerState extends State<PickerContainer> {
 
                   // 如何知第几个controller
                   var keyIndex = _index; // 滚动第几个controller
+                  setState(() {
+                    _scrollControllerList[keyIndex] =
+                        FixedExtentScrollController(initialItem: index);
+                  });
 
                   if (keyIndex + 1 >= _colDataValueList.length) {
                     initialValueList[keyIndex] = selectedItemValue;
-                    // handlePickerChange();
+                    if (_colDataValueList[keyIndex][index]['children'] !=
+                            null &&
+                        _colDataValueList[keyIndex][index]['children'].length >
+                            0) {
+                      _colDataValueList.add(_buildColData(
+                          _colDataValueList[keyIndex][index]['children']));
+                      initialValueList.add(_colDataValueList[keyIndex][index]
+                          ['children'][0]['value']);
+                      _scrollControllerList
+                          .add(FixedExtentScrollController(initialItem: 0));
+                      setState(() {});
+                    }
+                    handlePickerChange();
                     return;
                   }
                   if (_colDataValueList[keyIndex].length == 0) return;
                   for (int j = 0; j < _colDataValueList.length; j++) {
                     if (j < keyIndex) continue;
+                    if (_colDataValueList[j].length == 0) {
+                      if (j + 1 <= _colDataValueList.length - 1) {
+                        _colDataValueList[j + 1] = [];
+                        initialValueList[j + 1] = '';
+                        _scrollControllerList[j + 1] =
+                            FixedExtentScrollController(initialItem: 0);
+                        continue;
+                      }
+                    }
                     for (int i = 0, l = _colDataValueList[j].length;
                         i < l;
                         i++) {
                       var _value = _colDataValueList[j][i]['value'];
                       var _children = _colDataValueList[j][i]['children'];
                       if (selectedItemValue == _value) {
-                        initialValueList[keyIndex] = selectedItemValue;
                         if (_children != null && _children.length > 0) {
-                          _colDataValueList[j + 1] = _buildColData(_children);
-                          _scrollControllerList[j + 1].jumpToItem(0);
+                          if (j + 1 >= _colDataValueList.length) {
+                            if (j + 1 >= widget.cols) {
+                              handlePickerChange();
+                              setState(() {});
+                              break;
+                            }
+                            // 由小变多
+                            initialValueList.add(selectedItemValue);
+                            _colDataValueList.add(_buildColData(_children));
+                            _scrollControllerList.add(
+                                FixedExtentScrollController(initialItem: 0));
+                          } else {
+                            if (j + 1 >= widget.cols) {
+                              handlePickerChange();
+                              setState(() {});
+                              break;
+                            }
+                            initialValueList[j] = selectedItemValue;
+                            _colDataValueList[j + 1] = _buildColData(_children);
+                            _scrollControllerList[j + 1].jumpToItem(0);
+                          }
                           selectedItemValue = _children[0]['value'];
-                          // loopTime = _colDataValueList.length;
-                          // if(_colDataValueList.length)
-                          // if()
-                          // _buildChildren(_children, initialValueList.length);
-
                           break;
                         } else {
-                          _colDataValueList[j] = [];
-                          initialValueList[j] = '';
+                          if (j + 1 <= _colDataValueList.length - 1) {
+                            _colDataValueList[j + 1] = [];
+                            _scrollControllerList[j + 1] =
+                                FixedExtentScrollController(initialItem: 0);
+                            initialValueList[j + 1] = '';
+                          }
+
+                          initialValueList[j] = selectedItemValue;
                         }
+
+                        handlePickerChange();
                         setState(() {});
-                        break;
+                        // break;
                       } else {
                         continue;
                       }

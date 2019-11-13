@@ -279,16 +279,21 @@ class _PickerViewState extends State<PickerView> {
                   });
                   if (keyIndex + 1 >= _colDataValueList.length) {
                     initialValueList[keyIndex] = selectedItemValue;
+
                     return;
                   }
                   if (_colDataValueList[keyIndex].length == 0) return;
 
-                  for (int j = 0; j < widget.cols; j++) {
+                  for (int j = 0; j < _colDataValueList.length; j++) {
                     if (j < keyIndex) continue;
-                    if (j + 1 >= _colDataValueList.length) break;
                     if (_colDataValueList[j].length == 0) {
-                      _colDataValueList[j + 1] = [];
-                      continue;
+                      if (j + 1 <= _colDataValueList.length - 1) {
+                        _colDataValueList[j + 1] = [];
+                        initialValueList[j + 1] = '';
+                        _scrollControllerList[j + 1] =
+                            FixedExtentScrollController(initialItem: 0);
+                        continue;
+                      }
                     }
                     for (int i = 0, l = _colDataValueList[j].length;
                         i < l;
@@ -296,24 +301,42 @@ class _PickerViewState extends State<PickerView> {
                       var _value = _colDataValueList[j][i]['value'];
                       var _children = _colDataValueList[j][i]['children'];
                       if (selectedItemValue == _value) {
-                        initialValueList[j] = selectedItemValue;
                         if (_children != null && _children.length > 0) {
-                          if (j + 1 >= _colDataValueList.length) break;
-                          _colDataValueList[j + 1] = _buildColData(_children);
+                          if (j + 1 >= _colDataValueList.length) {
+                            if (j + 1 >= widget.cols) {
+                              setState(() {});
+                              break;
+                            }
+                            // 由小变多
+                            initialValueList.add(selectedItemValue);
+                            _colDataValueList.add(_buildColData(_children));
+                            _scrollControllerList.add(
+                                FixedExtentScrollController(initialItem: 0));
+                          } else {
+                            if (j + 1 >= widget.cols) {
+                              setState(() {});
+                              break;
+                            }
+                            initialValueList[j + 1] = selectedItemValue;
+                            _colDataValueList[j + 1] = _buildColData(_children);
+                            _scrollControllerList[j + 1].jumpToItem(0);
+                          }
                           selectedItemValue = _children[0]['value'];
-                          _scrollControllerList[j + 1].jumpToItem(0);
-                          initialValueList[j + 1] = _children[0]['value'];
-                          loopTime = _colDataValueList.length;
-                          _buildChildren(_children, _colDataValueList.length);
-                          setState(() {});
+
                           break;
                         } else {
-                          if (j + 1 >= _colDataValueList.length) break;
-                          _scrollControllerList.removeAt(j + 1);
-                          _colDataValueList.removeAt(j + 1);
-                          initialValueList.removeAt(j + 1);
-                          setState(() {});
+                          if (j + 1 <= _colDataValueList.length - 1) {
+                            _colDataValueList[j + 1] = [];
+                            initialValueList[j + 1] = '';
+                            _scrollControllerList[j + 1] =
+                                FixedExtentScrollController(initialItem: 0);
+                          }
+                          initialValueList[j] = selectedItemValue;
                         }
+                        setState(() {});
+                        break;
+                      } else {
+                        continue;
                       }
                     }
                   }

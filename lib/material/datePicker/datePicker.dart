@@ -10,7 +10,7 @@ List<int> _solarMonthsOf31Days = const <int>[1, 3, 5, 7, 8, 10, 12];
 class DatePicker {
   static showDatePicker(BuildContext context,
       {Key key,
-      String mode,
+      String mode = 'date',
       DateTime value,
       DateTime minDate,
       DateTime maxDate,
@@ -18,9 +18,21 @@ class DatePicker {
     return showCupertinoModalPopup<void>(
         context: context,
         builder: (BuildContext context) {
+          assert(mode == 'date' ||
+              mode == 'time' ||
+              mode == 'datetime' ||
+              mode == 'year' ||
+              mode == 'month');
+          if (minDate != null && maxDate != null) {
+            assert(
+                minDate.millisecondsSinceEpoch <=
+                    maxDate.millisecondsSinceEpoch,
+                'minDate must be earlier than maxDate or equal to maxDate');
+          }
           return DatePickerComponent(
             key: key,
             value: value,
+            mode: mode,
             minDate: minDate,
             maxDate: maxDate,
           );
@@ -48,7 +60,7 @@ class DatePickerComponent extends StatefulWidget {
 }
 
 class _DatePickerComponentState extends State<DatePickerComponent> {
-  List<int> _yearRange, _monthRange, _dayRange;
+  List<int> _yearRange, _monthRange, _dayRange, _hourRange, _minuteRange;
   DateTime _initDateTime;
   DateTime _minDateTime;
   DateTime _maxDateTime;
@@ -59,9 +71,23 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
   int _currentYear;
   int _currentMonth;
   int _currentDay;
+  int _currentHour;
+  int _currentMinute;
 
-  FixedExtentScrollController _yearScrollCtrl, _monthScrollCtrl, _dayScrollCtrl;
+  bool _isYearRangeChanged = false;
+  bool _isMonthRangeChanged = false;
+  bool _isDayRangeChanged = false;
+  bool _isHourRangeChanged = false;
+
+  FixedExtentScrollController _yearScrollCtrl,
+      _monthScrollCtrl,
+      _dayScrollCtrl,
+      _hourScrollCtrl,
+      _minuteScrollCtrl;
   Map<String, List<int>> _valueRangeMap;
+
+  Color _activeTextColor = Colors.black;
+  Color _inActiveTextColor = Colors.grey;
 
   @override
   void initState() {
@@ -71,44 +97,145 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     _maxDateTime = widget.maxDate ?? DEFAULT_MAX_DATETIME;
 
     this._yearRange = [_minDateTime.year, _maxDateTime.year];
-    // this._monthRange = [_minDateTime.month, 12];
-    // this._dayRange = [_minDateTime.day, 31];
 
     /// 时间戳
     _initDateTimeStamp = _initDateTime.millisecondsSinceEpoch;
     _minDateTimeStamp = _minDateTime.millisecondsSinceEpoch;
     _maxDateTimeStamp = _maxDateTime.millisecondsSinceEpoch;
 
-    if (_initDateTimeStamp == _minDateTimeStamp) {
-      _yearScrollCtrl = FixedExtentScrollController(initialItem: _yearRange[1]);
-      _monthScrollCtrl = FixedExtentScrollController(
-          initialItem: _findScrollCtrl(1, 12, _initDateTime.month));
-    } else if (_initDateTimeStamp == _maxDateTimeStamp) {
-      _yearScrollCtrl = FixedExtentScrollController(
-          initialItem: _maxDateTime.year - _minDateTime.year);
-      _monthScrollCtrl =
-          FixedExtentScrollController(initialItem: 12 - _minDateTime.month);
-    } else if (_initDateTimeStamp > _minDateTimeStamp &&
-        _initDateTimeStamp < _maxDateTimeStamp) {
-      this._monthRange = [1, 12];
-      this._dayRange = [1, _getDays(_initDateTime.year, _initDateTime.month)];
+    if (widget.mode == 'time') {
+      _initDateTime = widget.value != null
+          ? DateTime(0, 0, 0, widget.value.hour, widget.value.minute)
+          : DateTime(0, 0, 0, DateTime.now().hour, DateTime.now().minute);
+      _minDateTime = widget.minDate != null
+          ? DateTime(0, 0, 0, widget.minDate.hour, widget.minDate.minute)
+          : DateTime(
+              0, 0, 0, DEFAULT_MIN_DATETIME.hour, DEFAULT_MIN_DATETIME.minute);
+      _maxDateTime = widget.maxDate != null
+          ? DateTime(0, 0, 0, widget.maxDate.hour, widget.maxDate.minute)
+          : DateTime(
+              0, 0, 0, DEFAULT_MAX_DATETIME.hour, DEFAULT_MAX_DATETIME.minute);
 
-      _yearScrollCtrl = FixedExtentScrollController(
-          initialItem: _findScrollCtrl(
-              _minDateTime.year, _maxDateTime.year, _initDateTime.year));
-      _monthScrollCtrl = FixedExtentScrollController(
-          initialItem: _findScrollCtrl(
-              _monthRange.first, _monthRange.last, _initDateTime.month));
-      _dayScrollCtrl = FixedExtentScrollController(
-          initialItem: _findScrollCtrl(
-              _dayRange.first, _dayRange.last, _initDateTime.day));
+      _initDateTimeStamp = _initDateTime.millisecondsSinceEpoch;
+      _minDateTimeStamp = _minDateTime.millisecondsSinceEpoch;
+      _maxDateTimeStamp = _maxDateTime.millisecondsSinceEpoch;
 
-      // this._dayRange = [1, 31];
+      if (_minDateTimeStamp == _maxDateTimeStamp) {
+        _hourScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _minuteScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        this._hourRange = [_minDateTime.hour, _minDateTime.hour];
+        this._minuteRange = [_minDateTime.minute, _minDateTime.minute];
+        _currentHour = _minDateTime.hour;
+        _currentMinute = _minDateTime.minute;
+      } else if (_initDateTimeStamp > _minDateTimeStamp &&
+          _initDateTimeStamp < _maxDateTimeStamp) {
+        this._hourRange = [0, 23];
+        this._minuteRange = [0, 59];
+        _hourScrollCtrl = FixedExtentScrollController(
+            initialItem: _findScrollCtrl(
+                _hourRange.first, _hourRange.last, _initDateTime.hour));
+        _minuteScrollCtrl = FixedExtentScrollController(
+            initialItem: _findScrollCtrl(
+                _minuteRange.first, _minuteRange.last, _initDateTime.minute));
+        _currentHour = _initDateTime.hour;
+        _currentMinute = _initDateTime.minute;
+      }
+      _valueRangeMap = {'h': _hourRange, 'f': _minuteRange};
+    } else {
+      if (_minDateTimeStamp == _maxDateTimeStamp) {
+        _yearScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _monthScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _dayScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _hourScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _minuteScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        this._monthRange = [_minDateTime.month, _minDateTime.month];
+        this._dayRange = [_minDateTime.day, _minDateTime.day];
+        this._hourRange = [_minDateTime.hour, _minDateTime.hour];
+        this._minuteRange = [_minDateTime.minute, _minDateTime.minute];
+        _currentYear = _minDateTime.year;
+        _currentMonth = _minDateTime.month;
+        _currentDay = _minDateTime.day;
+        _currentHour = _minDateTime.hour;
+        _currentMinute = _minDateTime.minute;
+      } else if (_initDateTimeStamp > _minDateTimeStamp &&
+          _initDateTimeStamp < _maxDateTimeStamp) {
+        // 初始值位于区间中间
+        this._monthRange = [1, 12];
+        this._dayRange = [1, _getDays(_initDateTime.year, _initDateTime.month)];
+        this._hourRange = [0, 23];
+        this._minuteRange = [0, 59];
+
+        _yearScrollCtrl = FixedExtentScrollController(
+            initialItem: _findScrollCtrl(
+                _minDateTime.year, _maxDateTime.year, _initDateTime.year));
+        _monthScrollCtrl = FixedExtentScrollController(
+            initialItem: _findScrollCtrl(
+                _monthRange.first, _monthRange.last, _initDateTime.month));
+        _dayScrollCtrl = FixedExtentScrollController(
+            initialItem: _findScrollCtrl(
+                _dayRange.first, _dayRange.last, _initDateTime.day));
+        _hourScrollCtrl = FixedExtentScrollController(
+            initialItem: _findScrollCtrl(
+                _hourRange.first, _hourRange.last, _initDateTime.hour));
+        _minuteScrollCtrl = FixedExtentScrollController(
+            initialItem: _findScrollCtrl(
+                _minuteRange.first, _minuteRange.last, _initDateTime.minute));
+
+        _currentYear = _initDateTime.year;
+        _currentMonth = _initDateTime.month;
+        _currentDay = _initDateTime.day;
+        _currentHour = _initDateTime.hour;
+        _currentMinute = _initDateTime.minute;
+      } else if (_initDateTimeStamp <= _minDateTimeStamp) {
+        // 初始值小于区间最小值，选中区间最小值
+        this._monthRange = [_minDateTime.month, 12];
+        this._dayRange = [
+          _minDateTime.day,
+          _getDays(_minDateTime.year, _minDateTime.month)
+        ];
+        this._hourRange = [_minDateTime.hour, 23];
+        this._minuteRange = [_minDateTime.minute, 59];
+        _yearScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _monthScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _dayScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _hourScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _minuteScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _currentYear = _minDateTime.year;
+        _currentMonth = _minDateTime.month;
+        _currentDay = _minDateTime.day;
+        _currentHour = _minDateTime.hour;
+        _currentMinute = _minDateTime.minute;
+      } else if (_initDateTimeStamp >= _maxDateTimeStamp) {
+        // 初始值大于区间最大值，选中区间最大值
+        this._monthRange = [1, _maxDateTime.month];
+        this._dayRange = [1, _maxDateTime.day];
+        this._hourRange = [0, _maxDateTime.hour];
+        this._minuteRange = [0, _maxDateTime.minute];
+        _yearScrollCtrl = FixedExtentScrollController(
+            initialItem: _yearRange.last - _yearRange.first);
+        _monthScrollCtrl = FixedExtentScrollController(
+            initialItem: _monthRange.last - _monthRange.first);
+        _dayScrollCtrl = FixedExtentScrollController(
+            initialItem: _dayRange.last - _dayRange.first);
+        _hourScrollCtrl = FixedExtentScrollController(
+            initialItem: _hourRange.last - _hourRange.first);
+        _minuteScrollCtrl = FixedExtentScrollController(
+            initialItem: _minuteRange.last - _minuteRange.first);
+        _currentYear = _maxDateTime.year;
+        _currentMonth = _maxDateTime.month;
+        _currentDay = _maxDateTime.day;
+        _currentHour = _maxDateTime.hour;
+        _currentMinute = _maxDateTime.minute;
+      }
+
+      _valueRangeMap = {
+        'y': _yearRange,
+        'm': _monthRange,
+        'd': _dayRange,
+        'h': _hourRange,
+        'f': _minuteRange
+      };
     }
-    _currentYear = _initDateTime.year;
-    _currentMonth = _initDateTime.month;
-    _currentDay = _initDateTime.day;
-    _valueRangeMap = {'y': _yearRange, 'm': _monthRange, 'd': _dayRange};
   }
 
   /// 计算该年份是否是闰年
@@ -116,6 +243,7 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
   }
 
+  /// 计算一个月有多少天
   int _getDays(int year, int month) {
     int res;
     if (isLeapYear(year)) {
@@ -142,11 +270,11 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     return res;
   }
 
-  int _findScrollCtrl(int start, int end, int current) {
+  int _findScrollCtrl(int startValue, int endValue, int currValue) {
     int res;
-    for (int i = 0, l = end - start + 1; i < l; i++) {
-      var value = start + i;
-      if (current == value) {
+    for (int i = 0, l = endValue - startValue + 1; i < l; i++) {
+      var value = startValue + i;
+      if (currValue == value) {
         res = i;
         break;
       }
@@ -166,63 +294,479 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     return valueRange;
   }
 
-  _handleMonthChange(int index) {
-    print(_currentMonth);
-    // var _selectedMonth = _valueRangeMap['m'].first + index;
-    // _currentMonth = _selectedMonth;
-    // setState(() {
-    //   _valueRangeMap['d'] = [_currentYear, _selectedMonth];
-    // });
+  _handleMinuteChange(int index) {
+    if (_isMonthRangeChanged == true ||
+        _isYearRangeChanged == true ||
+        _isDayRangeChanged == true ||
+        _isHourRangeChanged == true) return;
+    int _selectedMin = _valueRangeMap['f'].first + index;
 
-    // _currentMonth = _getCurrentValue(
-    //     _valueRangeMap['y'].first, _valueRangeMap['y'].last, index);
+    _currentMinute = _selectedMin;
+    setState(() {
+      _minuteScrollCtrl = FixedExtentScrollController(initialItem: index);
+    });
+  }
+
+  _handleHourChange(int index) {
+    if (_isMonthRangeChanged == true ||
+        _isYearRangeChanged == true ||
+        _isDayRangeChanged == true) return;
+    _isHourRangeChanged = true;
+    int _selectedHour = _valueRangeMap['h'].first + index;
+    int _startMinute;
+    int _endMinute;
+
+    _currentHour = _selectedHour;
+
+    if (_currentYear == _yearRange.first &&
+        _currentMonth == _minDateTime.month &&
+        _currentDay == _minDateTime.day &&
+        _currentHour == _minDateTime.hour) {
+      // 初始年初始月初始日初始时
+      _startMinute = _minDateTime.minute;
+      _endMinute = 59;
+      _currentMinute =
+          _currentMinute < _startMinute ? _startMinute : _currentMinute;
+    } else if (_currentYear == _yearRange.last &&
+        _currentMonth == _maxDateTime.month &&
+        _currentDay == _maxDateTime.day &&
+        _currentHour == _maxDateTime.hour) {
+      // 结束年结束月结束日结束时
+      _startMinute = 0;
+      _endMinute = _maxDateTime.minute;
+      _currentMinute =
+          _currentMinute > _endMinute ? _endMinute : _currentMinute;
+    } else {
+      _startMinute = 0;
+      _endMinute = 59;
+    }
+
+    setState(() {
+      _valueRangeMap['f'] = [_startMinute, _endMinute];
+      _hourScrollCtrl = FixedExtentScrollController(initialItem: index);
+      _minuteScrollCtrl.jumpToItem(0);
+      _minuteScrollCtrl.jumpToItem(
+          _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+    });
+    _isHourRangeChanged = false;
+  }
+
+  /// mode为time
+  _handleTimeHourChange(int index) {
+    int _selectedHour = _valueRangeMap['h'].first + index;
+    int _startMinute;
+    int _endMinute;
+
+    _currentHour = _selectedHour;
+    if (_currentHour == _hourRange.first) {
+      _startMinute = _minDateTime.minute;
+      _endMinute = 59;
+      _currentMinute =
+          _currentMinute < _startMinute ? _startMinute : _currentMinute;
+    } else if (_currentHour == _hourRange.last) {
+      _startMinute = 0;
+      _endMinute = _maxDateTime.minute;
+      _currentMinute =
+          _currentMinute > _endMinute ? _endMinute : _currentMinute;
+    } else {
+      _startMinute = 0;
+      _endMinute = 59;
+    }
+
+    setState(() {
+      _valueRangeMap['f'] = [_startMinute, _endMinute];
+      _hourScrollCtrl = FixedExtentScrollController(initialItem: index);
+      _minuteScrollCtrl.jumpToItem(0);
+      _minuteScrollCtrl.jumpToItem(
+          _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+    });
+  }
+
+  /// mode为time
+  _handleTimeMinuteChange(int index) {
+    int _selectedMin = _valueRangeMap['f'].first + index;
+
+    _currentMinute = _selectedMin;
+    setState(() {
+      _minuteScrollCtrl = FixedExtentScrollController(initialItem: index);
+    });
+  }
+
+  _handleDayChange(int index) {
+    if (_isMonthRangeChanged == true || _isYearRangeChanged == true) return;
+    _isDayRangeChanged = true;
+    int _selectedDay = _valueRangeMap['d'].first + index;
+    int _startHour;
+    int _endHour;
+    int _startMinute;
+    int _endMinute;
+
+    _currentDay = _selectedDay;
+    if (_currentYear == _yearRange.first &&
+        _currentMonth == _minDateTime.month &&
+        _currentDay == _minDateTime.day) {
+      // 初始年初始月初始日初始时
+      _startHour = _minDateTime.hour;
+      _endHour = 23;
+      _currentHour = _currentHour < _startHour ? _startHour : _currentHour;
+
+      if (_currentHour == _minDateTime.hour) {
+        _startMinute = _minDateTime.minute;
+        _endMinute = 59;
+        _currentMinute =
+            _currentMinute < _startMinute ? _startMinute : _currentMinute;
+      } else {
+        _startMinute = 0;
+      }
+    } else if (_currentYear == _yearRange.last &&
+        _currentMonth == _maxDateTime.month &&
+        _currentDay == _maxDateTime.day) {
+      // 结束年结束月结束日
+      _startHour = 0;
+      _endHour = _maxDateTime.hour;
+      _currentHour = _currentHour > _endHour ? _endHour : _currentHour;
+
+      if (_currentHour == _minDateTime.hour) {
+        _startMinute = 0;
+        _endMinute = _maxDateTime.minute;
+        _currentMinute =
+            _currentMinute > _endMinute ? _endMinute : _currentMinute;
+      } else {
+        _endMinute = 59;
+      }
+    } else {
+      _startHour = 0;
+      _endHour = 23;
+      _startMinute = 0;
+      _endMinute = 59;
+    }
+
+    setState(() {
+      _valueRangeMap['h'] = [_startHour, _endHour];
+      _valueRangeMap['f'] = [_startMinute, _endMinute];
+      _dayScrollCtrl = FixedExtentScrollController(initialItem: index);
+      _hourScrollCtrl.jumpToItem(0);
+      _hourScrollCtrl
+          .jumpToItem(_findScrollCtrl(_startHour, _endHour, _currentHour));
+      _minuteScrollCtrl.jumpToItem(0);
+      _minuteScrollCtrl.jumpToItem(
+          _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+    });
+    _isDayRangeChanged = false;
+  }
+
+  _handleMonthChange(int index) {
+    if (_isYearRangeChanged == true) return;
+    _isMonthRangeChanged = true;
+    int _selectedMonth = _valueRangeMap['m'].first + index;
+    int _startDay;
+    int _startHour;
+    int _startMinute;
+    int _endHour;
+    int _endDay;
+    int _endMinute;
+    _currentMonth = _selectedMonth;
+
+    if (_currentYear == _yearRange.first) {
+      _endDay = _getDays(_currentYear, _currentMonth);
+      _endHour = 23;
+      _endMinute = 59;
+
+      /// 当前年是初始年
+      setState(() {
+        if (_currentMonth == _minDateTime.month) {
+          /// 初始年，最小月
+          _startDay = _minDateTime.day;
+          _currentDay = _startDay;
+
+          if (_currentDay == _minDateTime.day) {
+            /// 初��年，最小月，最小天
+            _startHour = _minDateTime.hour;
+            _currentHour =
+                _currentHour < _startHour ? _startHour : _currentHour;
+            if (_currentHour == _minDateTime.hour) {
+              /// 初始年，最小月，最小天，最小时
+              _startMinute = _minDateTime.minute;
+              _currentMinute =
+                  _currentMinute < _startMinute ? _startMinute : _currentMinute;
+            } else {
+              _startMinute = 0;
+            }
+          } else {
+            _startHour = 0;
+          }
+        } else {
+          _startDay = 1;
+          _startHour = 0;
+          _startMinute = 0;
+        }
+
+        _valueRangeMap['d'] = [_startDay, _endDay];
+        _valueRangeMap['h'] = [_startHour, _endHour];
+        _valueRangeMap['f'] = [_startMinute, _endMinute];
+        _monthScrollCtrl = FixedExtentScrollController(initialItem: index);
+        _dayScrollCtrl.jumpToItem(1);
+        _dayScrollCtrl.jumpToItem(_findScrollCtrl(_startDay, _endDay,
+            _currentDay > _startDay ? _currentDay : _startDay));
+        _hourScrollCtrl.jumpToItem(1);
+        _hourScrollCtrl
+            .jumpToItem(_findScrollCtrl(_startHour, _endHour, _currentHour));
+        _minuteScrollCtrl.jumpToItem(1);
+        _minuteScrollCtrl.jumpToItem(
+            _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+      });
+      _isMonthRangeChanged = false;
+    } else if (_currentYear == _yearRange.last) {
+      /// 当前年是结束年
+      _startDay = 1;
+      _startHour = 0;
+      _startMinute = 0;
+
+      if (_currentMonth == _maxDateTime.month) {
+        /// 结束年，结束月
+        _endDay = _maxDateTime.day;
+        _currentDay = _endDay;
+
+        if (_currentDay == _maxDateTime.day) {
+          /// 结束年，结束月，最大天
+          _endHour = _maxDateTime.hour;
+          _currentHour = _currentHour > _endHour ? _endHour : _currentHour;
+          if (_currentHour == _maxDateTime.hour) {
+            /// 结束年，结束月，最大天，最大时
+            _endMinute = _maxDateTime.minute;
+            _currentMinute =
+                _currentMinute > _endMinute ? _endMinute : _currentMinute;
+          } else {
+            _endMinute = 59;
+          }
+        } else {
+          _endHour = 23;
+        }
+      } else {
+        _endDay = _getDays(_currentYear, _currentMonth);
+        _endHour = 23;
+        _endMinute = 59;
+      }
+
+      setState(() {
+        _valueRangeMap['d'] = [_startDay, _endDay];
+        _valueRangeMap['h'] = [_startHour, _endHour];
+        _valueRangeMap['f'] = [_startMinute, _endMinute];
+        _monthScrollCtrl = FixedExtentScrollController(initialItem: index);
+        _dayScrollCtrl.jumpToItem(1);
+        _dayScrollCtrl.jumpToItem(_findScrollCtrl(
+            _startDay, _endDay, _currentDay > _endDay ? _endDay : _currentDay));
+        _hourScrollCtrl.jumpToItem(1);
+        _hourScrollCtrl.jumpToItem(_findScrollCtrl(_startHour, _endHour,
+            _currentHour > _endHour ? _endHour : _currentHour));
+        _minuteScrollCtrl.jumpToItem(1);
+        _minuteScrollCtrl.jumpToItem(
+            _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+      });
+      _isMonthRangeChanged = false;
+    } else {
+      /// 其他年份
+      _startDay = 1;
+      _startMinute = 0;
+      _startHour = 0;
+      _endDay = _getDays(_currentYear, _currentMonth);
+      _endHour = 23;
+      _endMinute = 59;
+
+      setState(() {
+        _valueRangeMap['d'] = [_startDay, _endDay];
+        _valueRangeMap['h'] = [_startHour, _endHour];
+        _valueRangeMap['f'] = [_startMinute, _endMinute];
+        _monthScrollCtrl = FixedExtentScrollController(initialItem: index);
+        _dayScrollCtrl.jumpToItem(1);
+        _dayScrollCtrl.jumpToItem(_findScrollCtrl(
+            _startDay, _endDay, _currentDay > _endDay ? _endDay : _currentDay));
+        _hourScrollCtrl.jumpToItem(1);
+        _hourScrollCtrl
+            .jumpToItem(_findScrollCtrl(_startHour, _endHour, _currentHour));
+        _minuteScrollCtrl.jumpToItem(1);
+        _minuteScrollCtrl.jumpToItem(
+            _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+      });
+      _isMonthRangeChanged = false;
+    }
   }
 
   _handleYearChange(int index) {
+    _isYearRangeChanged = true;
     // 起始年份
     if (this._yearRange.first + index == this._yearRange[0]) {
+      int _startDay;
+      int _currDay;
+      int _startHour;
+      int _startMinute;
+      int _currHour;
+      int _currMinute;
+
+      int _currMonth = _currentMonth < _minDateTime.month
+          ? _minDateTime.month
+          : _currentMonth;
+      if (_currMonth == _minDateTime.month) {
+        // 起始月
+        _startDay = _minDateTime.day;
+        _currDay =
+            _minDateTime.day > _currentDay ? _minDateTime.day : _currentDay;
+        if (_currDay == _minDateTime.day) {
+          // 起始天
+          _startHour = _minDateTime.hour;
+          _currHour = _minDateTime.hour > _currentHour
+              ? _minDateTime.hour
+              : _currentHour;
+          // 起始时
+          if (_currHour == _minDateTime.hour) {
+            _startMinute = _minDateTime.minute;
+            _currMinute = _minDateTime.minute > _currentMinute
+                ? _minDateTime.minute
+                : _currentMinute;
+          } else {
+            _startMinute = 0;
+            _currMinute = _currMinute;
+          }
+        } else {
+          _startHour = 0;
+          _currHour = _currentHour;
+        }
+      } else {
+        _startDay = 1;
+        _startMinute = 0;
+        _startHour = 0;
+        _currDay = _currentDay;
+        _currHour = _currentHour;
+        _currMinute = _currentMinute;
+      }
+
+      _currentYear = _getCurrentValue(
+          _valueRangeMap['y'].first, _valueRangeMap['y'].last, index);
+      _currentMonth = _currMonth;
+      _currentDay = _currDay;
+      _currentHour = _currHour;
+      _currentMinute = _currMinute;
+
       setState(() {
         _valueRangeMap['m'] = [_minDateTime.month, 12];
-
         _valueRangeMap['d'] = [
-          _minDateTime.day,
-          _getDays(
-              this._yearRange[0],
-              _currentMonth < _minDateTime.month
-                  ? _minDateTime.month
-                  : _currentMonth)
+          _startDay,
+          _getDays(this._yearRange[0], _currMonth)
         ];
+        _valueRangeMap['h'] = [_startHour, 23];
+        _valueRangeMap['f'] = [_startMinute, 59];
+        _yearScrollCtrl = FixedExtentScrollController(initialItem: index);
         _monthScrollCtrl
-            .jumpToItem(_findScrollCtrl(_minDateTime.month, 12, _currentMonth));
-        _dayScrollCtrl.jumpToItem(_findScrollCtrl(_minDateTime.day,
-            _getDays(this._yearRange[0], _currentMonth), _currentDay));
+            .jumpToItem(_findScrollCtrl(_minDateTime.month, 12, _currMonth));
+        _dayScrollCtrl.jumpToItem(1);
+        _dayScrollCtrl.jumpToItem(_findScrollCtrl(
+            _startDay, _getDays(_minDateTime.year, _currMonth), _currDay));
+        _hourScrollCtrl.jumpToItem(1);
+        _hourScrollCtrl.jumpToItem(_findScrollCtrl(_startHour, 23, _currHour));
+        _minuteScrollCtrl.jumpToItem(1);
+        _minuteScrollCtrl
+            .jumpToItem(_findScrollCtrl(_startMinute, 59, _currMinute));
       });
+      _isYearRangeChanged = false;
       return;
     }
     // 结束年份
     if (this._yearRange.first + index == this._yearRange[1]) {
+      int _endDay;
+      int _endHour;
+      int _endMinute;
+      int _currDay;
+      int _currHour;
+      int _currMinute;
+
+      int _currMonth = _currentMonth < _maxDateTime.month
+          ? _currentMonth
+          : _maxDateTime.month;
+
+      if (_currMonth == _maxDateTime.month) {
+        // 结束月
+        _endDay = _maxDateTime.day;
+        _currDay =
+            _currentDay < _maxDateTime.day ? _currentDay : _maxDateTime.day;
+        if (_currDay == _maxDateTime.day) {
+          // 结束天
+          _endHour = _maxDateTime.hour;
+          _currHour = _currentHour > _maxDateTime.hour
+              ? _maxDateTime.hour
+              : _currentHour;
+          if (_currHour == _maxDateTime.hour) {
+            // 结束时
+            _endMinute = _maxDateTime.minute;
+            _currMinute = _currentMinute > _maxDateTime.minute
+                ? _maxDateTime.minute
+                : _currentMinute;
+          } else {
+            _currMinute = _currentMinute;
+            _endMinute = 59;
+          }
+        } else {
+          _currHour = _currentHour;
+          _endHour = 23;
+        }
+      } else {
+        _endDay = _getDays(this._yearRange[1], _currentMonth);
+        _endHour = 23;
+        _endMinute = 59;
+        _currDay = _currentDay;
+        _currHour = _currentHour;
+        _currMinute = _currentMinute;
+      }
+
       setState(() {
         _valueRangeMap['m'] = [1, _maxDateTime.month];
-        _valueRangeMap['d'] = [
-          1,
-          _getDays(
-              this._yearRange[1],
-              _currentMonth > _maxDateTime.month
-                  ? _maxDateTime.month
-                  : _currentMonth)
-        ];
+        _valueRangeMap['d'] = [1, _endDay];
+        _valueRangeMap['h'] = [0, _endHour];
+        _valueRangeMap['f'] = [0, _endMinute];
+        _yearScrollCtrl = FixedExtentScrollController(initialItem: index);
+        _monthScrollCtrl
+            .jumpToItem(_findScrollCtrl(1, _maxDateTime.month, _currMonth));
+        _dayScrollCtrl.jumpToItem(1);
+        _dayScrollCtrl.jumpToItem(_findScrollCtrl(
+            1, _getDays(_maxDateTime.year, _currMonth), _currDay));
+        _hourScrollCtrl.jumpToItem(1);
+        _hourScrollCtrl.jumpToItem(_findScrollCtrl(0, _endHour, _currHour));
+        _minuteScrollCtrl.jumpToItem(1);
+        _minuteScrollCtrl
+            .jumpToItem(_findScrollCtrl(0, _endMinute, _currMinute));
       });
+      _currentMonth = _currMonth;
+      _currentDay = _currDay;
+      _currentHour = _currHour;
+      _currentMinute = _currMinute;
+      _currentYear = _getCurrentValue(
+          _valueRangeMap['y'].first, _valueRangeMap['y'].last, index);
+      _isYearRangeChanged = false;
       return;
     }
+    _currentYear = _getCurrentValue(
+        _valueRangeMap['y'].first, _valueRangeMap['y'].last, index);
+
     // 其他年份
     setState(() {
       _valueRangeMap['m'] = [1, 12];
-      _valueRangeMap['d'] = [1, _getDays(this._yearRange.first, _currentMonth)];
+      _valueRangeMap['d'] = [1, _getDays(_currentYear, _currentMonth)];
+      _valueRangeMap['h'] = [0, 23];
+      _valueRangeMap['f'] = [0, 59];
+      _yearScrollCtrl = FixedExtentScrollController(initialItem: index);
+      _monthScrollCtrl.jumpToItem(1);
+      _monthScrollCtrl.jumpToItem(_findScrollCtrl(1, 12, _currentMonth));
+      _dayScrollCtrl.jumpToItem(1);
+      _dayScrollCtrl.jumpToItem(_findScrollCtrl(
+          1, _getDays(_currentYear, _currentMonth), _currentDay));
+      _hourScrollCtrl.jumpToItem(1);
+      _hourScrollCtrl.jumpToItem(_findScrollCtrl(0, 23, _currentHour));
+      _minuteScrollCtrl.jumpToItem(1);
+      _minuteScrollCtrl.jumpToItem(_findScrollCtrl(0, 59, _currentMinute));
     });
-    _currentYear = _getCurrentValue(
-        _valueRangeMap['y'].first, _valueRangeMap['y'].last, index);
+    _isYearRangeChanged = false;
   }
 
+  /// 根据index获取值
   int _getCurrentValue(int start, int end, int index) {
     int res;
     for (int i = 0, l = end - start + 1; i < l; i++) {
@@ -235,50 +779,164 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     return res;
   }
 
-  Widget _buildDatePickerColumn({
-    @required FixedExtentScrollController scrollCtrl,
-    @required List<int> valueRange,
-    @required ValueChanged<int> valueChanged,
-  }) {
+  Widget _buildDatePickerColumn(
+      {@required FixedExtentScrollController scrollCtrl,
+      @required List<int> valueRange,
+      @required ValueChanged<int> valueChanged,
+      String type}) {
     return Flexible(
       flex: 1,
       child: CupertinoPicker.builder(
         scrollController: scrollCtrl,
         backgroundColor: Colors.white,
-        itemExtent: 25.0,
+        itemExtent: 28.0,
+        squeeze: 1.0,
+        diameterRatio: 2.0,
         onSelectedItemChanged: valueChanged,
         childCount: valueRange.last - valueRange.first + 1,
         itemBuilder: (BuildContext context, int index) {
-          return _buildPickerItemWidget('${valueRange.first + index}');
+          return _buildPickerItemWidget('${valueRange.first + index}$type');
         },
       ),
     );
   }
 
+  Widget _buildYearPickerColumn(
+      {@required FixedExtentScrollController scrollCtrl,
+      @required List<int> valueRange,
+      @required ValueChanged<int> valueChanged}) {
+    return Flexible(
+      flex: 1,
+      child: CupertinoPicker.builder(
+        scrollController: scrollCtrl,
+        backgroundColor: Colors.white,
+        itemExtent: 28.0,
+        squeeze: 1.0,
+        diameterRatio: 2.0,
+        onSelectedItemChanged: valueChanged,
+        childCount: valueRange.last - valueRange.first + 1,
+        itemBuilder: (BuildContext context, int index) {
+          return _buildPickerItemWidget('${valueRange.first + index}年');
+        },
+      ),
+    );
+  }
+
+  /// 渲染模式为date
   Widget _buildDatePickerWidget() {
     return Row(
       children: <Widget>[
         _buildDatePickerColumn(
             scrollCtrl: _yearScrollCtrl,
             valueRange: _valueRangeMap['y'],
+            type: '年',
             valueChanged: _handleYearChange),
         _buildDatePickerColumn(
             scrollCtrl: _monthScrollCtrl,
             valueRange: _valueRangeMap['m'],
+            type: '月',
             valueChanged: _handleMonthChange),
         _buildDatePickerColumn(
             scrollCtrl: _dayScrollCtrl,
             valueRange: _valueRangeMap['d'],
-            valueChanged: null),
+            type: '日',
+            valueChanged: _handleDayChange),
       ],
     );
   }
 
-  Widget _buildPickerItemWidget(String value) {
-    return Container(
-      height: ITEM_WIDGET_HEIGHT,
-      child: Text(value),
+  /// 渲染模式为datetime
+  Widget _buildDatetimePickerWidget() {
+    return Row(
+      children: <Widget>[
+        _buildDatePickerColumn(
+            scrollCtrl: _yearScrollCtrl,
+            valueRange: _valueRangeMap['y'],
+            type: '年',
+            valueChanged: _handleYearChange),
+        _buildDatePickerColumn(
+            scrollCtrl: _monthScrollCtrl,
+            valueRange: _valueRangeMap['m'],
+            type: '月',
+            valueChanged: _handleMonthChange),
+        _buildDatePickerColumn(
+            scrollCtrl: _dayScrollCtrl,
+            valueRange: _valueRangeMap['d'],
+            type: '日',
+            valueChanged: _handleDayChange),
+        _buildDatePickerColumn(
+            scrollCtrl: _hourScrollCtrl,
+            valueRange: _valueRangeMap['h'],
+            type: '时',
+            valueChanged: _handleHourChange),
+        _buildDatePickerColumn(
+            scrollCtrl: _minuteScrollCtrl,
+            valueRange: _valueRangeMap['f'],
+            type: '分',
+            valueChanged: _handleMinuteChange),
+      ],
     );
+  }
+
+  /// 渲染模式为year
+  Widget _buildYearPickerWidget() {
+    return Row(
+      children: <Widget>[
+        _buildYearPickerColumn(
+            scrollCtrl: _yearScrollCtrl,
+            valueRange: _valueRangeMap['y'],
+            valueChanged: (int value) {})
+      ],
+    );
+  }
+
+  /// 渲染模式为month
+  Widget _buildMonthPickerWidget() {
+    return Row(
+      children: <Widget>[
+        _buildDatePickerColumn(
+            scrollCtrl: _yearScrollCtrl,
+            valueRange: _valueRangeMap['y'],
+            valueChanged: _handleYearChange,
+            type: '年'),
+        _buildDatePickerColumn(
+            scrollCtrl: _monthScrollCtrl,
+            valueRange: _valueRangeMap['m'],
+            valueChanged: _handleMonthChange,
+            type: '月')
+      ],
+    );
+  }
+
+  /// 渲染模式为time
+  Widget _buildTimePickerWidget() {
+    return Row(
+      children: <Widget>[
+        _buildDatePickerColumn(
+            scrollCtrl: _hourScrollCtrl,
+            valueRange: _valueRangeMap['h'],
+            valueChanged: _handleTimeHourChange,
+            type: '时'),
+        _buildDatePickerColumn(
+            scrollCtrl: _minuteScrollCtrl,
+            valueRange: _valueRangeMap['f'],
+            valueChanged: _handleTimeMinuteChange,
+            type: '分')
+      ],
+    );
+  }
+
+  Widget _buildPickerItemWidget(String value, {bool active = true}) {
+    return Container(
+        height: ITEM_WIDGET_HEIGHT,
+        child: DefaultTextStyle(
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w400,
+              color: active == true ? _activeTextColor : _inActiveTextColor),
+          child: Text(value),
+        ));
   }
 
   Widget _buildPickerView() {
@@ -286,6 +944,26 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
       case 'date':
         {
           return _buildDatePickerWidget();
+        }
+        break;
+      case 'year':
+        {
+          return _buildYearPickerWidget();
+        }
+        break;
+      case 'month':
+        {
+          return _buildMonthPickerWidget();
+        }
+        break;
+      case 'time':
+        {
+          return _buildTimePickerWidget();
+        }
+        break;
+      case 'datetime':
+        {
+          return _buildDatetimePickerWidget();
         }
         break;
       default:

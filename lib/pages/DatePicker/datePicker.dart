@@ -17,10 +17,13 @@ class PageDatePicker extends StatelessWidget {
             child: RaisedButton(
               child: Text('show'),
               onPressed: () {
-                DatePicker.showDatePicker(context,
-                    minDate: DateTime(2018, 6, 12),
-                    maxDate: DateTime(2022, 12, 23),
-                    value: DateTime(2019, 8, 11));
+                DatePicker.showDatePicker(
+                  context,
+                  mode: 'time',
+                  minDate: DateTime(2017, 2, 12, 12, 23),
+                  maxDate: DateTime(2022, 6, 12, 15, 44),
+                  // value: DateTime(2019, 12, 36)
+                );
               },
             ),
           ),

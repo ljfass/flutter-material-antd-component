@@ -27,6 +27,7 @@ import './pages/Grid/grid.dart';
 import './pages/picker/picker.dart';
 import './pages/PickerView/pickerView.dart';
 import './pages/DatePicker/datePicker.dart';
+import './pages/DatePickerView/datePickerView.dart';
 
 void main() => runApp(MyApp());
 
@@ -195,6 +196,23 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: ListTile(
                         title: Text(
                           'Button 按钮',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageDatePickerView();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'DatePickerView 选择器',
                           style: TextStyle(fontSize: 14.0, color: Colors.grey),
                         ),
                         trailing: Container(

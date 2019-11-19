@@ -14,7 +14,12 @@ class DatePicker {
       DateTime value,
       DateTime minDate,
       DateTime maxDate,
-      bool use12Hours}) {
+      bool use12Hours = false,
+      String title,
+      int minuteStep = 1,
+      ValueChanged<Map<String, String>> onValueChange,
+      ValueChanged<DateTime> onOk,
+      VoidCallback onDismiss}) {
     return showCupertinoModalPopup<void>(
         context: context,
         builder: (BuildContext context) {
@@ -35,6 +40,12 @@ class DatePicker {
             mode: mode,
             minDate: minDate,
             maxDate: maxDate,
+            title: title,
+            minuteStep: minuteStep,
+            use12Hours: false,
+            onValueChange: onValueChange,
+            onOk: onOk,
+            onDismiss: onDismiss,
           );
         });
   }
@@ -47,20 +58,44 @@ class DatePickerComponent extends StatefulWidget {
       this.value,
       this.maxDate,
       this.minDate,
-      this.use12Hours})
+      this.use12Hours,
+      this.title,
+      this.minuteStep,
+      this.onValueChange,
+      this.onOk,
+      this.onDismiss})
       : super(key: key);
   final String mode;
   final DateTime value;
   final DateTime minDate;
   final DateTime maxDate;
   final bool use12Hours;
+  final String title;
+  final int minuteStep;
+  final ValueChanged<Map<String, String>> onValueChange;
+  final ValueChanged<DateTime> onOk;
+  final VoidCallback onDismiss;
 
   @override
   _DatePickerComponentState createState() => _DatePickerComponentState();
 }
 
 class _DatePickerComponentState extends State<DatePickerComponent> {
-  List<int> _yearRange, _monthRange, _dayRange, _hourRange, _minuteRange;
+  double _itemExtent = 28.0;
+  double _squeeze = 1.0;
+  double _diameterRatio = 2.0;
+  Color _background = Colors.white;
+  Color _activeTextColor = Colors.black;
+  Color _inActiveTextColor = Colors.grey;
+
+  List<int> _yearRange,
+      _monthRange,
+      _dayRange,
+      _hourRange,
+      _minuteRange,
+      _12hoursRange = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  List<int> _init12hoursRange = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
   DateTime _initDateTime;
   DateTime _minDateTime;
   DateTime _maxDateTime;
@@ -73,6 +108,9 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
   int _currentDay;
   int _currentHour;
   int _currentMinute;
+  int _currentSecond;
+  int _current12Hour;
+  String _currentPeriod;
 
   bool _isYearRangeChanged = false;
   bool _isMonthRangeChanged = false;
@@ -83,66 +121,103 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
       _monthScrollCtrl,
       _dayScrollCtrl,
       _hourScrollCtrl,
-      _minuteScrollCtrl;
+      _minuteScrollCtrl,
+      _periodScrollCtrl,
+      _12hoursScrollCtrl;
   Map<String, List<int>> _valueRangeMap;
 
-  Color _activeTextColor = Colors.black;
-  Color _inActiveTextColor = Colors.grey;
+  double itemWidgetHeight = 36.0;
 
   @override
   void initState() {
     super.initState();
-    _initDateTime = widget.value ?? DateTime.now();
-    _minDateTime = widget.minDate ?? DEFAULT_MIN_DATETIME;
-    _maxDateTime = widget.maxDate ?? DEFAULT_MAX_DATETIME;
-
-    this._yearRange = [_minDateTime.year, _maxDateTime.year];
-
-    /// 时间戳
-    _initDateTimeStamp = _initDateTime.millisecondsSinceEpoch;
-    _minDateTimeStamp = _minDateTime.millisecondsSinceEpoch;
-    _maxDateTimeStamp = _maxDateTime.millisecondsSinceEpoch;
-
     if (widget.mode == 'time') {
       _initDateTime = widget.value != null
-          ? DateTime(0, 0, 0, widget.value.hour, widget.value.minute)
-          : DateTime(0, 0, 0, DateTime.now().hour, DateTime.now().minute);
+          ? DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, widget.value.hour, widget.value.minute)
+          : DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, DateTime.now().hour, DateTime.now().minute);
       _minDateTime = widget.minDate != null
-          ? DateTime(0, 0, 0, widget.minDate.hour, widget.minDate.minute)
+          ? DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, widget.minDate.hour, widget.minDate.minute)
           : DateTime(
-              0, 0, 0, DEFAULT_MIN_DATETIME.hour, DEFAULT_MIN_DATETIME.minute);
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+              DEFAULT_MIN_DATETIME.hour,
+              DEFAULT_MIN_DATETIME.minute);
       _maxDateTime = widget.maxDate != null
-          ? DateTime(0, 0, 0, widget.maxDate.hour, widget.maxDate.minute)
+          ? DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, widget.maxDate.hour, widget.maxDate.minute)
           : DateTime(
-              0, 0, 0, DEFAULT_MAX_DATETIME.hour, DEFAULT_MAX_DATETIME.minute);
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+              DEFAULT_MAX_DATETIME.hour,
+              DEFAULT_MAX_DATETIME.minute);
 
       _initDateTimeStamp = _initDateTime.millisecondsSinceEpoch;
       _minDateTimeStamp = _minDateTime.millisecondsSinceEpoch;
       _maxDateTimeStamp = _maxDateTime.millisecondsSinceEpoch;
+      assert(_minDateTimeStamp <= _maxDateTimeStamp,
+          'minDate must be earlier than maxDate or equal to maxDate');
+      _currentYear = DateTime.now().year;
+      _currentMonth = DateTime.now().month;
+      _currentDay = DateTime.now().day;
+      _currentSecond = DateTime.now().second;
 
-      if (_minDateTimeStamp == _maxDateTimeStamp) {
+      if (_minDateTimeStamp >= _maxDateTimeStamp) {
         _hourScrollCtrl = FixedExtentScrollController(initialItem: 0);
         _minuteScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        this._hourRange = [_minDateTime.year, _minDateTime.year];
         this._hourRange = [_minDateTime.hour, _minDateTime.hour];
         this._minuteRange = [_minDateTime.minute, _minDateTime.minute];
         _currentHour = _minDateTime.hour;
         _currentMinute = _minDateTime.minute;
       } else if (_initDateTimeStamp > _minDateTimeStamp &&
           _initDateTimeStamp < _maxDateTimeStamp) {
-        this._hourRange = [0, 23];
+        this._hourRange = [_minDateTime.hour, _maxDateTime.hour];
         this._minuteRange = [0, 59];
         _hourScrollCtrl = FixedExtentScrollController(
             initialItem: _findScrollCtrl(
                 _hourRange.first, _hourRange.last, _initDateTime.hour));
         _minuteScrollCtrl = FixedExtentScrollController(
-            initialItem: _findScrollCtrl(
+            initialItem: _findMinuteScrollCtrl(
                 _minuteRange.first, _minuteRange.last, _initDateTime.minute));
         _currentHour = _initDateTime.hour;
         _currentMinute = _initDateTime.minute;
+      } else if (_initDateTimeStamp <= _minDateTimeStamp) {
+        this._hourRange = [_minDateTime.hour, 23];
+        this._minuteRange = [_minDateTime.minute, 59];
+        _hourScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _minuteScrollCtrl = FixedExtentScrollController(initialItem: 0);
+        _currentHour = _minDateTime.hour;
+        _currentMinute = _minDateTime.minute;
+      } else if (_initDateTimeStamp >= _maxDateTimeStamp) {
+        this._hourRange = [0, _maxDateTime.hour];
+        this._minuteRange = [0, _maxDateTime.minute];
+        _hourScrollCtrl = FixedExtentScrollController(
+            initialItem: _hourRange.last - _hourRange.first);
+        _minuteScrollCtrl = FixedExtentScrollController(
+            initialItem: _minuteRange.last - _minuteRange.first);
+        _currentHour = _maxDateTime.hour;
+        _currentMinute = _maxDateTime.minute;
       }
+
       _valueRangeMap = {'h': _hourRange, 'f': _minuteRange};
     } else {
-      if (_minDateTimeStamp == _maxDateTimeStamp) {
+      // mode为date、datetime、year、month
+      _initDateTime = widget.value ?? DateTime.now();
+      _minDateTime = widget.minDate ?? DEFAULT_MIN_DATETIME;
+      _maxDateTime = widget.maxDate ?? DEFAULT_MAX_DATETIME;
+
+      this._yearRange = [_minDateTime.year, _maxDateTime.year];
+
+      /// 时间戳
+      _initDateTimeStamp = _initDateTime.millisecondsSinceEpoch;
+      _minDateTimeStamp = _minDateTime.millisecondsSinceEpoch;
+      _maxDateTimeStamp = _maxDateTime.millisecondsSinceEpoch;
+      if (_minDateTimeStamp >= _maxDateTimeStamp) {
         _yearScrollCtrl = FixedExtentScrollController(initialItem: 0);
         _monthScrollCtrl = FixedExtentScrollController(initialItem: 0);
         _dayScrollCtrl = FixedExtentScrollController(initialItem: 0);
@@ -157,6 +232,16 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
         _currentDay = _minDateTime.day;
         _currentHour = _minDateTime.hour;
         _currentMinute = _minDateTime.minute;
+        _currentSecond = _minDateTime.second;
+        // 12小时制选择时间，上午/下午时间段
+        if (_currentHour <= 11) {
+          // 上午
+          _periodScrollCtrl = FixedExtentScrollController(initialItem: 0);
+          int _startIndex = this._12hoursRange.indexOf(_currentHour);
+          int _endIndex = this._12hoursRange.indexOf(11);
+          this._12hoursRange =
+              this._12hoursRange.getRange(_startIndex, _endIndex + 1).toList();
+        }
       } else if (_initDateTimeStamp > _minDateTimeStamp &&
           _initDateTimeStamp < _maxDateTimeStamp) {
         // 初始值位于区间中间
@@ -178,14 +263,44 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
             initialItem: _findScrollCtrl(
                 _hourRange.first, _hourRange.last, _initDateTime.hour));
         _minuteScrollCtrl = FixedExtentScrollController(
-            initialItem: _findScrollCtrl(
-                _minuteRange.first, _minuteRange.last, _initDateTime.minute));
+            initialItem: _findMinuteScrollCtrl(
+          _minuteRange.first,
+          _minuteRange.last,
+          _initDateTime.minute,
+        ));
 
         _currentYear = _initDateTime.year;
         _currentMonth = _initDateTime.month;
         _currentDay = _initDateTime.day;
         _currentHour = _initDateTime.hour;
         _currentMinute = _initDateTime.minute;
+        _currentSecond = _initDateTime.second;
+        // 12小时制选择时间，上午/下午时间段
+        if (_currentHour <= 11) {
+          // 上午
+          _periodScrollCtrl = FixedExtentScrollController(initialItem: 0);
+          if (_currentHour == 0) {
+            _12hoursScrollCtrl = FixedExtentScrollController(initialItem: 0);
+            _current12Hour = _12hoursRange[0];
+          } else {
+            int _index = _12hoursRange.indexOf(_currentHour);
+            _12hoursScrollCtrl =
+                FixedExtentScrollController(initialItem: _index);
+            _current12Hour = _12hoursRange[_index];
+          }
+        } else {
+          // 下午
+          _periodScrollCtrl = FixedExtentScrollController(initialItem: 1);
+          if (_currentHour == 12) {
+            _12hoursScrollCtrl = FixedExtentScrollController(initialItem: 0);
+            _current12Hour = _12hoursRange[0];
+          } else {
+            int _index = _12hoursRange.indexOf(_currentHour - 12);
+            _12hoursScrollCtrl =
+                FixedExtentScrollController(initialItem: _index);
+            _current12Hour = _12hoursRange[_index];
+          }
+        }
       } else if (_initDateTimeStamp <= _minDateTimeStamp) {
         // 初始值小于区间最小值，选中区间最小值
         this._monthRange = [_minDateTime.month, 12];
@@ -205,6 +320,36 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
         _currentDay = _minDateTime.day;
         _currentHour = _minDateTime.hour;
         _currentMinute = _minDateTime.minute;
+        _currentSecond = _minDateTime.second;
+
+        // 12小时制选择时间，上午/下午时间段
+        if (_currentHour <= 11) {
+          // 上午
+          _periodScrollCtrl = FixedExtentScrollController(initialItem: 0);
+          int _startIndex = this._12hoursRange.indexOf(_currentHour);
+          int _endIndex = this._12hoursRange.indexOf(11);
+          this._12hoursRange =
+              this._12hoursRange.getRange(_startIndex, _endIndex + 1).toList();
+          _12hoursScrollCtrl = FixedExtentScrollController(initialItem: 0);
+          _current12Hour = _12hoursRange[0];
+        } else {
+          // 下午
+          _periodScrollCtrl = FixedExtentScrollController(initialItem: 1);
+          if (_currentHour == 12) {
+            this._12hoursRange.clear();
+            _12hoursScrollCtrl = FixedExtentScrollController(initialItem: 0);
+            _current12Hour = 0;
+          } else {
+            int _startIndex = this._12hoursRange.indexOf(_currentHour - 12);
+            int _endIndex = this._12hoursRange.indexOf(11);
+            this._12hoursRange = this
+                ._12hoursRange
+                .getRange(_startIndex, _endIndex + 1)
+                .toList();
+            _12hoursScrollCtrl = FixedExtentScrollController(initialItem: 0);
+            _current12Hour = _12hoursRange[0];
+          }
+        }
       } else if (_initDateTimeStamp >= _maxDateTimeStamp) {
         // 初始值大于区间最大值，选中区间最大值
         this._monthRange = [1, _maxDateTime.month];
@@ -226,6 +371,43 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
         _currentDay = _maxDateTime.day;
         _currentHour = _maxDateTime.hour;
         _currentMinute = _maxDateTime.minute;
+        _currentSecond = _maxDateTime.second;
+
+        // 12小时制选择时间，上午/下午时间段
+        if (_currentHour <= 11) {
+          // 上午
+          _periodScrollCtrl = FixedExtentScrollController(initialItem: 0);
+          if (_currentHour == 0) {
+            this._12hoursRange = [12];
+            this._12hoursScrollCtrl =
+                FixedExtentScrollController(initialItem: 0);
+            _current12Hour = _12hoursRange[0];
+          } else {
+            int _endIndex = this._12hoursRange.indexOf(this._currentHour);
+            this._12hoursRange =
+                this._12hoursRange.getRange(0, _endIndex + 1).toList();
+            this._12hoursScrollCtrl = FixedExtentScrollController(
+                initialItem: this._12hoursRange.length - 1);
+            _current12Hour = _12hoursRange[this._12hoursRange.length - 1];
+          }
+        } else {
+          // 下午
+          _periodScrollCtrl = FixedExtentScrollController(initialItem: 1);
+          if (_currentHour == 12) {
+            this._12hoursRange = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            this._12hoursScrollCtrl = FixedExtentScrollController(
+                initialItem: this._12hoursRange.length - 1);
+            _current12Hour = _12hoursRange[this._12hoursRange.length - 1];
+          } else {
+            int _endIndex = this._12hoursRange.indexOf(this._currentHour - 12);
+
+            this._12hoursRange =
+                this._12hoursRange.getRange(0, _endIndex + 1).toList();
+            _12hoursScrollCtrl = FixedExtentScrollController(
+                initialItem: this._12hoursRange.length - 1);
+            _current12Hour = _12hoursRange[this._12hoursRange.length - 1];
+          }
+        }
       }
 
       _valueRangeMap = {
@@ -282,16 +464,43 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     return res;
   }
 
-  double ITEM_WIDGET_HEIGHT = 36.0;
-
-  List<int> _findPickerItemRange(String _key) {
-    List<int> valueRange;
-    _valueRangeMap.forEach((key, value) {
-      if (_key == key) {
-        valueRange = value;
+  int _findMinuteScrollCtrl(int startValue, int endValue, int currValue) {
+    int res;
+    bool flag = false;
+    for (int i = 0,
+            l = ((endValue - startValue + 1) / widget.minuteStep).ceil();
+        i < l;
+        i++) {
+      var value = widget.minuteStep * i + startValue;
+      if (value == currValue) {
+        res = i;
+        flag = true;
+        break;
       }
-    });
-    return valueRange;
+    }
+    if (currValue == startValue) {
+      _currentMinute = startValue;
+      res = 0;
+    } else if (currValue == endValue) {
+      res = ((endValue - startValue + 1) / widget.minuteStep).ceil() - 1;
+      _currentMinute =
+          ((((endValue - startValue + 1) / widget.minuteStep).ceil() - 1) *
+                  widget.minuteStep) +
+              startValue;
+    } else if (flag == false) {
+      for (int i = 0,
+              l = ((endValue - startValue + 1) / widget.minuteStep).ceil();
+          i < l;
+          i++) {
+        var value = widget.minuteStep * i + startValue;
+        if (value > currValue) {
+          _currentMinute = value;
+          res = i;
+          break;
+        }
+      }
+    }
+    return res;
   }
 
   _handleMinuteChange(int index) {
@@ -299,12 +508,13 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
         _isYearRangeChanged == true ||
         _isDayRangeChanged == true ||
         _isHourRangeChanged == true) return;
-    int _selectedMin = _valueRangeMap['f'].first + index;
+    int _selectedMin = widget.minuteStep * index + _valueRangeMap['f'].first;
 
     _currentMinute = _selectedMin;
     setState(() {
       _minuteScrollCtrl = FixedExtentScrollController(initialItem: index);
     });
+    _handleValueChange(_currentMinute.toString(), 4);
   }
 
   _handleHourChange(int index) {
@@ -346,9 +556,10 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
       _hourScrollCtrl = FixedExtentScrollController(initialItem: index);
       _minuteScrollCtrl.jumpToItem(0);
       _minuteScrollCtrl.jumpToItem(
-          _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+          _findMinuteScrollCtrl(_startMinute, _endMinute, _currentMinute));
     });
     _isHourRangeChanged = false;
+    _handleValueChange(_currentHour.toString(), 3);
   }
 
   /// mode为time
@@ -356,7 +567,7 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     int _selectedHour = _valueRangeMap['h'].first + index;
     int _startMinute;
     int _endMinute;
-
+    _isHourRangeChanged = true;
     _currentHour = _selectedHour;
     if (_currentHour == _hourRange.first) {
       _startMinute = _minDateTime.minute;
@@ -378,18 +589,63 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
       _hourScrollCtrl = FixedExtentScrollController(initialItem: index);
       _minuteScrollCtrl.jumpToItem(0);
       _minuteScrollCtrl.jumpToItem(
-          _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+          _findMinuteScrollCtrl(_startMinute, _endMinute, _currentMinute));
     });
+    _isHourRangeChanged = false;
+    _handleValueChange(_currentHour.toString(), 0);
   }
 
   /// mode为time
   _handleTimeMinuteChange(int index) {
-    int _selectedMin = _valueRangeMap['f'].first + index;
-
+    if (_isHourRangeChanged == true) return;
+    int _selectedMin = widget.minuteStep * index + _valueRangeMap['f'].first;
     _currentMinute = _selectedMin;
     setState(() {
       _minuteScrollCtrl = FixedExtentScrollController(initialItem: index);
     });
+    _handleValueChange(_currentMinute.toString(), 1);
+  }
+
+  /// use12Hours为true
+  _handle12hourChange(int index) {
+    int _startMinute;
+    int _endMinute;
+    if (_isMonthRangeChanged == true ||
+        _isYearRangeChanged == true ||
+        _isDayRangeChanged == true) return;
+    _isHourRangeChanged = true;
+    _current12Hour = _12hoursRange[index];
+    if (_currentYear == _yearRange.first &&
+        _currentMonth == _minDateTime.month &&
+        _currentDay == _minDateTime.day &&
+        _current12Hour == _12hoursRange[0]) {
+      // 初始年初始月初始日初始时
+      _startMinute = _minDateTime.minute;
+      _endMinute = 59;
+      _currentMinute =
+          _currentMinute < _startMinute ? _startMinute : _currentMinute;
+    } else if (_currentYear == _yearRange.last &&
+        _currentMonth == _maxDateTime.month &&
+        _currentDay == _maxDateTime.day &&
+        _current12Hour == _12hoursRange[_12hoursRange.length - 1]) {
+      // 结束年结束月结束日结束时
+      _startMinute = 0;
+      _endMinute = _maxDateTime.minute;
+      _currentMinute =
+          _currentMinute > _endMinute ? _endMinute : _currentMinute;
+    } else {
+      _startMinute = 0;
+      _endMinute = 59;
+    }
+
+    setState(() {
+      _valueRangeMap['f'] = [_startMinute, _endMinute];
+      _12hoursScrollCtrl = FixedExtentScrollController(initialItem: index);
+      _minuteScrollCtrl.jumpToItem(0);
+      _minuteScrollCtrl.jumpToItem(
+          _findMinuteScrollCtrl(_startMinute, _endMinute, _currentMinute));
+    });
+    _isHourRangeChanged = false;
   }
 
   _handleDayChange(int index) {
@@ -405,7 +661,7 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     if (_currentYear == _yearRange.first &&
         _currentMonth == _minDateTime.month &&
         _currentDay == _minDateTime.day) {
-      // 初始年初始月初始日初始时
+      // 始年初始月初始日初始时
       _startHour = _minDateTime.hour;
       _endHour = 23;
       _currentHour = _currentHour < _startHour ? _startHour : _currentHour;
@@ -450,9 +706,10 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
           .jumpToItem(_findScrollCtrl(_startHour, _endHour, _currentHour));
       _minuteScrollCtrl.jumpToItem(0);
       _minuteScrollCtrl.jumpToItem(
-          _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+          _findMinuteScrollCtrl(_startMinute, _endMinute, _currentMinute));
     });
     _isDayRangeChanged = false;
+    _handleValueChange(_currentDay.toString(), 2);
   }
 
   _handleMonthChange(int index) {
@@ -480,7 +737,7 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
           _currentDay = _startDay;
 
           if (_currentDay == _minDateTime.day) {
-            /// 初��年，最小月，最小天
+            /// 初始年，最小月，最小天
             _startHour = _minDateTime.hour;
             _currentHour =
                 _currentHour < _startHour ? _startHour : _currentHour;
@@ -513,9 +770,10 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
             .jumpToItem(_findScrollCtrl(_startHour, _endHour, _currentHour));
         _minuteScrollCtrl.jumpToItem(1);
         _minuteScrollCtrl.jumpToItem(
-            _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+            _findMinuteScrollCtrl(_startMinute, _endMinute, _currentMinute));
       });
       _isMonthRangeChanged = false;
+      _handleValueChange(_currentMonth.toString(), 1);
     } else if (_currentYear == _yearRange.last) {
       /// 当前年是结束年
       _startDay = 1;
@@ -561,9 +819,10 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
             _currentHour > _endHour ? _endHour : _currentHour));
         _minuteScrollCtrl.jumpToItem(1);
         _minuteScrollCtrl.jumpToItem(
-            _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+            _findMinuteScrollCtrl(_startMinute, _endMinute, _currentMinute));
       });
       _isMonthRangeChanged = false;
+      _handleValueChange(_currentMonth.toString(), 1);
     } else {
       /// 其他年份
       _startDay = 1;
@@ -586,9 +845,10 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
             .jumpToItem(_findScrollCtrl(_startHour, _endHour, _currentHour));
         _minuteScrollCtrl.jumpToItem(1);
         _minuteScrollCtrl.jumpToItem(
-            _findScrollCtrl(_startMinute, _endMinute, _currentMinute));
+            _findMinuteScrollCtrl(_startMinute, _endMinute, _currentMinute));
       });
       _isMonthRangeChanged = false;
+      _handleValueChange(_currentMonth.toString(), 1);
     }
   }
 
@@ -610,7 +870,7 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
         // 起始月
         _startDay = _minDateTime.day;
         _currDay =
-            _minDateTime.day > _currentDay ? _minDateTime.day : _currentDay;
+            _currentDay > _minDateTime.day ? _minDateTime.day : _currentDay;
         if (_currDay == _minDateTime.day) {
           // 起始天
           _startHour = _minDateTime.hour;
@@ -625,7 +885,7 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
                 : _currentMinute;
           } else {
             _startMinute = 0;
-            _currMinute = _currMinute;
+            _currMinute = _currentMinute;
           }
         } else {
           _startHour = 0;
@@ -665,9 +925,10 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
         _hourScrollCtrl.jumpToItem(_findScrollCtrl(_startHour, 23, _currHour));
         _minuteScrollCtrl.jumpToItem(1);
         _minuteScrollCtrl
-            .jumpToItem(_findScrollCtrl(_startMinute, 59, _currMinute));
+            .jumpToItem(_findMinuteScrollCtrl(_startMinute, 59, _currMinute));
       });
       _isYearRangeChanged = false;
+      _handleValueChange(_currentYear.toString(), 0);
       return;
     }
     // 结束年份
@@ -732,7 +993,7 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
         _hourScrollCtrl.jumpToItem(_findScrollCtrl(0, _endHour, _currHour));
         _minuteScrollCtrl.jumpToItem(1);
         _minuteScrollCtrl
-            .jumpToItem(_findScrollCtrl(0, _endMinute, _currMinute));
+            .jumpToItem(_findMinuteScrollCtrl(0, _endMinute, _currMinute));
       });
       _currentMonth = _currMonth;
       _currentDay = _currDay;
@@ -741,12 +1002,14 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
       _currentYear = _getCurrentValue(
           _valueRangeMap['y'].first, _valueRangeMap['y'].last, index);
       _isYearRangeChanged = false;
+      _handleValueChange(_currentYear.toString(), 0);
       return;
     }
     _currentYear = _getCurrentValue(
         _valueRangeMap['y'].first, _valueRangeMap['y'].last, index);
 
     // 其他年份
+
     setState(() {
       _valueRangeMap['m'] = [1, 12];
       _valueRangeMap['d'] = [1, _getDays(_currentYear, _currentMonth)];
@@ -761,10 +1024,41 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
       _hourScrollCtrl.jumpToItem(1);
       _hourScrollCtrl.jumpToItem(_findScrollCtrl(0, 23, _currentHour));
       _minuteScrollCtrl.jumpToItem(1);
-      _minuteScrollCtrl.jumpToItem(_findScrollCtrl(0, 59, _currentMinute));
+      _minuteScrollCtrl
+          .jumpToItem(_findMinuteScrollCtrl(0, 59, _currentMinute));
+      if (widget.use12Hours == true) {
+        _12hoursRange = _init12hoursRange;
+        _valueRangeMap['f'] = [0, 59];
+        _12hoursScrollCtrl.jumpToItem(1);
+        _12hoursScrollCtrl.jumpToItem(_12hoursRange.indexOf(_current12Hour));
+        _minuteScrollCtrl.jumpToItem(1);
+        _minuteScrollCtrl
+            .jumpToItem(_findMinuteScrollCtrl(0, 59, _currentMinute));
+      }
     });
     _isYearRangeChanged = false;
+    _handleValueChange(_currentYear.toString(), 0);
   }
+
+  void _handleOnOk() {
+    if (widget.onOk != null) {
+      widget.onOk(DateTime(
+          this._currentYear,
+          this._currentMonth,
+          this._currentDay,
+          this._currentHour,
+          this._currentMinute,
+          this._currentSecond));
+    }
+  }
+
+  void _handleValueChange(String value, int index) {
+    if (widget.onValueChange != null) {
+      widget.onValueChange({'vals': value, 'index': index.toString()});
+    }
+  }
+
+  void _handlePeriodChange(int index) {}
 
   /// 根据index获取值
   int _getCurrentValue(int start, int end, int index) {
@@ -779,26 +1073,102 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     return res;
   }
 
-  Widget _buildDatePickerColumn(
+  // int _getMinuteStepIndex(int count, int startValut) {
+  //   int res;
+  //   for (int i = 0; i < count; i++) {
+  //     if (i * widget.minuteStep + startValut - 1 == _currentMinute) {
+  //       res = i;
+  //       break;
+  //     }
+  //   }
+  //   return res;
+  // }
+
+  Widget _buildDateMinutePickerColumn(
       {@required FixedExtentScrollController scrollCtrl,
       @required List<int> valueRange,
       @required ValueChanged<int> valueChanged,
-      String type}) {
+      String type,
+      int minuteStep = 1}) {
     return Flexible(
       flex: 1,
       child: CupertinoPicker.builder(
         scrollController: scrollCtrl,
         backgroundColor: Colors.white,
-        itemExtent: 28.0,
-        squeeze: 1.0,
-        diameterRatio: 2.0,
+        itemExtent: _itemExtent,
+        squeeze: _squeeze,
+        diameterRatio: _diameterRatio,
         onSelectedItemChanged: valueChanged,
-        childCount: valueRange.last - valueRange.first + 1,
+        childCount:
+            ((valueRange.last - valueRange.first + 1) / minuteStep).ceil(),
         itemBuilder: (BuildContext context, int index) {
-          return _buildPickerItemWidget('${valueRange.first + index}$type');
+          return _buildPickerItemWidget(
+              '${(index * widget.minuteStep + valueRange.first)}$type');
         },
       ),
     );
+  }
+
+  Widget _buildDatePeriodPickerColumn(
+      {@required FixedExtentScrollController scrollCtrl,
+      @required List<String> valueRange,
+      @required ValueChanged<int> valueChanged}) {
+    return Flexible(
+      flex: 1,
+      child: CupertinoPicker.builder(
+        scrollController: scrollCtrl,
+        backgroundColor: Colors.white,
+        itemExtent: _itemExtent,
+        squeeze: _squeeze,
+        diameterRatio: _diameterRatio,
+        onSelectedItemChanged: valueChanged,
+        childCount: valueRange.length,
+        itemBuilder: (BuildContext context, int index) {
+          return _buildPickerItemWidget('${valueRange[index]}');
+        },
+      ),
+    );
+  }
+
+  Widget _buildDatePickerColumn(
+      {@required FixedExtentScrollController scrollCtrl,
+      @required List<int> valueRange,
+      @required ValueChanged<int> valueChanged,
+      String type,
+      int minuteStep = 1}) {
+    if (type == '时' && widget.use12Hours == true) {
+      return Flexible(
+        flex: 1,
+        child: CupertinoPicker.builder(
+          scrollController: scrollCtrl,
+          backgroundColor: Colors.white,
+          itemExtent: _itemExtent,
+          squeeze: _squeeze,
+          diameterRatio: _diameterRatio,
+          onSelectedItemChanged: valueChanged,
+          childCount: _12hoursRange.length,
+          itemBuilder: (BuildContext context, int index) {
+            return _buildPickerItemWidget('${_12hoursRange[index]}$type');
+          },
+        ),
+      );
+    } else {
+      return Flexible(
+        flex: 1,
+        child: CupertinoPicker.builder(
+          scrollController: scrollCtrl,
+          backgroundColor: Colors.white,
+          itemExtent: _itemExtent,
+          squeeze: _squeeze,
+          diameterRatio: _diameterRatio,
+          onSelectedItemChanged: valueChanged,
+          childCount: valueRange.last - valueRange.first + 1,
+          itemBuilder: (BuildContext context, int index) {
+            return _buildPickerItemWidget('${valueRange.first + index}$type');
+          },
+        ),
+      );
+    }
   }
 
   Widget _buildYearPickerColumn(
@@ -810,9 +1180,9 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
       child: CupertinoPicker.builder(
         scrollController: scrollCtrl,
         backgroundColor: Colors.white,
-        itemExtent: 28.0,
-        squeeze: 1.0,
-        diameterRatio: 2.0,
+        itemExtent: _itemExtent,
+        squeeze: _squeeze,
+        diameterRatio: _diameterRatio,
         onSelectedItemChanged: valueChanged,
         childCount: valueRange.last - valueRange.first + 1,
         itemBuilder: (BuildContext context, int index) {
@@ -837,45 +1207,82 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
             type: '月',
             valueChanged: _handleMonthChange),
         _buildDatePickerColumn(
-            scrollCtrl: _dayScrollCtrl,
-            valueRange: _valueRangeMap['d'],
-            type: '日',
-            valueChanged: _handleDayChange),
+          scrollCtrl: _dayScrollCtrl,
+          valueRange: _valueRangeMap['d'],
+          type: '日',
+          valueChanged: _handleDayChange,
+        ),
       ],
     );
   }
 
   /// 渲染模式为datetime
   Widget _buildDatetimePickerWidget() {
-    return Row(
-      children: <Widget>[
-        _buildDatePickerColumn(
-            scrollCtrl: _yearScrollCtrl,
-            valueRange: _valueRangeMap['y'],
-            type: '年',
-            valueChanged: _handleYearChange),
-        _buildDatePickerColumn(
-            scrollCtrl: _monthScrollCtrl,
-            valueRange: _valueRangeMap['m'],
-            type: '月',
-            valueChanged: _handleMonthChange),
-        _buildDatePickerColumn(
-            scrollCtrl: _dayScrollCtrl,
-            valueRange: _valueRangeMap['d'],
-            type: '日',
-            valueChanged: _handleDayChange),
-        _buildDatePickerColumn(
-            scrollCtrl: _hourScrollCtrl,
-            valueRange: _valueRangeMap['h'],
-            type: '时',
-            valueChanged: _handleHourChange),
-        _buildDatePickerColumn(
-            scrollCtrl: _minuteScrollCtrl,
-            valueRange: _valueRangeMap['f'],
-            type: '分',
-            valueChanged: _handleMinuteChange),
-      ],
-    );
+    return widget.use12Hours == false
+        ? Row(
+            children: <Widget>[
+              _buildDatePickerColumn(
+                  scrollCtrl: _yearScrollCtrl,
+                  valueRange: _valueRangeMap['y'],
+                  type: '年',
+                  valueChanged: _handleYearChange),
+              _buildDatePickerColumn(
+                  scrollCtrl: _monthScrollCtrl,
+                  valueRange: _valueRangeMap['m'],
+                  type: '月',
+                  valueChanged: _handleMonthChange),
+              _buildDatePickerColumn(
+                  scrollCtrl: _dayScrollCtrl,
+                  valueRange: _valueRangeMap['d'],
+                  type: '日',
+                  valueChanged: _handleDayChange),
+              _buildDatePickerColumn(
+                  scrollCtrl: _hourScrollCtrl,
+                  valueRange: _valueRangeMap['h'],
+                  type: '时',
+                  valueChanged: _handleHourChange),
+              _buildDateMinutePickerColumn(
+                  scrollCtrl: _minuteScrollCtrl,
+                  valueRange: _valueRangeMap['f'],
+                  type: '分',
+                  valueChanged: _handleMinuteChange,
+                  minuteStep: widget.minuteStep),
+            ],
+          )
+        : Row(
+            children: <Widget>[
+              _buildDatePickerColumn(
+                  scrollCtrl: _yearScrollCtrl,
+                  valueRange: _valueRangeMap['y'],
+                  type: '年',
+                  valueChanged: _handleYearChange),
+              _buildDatePickerColumn(
+                  scrollCtrl: _monthScrollCtrl,
+                  valueRange: _valueRangeMap['m'],
+                  type: '月',
+                  valueChanged: _handleMonthChange),
+              _buildDatePickerColumn(
+                  scrollCtrl: _dayScrollCtrl,
+                  valueRange: _valueRangeMap['d'],
+                  type: '日',
+                  valueChanged: _handleDayChange),
+              _buildDatePickerColumn(
+                  scrollCtrl: _12hoursScrollCtrl,
+                  valueRange: _valueRangeMap['h'],
+                  type: '时',
+                  valueChanged: _handle12hourChange),
+              _buildDateMinutePickerColumn(
+                  scrollCtrl: _minuteScrollCtrl,
+                  valueRange: _valueRangeMap['f'],
+                  type: '分',
+                  valueChanged: _handleMinuteChange,
+                  minuteStep: widget.minuteStep),
+              _buildDatePeriodPickerColumn(
+                  scrollCtrl: _periodScrollCtrl,
+                  valueRange: ['上午', '下午'],
+                  valueChanged: _handlePeriodChange)
+            ],
+          );
   }
 
   /// 渲染模式为year
@@ -885,7 +1292,11 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
         _buildYearPickerColumn(
             scrollCtrl: _yearScrollCtrl,
             valueRange: _valueRangeMap['y'],
-            valueChanged: (int value) {})
+            valueChanged: (int index) {
+              _currentYear = _getCurrentValue(
+                  _valueRangeMap['y'].first, _valueRangeMap['y'].last, index);
+              _handleValueChange(_currentYear.toString(), 0);
+            })
       ],
     );
   }
@@ -917,10 +1328,11 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
             valueRange: _valueRangeMap['h'],
             valueChanged: _handleTimeHourChange,
             type: '时'),
-        _buildDatePickerColumn(
+        _buildDateMinutePickerColumn(
             scrollCtrl: _minuteScrollCtrl,
             valueRange: _valueRangeMap['f'],
             valueChanged: _handleTimeMinuteChange,
+            minuteStep: widget.minuteStep,
             type: '分')
       ],
     );
@@ -928,7 +1340,7 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
 
   Widget _buildPickerItemWidget(String value, {bool active = true}) {
     return Container(
-        height: ITEM_WIDGET_HEIGHT,
+        height: itemWidgetHeight,
         child: DefaultTextStyle(
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -978,8 +1390,55 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     var _containerHeight = MediaQuery.of(context).size.height * 0.35;
     return Container(
       height: _containerHeight,
-      decoration: BoxDecoration(color: Colors.white),
-      child: _buildPickerView(),
+      decoration: BoxDecoration(color: _background),
+      child: Column(
+        children: <Widget>[
+          Material(
+            color: _background,
+            textStyle: TextStyle(
+                color: Theme.of(context).primaryColor, fontSize: 16.0),
+            child: Container(
+              height: 42.0,
+              decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Color(0xffdddddd)))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop(true);
+                      if (widget.onDismiss != null) widget.onDismiss();
+                    },
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 9.0, horizontal: 15.0),
+                      child: Text('取消'),
+                    ),
+                  ),
+                  Text(
+                    widget.title ?? '',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (widget.onOk != null) _handleOnOk();
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 9.0, horizontal: 15.0),
+                      child: Text('确定'),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Flexible(
+            child: _buildPickerView(),
+          )
+        ],
+      ),
     );
   }
 }

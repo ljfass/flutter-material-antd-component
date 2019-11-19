@@ -13,26 +13,129 @@ class PageDatePicker extends StatelessWidget {
           child: Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.symmetric(horizontal: 15.0),
-            height: 50.0,
-            child: RaisedButton(
-              child: Text('show'),
-              onPressed: () {
-                DatePicker.showDatePicker(context,
-                    mode: 'datetime',
-                    title: 'select time',
-                    minuteStep: 1,
-                    use12Hours: true,
-                    minDate: DateTime(2008, 2, 12, 11, 23),
-                    maxDate: DateTime(2022, 6, 12, 13, 23),
-                    value: DateTime(2003, 3, 5, 14, 25),
-                    onOk: (DateTime value) {
-                  print(value);
-                }, onValueChange: (value) {
-                  print(value);
-                }
-                    // value: DateTime(2019, 12, 36)
-                    );
-              },
+            child: Column(
+              children: <Widget>[
+                RaisedButton(
+                  child: Text('default'),
+                  onPressed: () {
+                    DatePicker.showDatePicker(context,
+                        // mode: 'datetime',
+                        title: 'select date',
+                        minuteStep: 1,
+                        use12Hours: true,
+                        minDate: DateTime(2008, 2, 12, 11, 23),
+                        maxDate: DateTime(2022, 6, 12, 13, 23),
+                        onOk: (DateTime value) {
+                      print(value);
+                    }, onValueChange: (value) {
+                      print(value);
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                RaisedButton(
+                  child: Text('datetime'),
+                  onPressed: () {
+                    DatePicker.showDatePicker(context,
+                        mode: 'datetime',
+                        title: 'select datetime',
+                        minuteStep: 1,
+                        use12Hours: true,
+                        minDate: DateTime(2008, 2, 12, 11, 23),
+                        maxDate: DateTime(2022, 6, 12, 13, 23),
+                        onOk: (DateTime value) {
+                      print(value);
+                    }, onValueChange: (value) {
+                      print(value);
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                RaisedButton(
+                  child: Text('year'),
+                  onPressed: () {
+                    DatePicker.showDatePicker(context,
+                        mode: 'year',
+                        title: 'select year',
+                        minuteStep: 1,
+                        use12Hours: true,
+                        minDate: DateTime(2008, 2, 12, 11, 23),
+                        maxDate: DateTime(2022, 6, 12, 13, 23),
+                        onOk: (DateTime value) {
+                      print(value);
+                    }, onValueChange: (value) {
+                      print(value);
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                RaisedButton(
+                  child: Text('month'),
+                  onPressed: () {
+                    DatePicker.showDatePicker(context,
+                        mode: 'month',
+                        title: 'select month',
+                        minuteStep: 1,
+                        use12Hours: true,
+                        minDate: DateTime(2008, 2, 12, 11, 23),
+                        maxDate: DateTime(2022, 6, 12, 13, 23),
+                        onOk: (DateTime value) {
+                      print(value);
+                    }, onValueChange: (value) {
+                      print(value);
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                RaisedButton(
+                  child: Text('time'),
+                  onPressed: () {
+                    DatePicker.showDatePicker(context,
+                        mode: 'time',
+                        title: 'select time',
+                        minuteStep: 1,
+                        use12Hours: true,
+                        minDate: DateTime(2008, 2, 12, 11, 23),
+                        maxDate: DateTime(2022, 6, 12, 13, 23),
+                        onOk: (DateTime value) {
+                      print(value);
+                    }, onValueChange: (value) {
+                      print(value);
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                RaisedButton(
+                  child: Text('minute step'),
+                  onPressed: () {
+                    DatePicker.showDatePicker(context,
+                        mode: 'datetime',
+                        title: 'select datetime',
+                        minuteStep: 2,
+                        use12Hours: true,
+                        minDate: DateTime(2008, 2, 12, 11, 23),
+                        maxDate: DateTime(2022, 6, 12, 13, 23),
+                        onOk: (DateTime value) {
+                      print(value);
+                    }, onValueChange: (value) {
+                      print(value);
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20.0,
+                )
+              ],
             ),
           ),
         ));

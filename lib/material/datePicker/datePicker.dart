@@ -420,6 +420,16 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     }
   }
 
+  @override
+  void dispose() {
+    if (_yearScrollCtrl != null) _yearScrollCtrl.dispose();
+    if (_monthScrollCtrl != null) _monthScrollCtrl.dispose();
+    if (_dayScrollCtrl != null) _dayScrollCtrl.dispose();
+    if (_hourScrollCtrl != null) _hourScrollCtrl.dispose();
+    if (_minuteScrollCtrl != null) _minuteScrollCtrl.dispose();
+    super.dispose();
+  }
+
   /// 计算该年份是否是闰年
   bool isLeapYear(int year) {
     return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
@@ -870,7 +880,7 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
         // 起始月
         _startDay = _minDateTime.day;
         _currDay =
-            _currentDay > _minDateTime.day ? _minDateTime.day : _currentDay;
+            _currentDay > _minDateTime.day ? _currentDay : _minDateTime.day;
         if (_currDay == _minDateTime.day) {
           // 起始天
           _startHour = _minDateTime.hour;
@@ -889,7 +899,9 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
           }
         } else {
           _startHour = 0;
+          _startMinute = 0;
           _currHour = _currentHour;
+          _currMinute = _currentMinute;
         }
       } else {
         _startDay = 1;
@@ -967,7 +979,9 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
           }
         } else {
           _currHour = _currentHour;
+          _currMinute = _currentMinute;
           _endHour = 23;
+          _endMinute = 59;
         }
       } else {
         _endDay = _getDays(this._yearRange[1], _currentMonth);
@@ -1072,17 +1086,6 @@ class _DatePickerComponentState extends State<DatePickerComponent> {
     }
     return res;
   }
-
-  // int _getMinuteStepIndex(int count, int startValut) {
-  //   int res;
-  //   for (int i = 0; i < count; i++) {
-  //     if (i * widget.minuteStep + startValut - 1 == _currentMinute) {
-  //       res = i;
-  //       break;
-  //     }
-  //   }
-  //   return res;
-  // }
 
   Widget _buildDateMinutePickerColumn(
       {@required FixedExtentScrollController scrollCtrl,

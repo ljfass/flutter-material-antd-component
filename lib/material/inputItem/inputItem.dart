@@ -1,20 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
 
 class InputItem extends StatefulWidget {
-  InputItem(
-      {Key key,
-      this.child,
-      this.type = 'text',
-      this.defaultValue = '',
-      this.placeholder,
-      this.editable = true,
-      this.disabled = false,
-      this.clear = false,
-      this.maxLength,
-      this.moneyKeyboardAlign = 'right'})
-      : super(key: key);
-  final Widget child;
+  InputItem({
+    Key key,
+    this.label,
+    this.type = 'text',
+    this.defaultValue = '',
+    this.placeholder,
+    this.editable = true,
+    this.disabled = false,
+    this.clear = false,
+    this.maxLength,
+    this.moneyKeyboardAlign = 'right',
+    this.labelNumber = 5,
+    this.updatePlaceholder = false,
+    this.error = false,
+    this.onChange,
+    this.onFocus,
+    this.onBlur,
+    this.onErrorClick,
+    this.onVirtualKeyboardConfirm,
+  })  : assert(moneyKeyboardAlign == null ||
+            moneyKeyboardAlign == 'left' ||
+            moneyKeyboardAlign == 'right'),
+        assert(label == null || label is String || label is Widget),
+        assert(labelNumber >= 2 && labelNumber <= 7),
+        super(key: key);
+  final dynamic label;
   final String type;
   final String defaultValue;
   final String placeholder;
@@ -23,6 +37,14 @@ class InputItem extends StatefulWidget {
   final bool clear;
   final int maxLength;
   final String moneyKeyboardAlign;
+  final int labelNumber;
+  final bool updatePlaceholder;
+  final bool error;
+  final ValueChanged<String> onChange;
+  final ValueChanged<String> onFocus;
+  final ValueChanged<String> onBlur;
+  final VoidCallback onErrorClick;
+  final ValueChanged<String> onVirtualKeyboardConfirm;
 
   @override
   _InputItemState createState() => _InputItemState();
@@ -32,11 +54,39 @@ class _InputItemState extends State<InputItem> {
   bool showClear = false;
   FocusNode _focusNode;
   TextEditingController _textEditingController;
+  String _placeholder;
+  String _defaultValue;
+  TextInputPhoneFormatter _phoneFormatter;
+  TextInputBankCardFormatter _bankCardFormatter;
+  TextInputBankCardFormatter _moneyFormatter;
+  int bankCardLoop = 1;
+  List<TextInputFormatter> _textInputFormatterList = [];
+
   @override
   void initState() {
     super.initState();
+    _defaultValue = widget.defaultValue;
+    if (widget.type == 'bankCard') {
+      _bankCardFormatter = TextInputBankCardFormatter(loop: bankCardLoop);
+      _textInputFormatterList
+          .add(WhitelistingTextInputFormatter(RegExp("[0-9]")));
+      _textInputFormatterList.add(_bankCardFormatter);
+    } else if (widget.type == 'phone') {
+      _phoneFormatter = TextInputPhoneFormatter();
+      _textInputFormatterList
+          .add(WhitelistingTextInputFormatter(RegExp("[0-9]")));
+      _textInputFormatterList.add(_phoneFormatter);
+    } else if (widget.type == 'number') {
+      _textInputFormatterList.add(WhitelistingTextInputFormatter.digitsOnly);
+    } else if (widget.type == 'money') {
+      // _moneyFormatter = TextInputPhoneFormatter();
+      _textInputFormatterList
+          .add(WhitelistingTextInputFormatter(RegExp("[0-9.]")));
+    }
+
+    _placeholder = widget.placeholder ?? null;
     _focusNode = FocusNode();
-    _textEditingController = TextEditingController(text: widget.defaultValue);
+    _textEditingController = TextEditingController(text: _defaultValue);
     _textEditingController.addListener(() {
       if (_textEditingController.text != '') {
         setState(() {
@@ -50,6 +100,9 @@ class _InputItemState extends State<InputItem> {
     });
     _focusNode.addListener(() {
       if (_focusNode.hasFocus == true) {
+        if (widget.onFocus != null) {
+          widget.onFocus(_textEditingController.text);
+        }
         if (_textEditingController.text == '') {
           setState(() {
             showClear = false;
@@ -63,9 +116,9 @@ class _InputItemState extends State<InputItem> {
       }
 
       if (_focusNode.hasFocus == false) {
-        setState(() {
-          showClear = false;
-        });
+        this.showClear = false;
+        setState(() {});
+        if (widget.onBlur != null) widget.onBlur(_textEditingController.text);
       }
     });
   }
@@ -76,20 +129,49 @@ class _InputItemState extends State<InputItem> {
     super.dispose();
   }
 
-  Widget _buildClearWidget({bool show = false}) {
+  Widget _buildClearWidget({bool show = false, VoidCallback callback}) {
     return Visibility(
       visible: show,
-      child: Container(
-        width: 14.0,
-        height: 14.0,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle, color: Color(0xff000000).withOpacity(0.3)),
-        child: Align(
-          alignment: Alignment.center,
-          child: Icon(
-            Icons.close,
-            size: 11.0,
-            color: Color(0xffffffff),
+      child: GestureDetector(
+        onTap: callback ?? null,
+        child: Container(
+          width: 14.0,
+          height: 14.0,
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xff000000).withOpacity(0.3)),
+          child: Align(
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.close,
+              size: 11.0,
+              color: Color(0xffffffff),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget({bool show = false, VoidCallback callback}) {
+    return Visibility(
+      visible: show,
+      child: GestureDetector(
+        onTap: callback ?? null,
+        child: Container(
+          margin: EdgeInsets.only(left: 6.0),
+          width: 14.0,
+          height: 14.0,
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xffffffff),
+              border: Border.all(color: Color(0xffff5500))),
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              '!',
+              style: TextStyle(fontSize: 11.0, color: Color(0xffff5500)),
+            ),
           ),
         ),
       ),
@@ -97,6 +179,12 @@ class _InputItemState extends State<InputItem> {
   }
 
   Widget _buildInputItemChildLabel() {
+    dynamic _label;
+    _label = widget.label is String
+        ? widget.label.length >= widget.labelNumber
+            ? Text(widget.label.substring(0, widget.labelNumber))
+            : Text(widget.label)
+        : widget.label;
     return Container(
       alignment: Alignment.topCenter,
       margin: EdgeInsets.only(right: 5.0),
@@ -106,13 +194,151 @@ class _InputItemState extends State<InputItem> {
         overflow: TextOverflow.clip,
         textAlign: TextAlign.end,
         style: TextStyle(
-            color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.w500),
-        child: widget.child,
+            color: widget.disabled == true ? Color(0xffbbbbbb) : Colors.black,
+            fontSize: 16.0,
+            fontWeight: FontWeight.w500),
+        child: _label,
       ),
     );
   }
 
-  Widget _buildInputItemTypeTextWidgetChild() {
+  TextField _buildTextFieldWidget(
+      {List<TextInputFormatter> formatters,
+      TextInputType type = TextInputType.text,
+      bool isObscure = false,
+      TextAlign textAlign = TextAlign.left}) {
+    return TextField(
+        focusNode: _focusNode,
+        controller: _textEditingController,
+        textAlign: textAlign,
+        keyboardType: type,
+        enabled: !widget.disabled,
+        readOnly: !widget.editable,
+        cursorWidth: 1.2,
+        maxLength: widget.maxLength ?? null,
+        inputFormatters: formatters,
+        obscureText: isObscure,
+        cursorColor: widget.error == true
+            ? Color(0xffff5500)
+            : Theme.of(context).primaryColor,
+        style: TextStyle(
+            color: widget.error == true ? Color(0xffff5500) : Colors.black),
+        decoration: InputDecoration(
+            counterText: '',
+            hintText: _placeholder,
+            hintStyle: TextStyle(color: Color(0xffc4c4c4)),
+            contentPadding: EdgeInsets.only(left: 15.0),
+            border: OutlineInputBorder(borderSide: BorderSide.none)),
+        onChanged: widget.onChange == null
+            ? null
+            : (String value) {
+                widget.onChange(value);
+              },
+        onSubmitted: widget.onVirtualKeyboardConfirm == null
+            ? null
+            : (String value) {
+                widget.onVirtualKeyboardConfirm(value);
+              });
+  }
+
+  Widget _buildInputItemTypeTextWithoutLabel() {
+    Widget _contentWidget;
+    switch (widget.type) {
+      case 'text':
+        {
+          _contentWidget = _buildTextFieldWidget(
+            formatters: [],
+          );
+        }
+        break;
+      case 'phone':
+        {
+          _contentWidget = _buildTextFieldWidget(
+              formatters: _textInputFormatterList, type: TextInputType.phone);
+        }
+        break;
+      case 'bankCard':
+        {
+          _contentWidget = _buildTextFieldWidget(
+              formatters: _textInputFormatterList, type: TextInputType.number);
+        }
+        break;
+      case 'password':
+        {
+          _contentWidget =
+              _buildTextFieldWidget(formatters: [], isObscure: true);
+        }
+        break;
+      case 'number':
+        {
+          _contentWidget = _buildTextFieldWidget(
+              formatters: _textInputFormatterList, type: TextInputType.number);
+        }
+        break;
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          child: _contentWidget,
+        ),
+        _buildClearWidget(
+            show: (widget.clear == false ||
+                    widget.editable == false ||
+                    widget.disabled == true)
+                ? false
+                : showClear,
+            callback: _handleContentClear),
+        _buildErrorWidget(show: widget.error, callback: _handleErrorClick)
+      ],
+    );
+  }
+
+  Widget _buildInputItemTypeTextWidgetWithLabel() {
+    Widget _contentWidget;
+    switch (widget.type) {
+      case 'text':
+        {
+          _contentWidget = _buildTextFieldWidget(
+            formatters: [],
+          );
+        }
+        break;
+      case 'phone':
+        {
+          _contentWidget = _buildTextFieldWidget(
+              formatters: _textInputFormatterList, type: TextInputType.phone);
+        }
+        break;
+      case 'bankCard':
+        {
+          _contentWidget = _buildTextFieldWidget(
+              formatters: _textInputFormatterList, type: TextInputType.number);
+        }
+        break;
+      case 'password':
+        {
+          _contentWidget =
+              _buildTextFieldWidget(formatters: [], isObscure: true);
+        }
+        break;
+      case 'number':
+        {
+          _contentWidget = _buildTextFieldWidget(
+              formatters: _textInputFormatterList, type: TextInputType.number);
+        }
+        break;
+      case 'money':
+        {
+          _contentWidget = _buildTextFieldWidget(
+              formatters: _textInputFormatterList,
+              type: TextInputType.number,
+              textAlign: widget.moneyKeyboardAlign == 'right'
+                  ? TextAlign.right
+                  : TextAlign.left);
+        }
+        break;
+    }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
@@ -121,23 +347,16 @@ class _InputItemState extends State<InputItem> {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: TextField(
-                  focusNode: _focusNode,
-                  controller: _textEditingController,
-                  textAlign: TextAlign.start,
-                  enabled: !widget.disabled,
-                  maxLength: widget.maxLength ?? null,
-                  decoration: InputDecoration(
-                      hintText: widget.placeholder ?? null,
-                      hintStyle: TextStyle(color: Color(0xffc4c4c4)),
-                      contentPadding: EdgeInsets.only(left: 15.0),
-                      border: OutlineInputBorder(borderSide: BorderSide.none)),
-                  onChanged: (String value) {
-                    print(value);
-                  },
-                ),
+                child: _contentWidget,
               ),
-              _buildClearWidget(show: widget.clear == false ? false : showClear)
+              _buildClearWidget(
+                  show: (widget.clear == false ||
+                          widget.editable == false ||
+                          widget.disabled == true)
+                      ? false
+                      : this.showClear,
+                  callback: _handleContentClear),
+              _buildErrorWidget(show: widget.error, callback: _handleErrorClick)
             ],
           ),
         )
@@ -145,32 +364,35 @@ class _InputItemState extends State<InputItem> {
     );
   }
 
-  Widget _buildInputItemTypeTextWithoutChild() {
-    return TextField(
-      controller: _textEditingController,
-      textAlign: TextAlign.start,
-      enabled: !widget.disabled,
-      maxLength: widget.maxLength ?? null,
-      decoration: InputDecoration(
-          hintText: widget.placeholder ?? null,
-          hintStyle: TextStyle(color: Color(0xffc4c4c4)),
-          contentPadding: EdgeInsets.only(left: 15.0),
-          border: OutlineInputBorder(borderSide: BorderSide.none)),
-    );
+  void _handleContentClear() {
+    setState(() {
+      showClear = !showClear;
+      if (widget.updatePlaceholder == true) {
+        _placeholder = _textEditingController.text;
+      }
+    });
+    _textEditingController.clear();
   }
 
-  /// text
-  Widget _buildInputItemTypeText() {
+  void _handleErrorClick() {
+    if (widget.onErrorClick != null) {
+      widget.onErrorClick();
+    }
+  }
+
+  /// text、phone、password、number
+  Widget _buildInputItemTextField() {
     return Container(
       height: 40.0,
-      alignment: Alignment.centerLeft,
-      padding: EdgeInsets.symmetric(horizontal: 15.0),
+      alignment: Alignment.center,
+      padding: EdgeInsets.fromLTRB(
+          widget.label != null ? 15.0 : 0.0, 0.0, 15.0, 0.0),
       decoration: BoxDecoration(
         color: Colors.white,
       ),
-      child: widget.child != null
-          ? _buildInputItemTypeTextWidgetChild()
-          : _buildInputItemTypeTextWithoutChild(),
+      child: widget.label != null
+          ? _buildInputItemTypeTextWidgetWithLabel()
+          : _buildInputItemTypeTextWithoutLabel(),
     );
   }
 
@@ -178,7 +400,32 @@ class _InputItemState extends State<InputItem> {
     switch (widget.type) {
       case 'text':
         {
-          return _buildInputItemTypeText();
+          return _buildInputItemTextField();
+        }
+        break;
+      case 'phone':
+        {
+          return _buildInputItemTextField();
+        }
+        break;
+      case 'bankCard':
+        {
+          return _buildInputItemTextField();
+        }
+        break;
+      case 'password':
+        {
+          return _buildInputItemTextField();
+        }
+        break;
+      case 'number':
+        {
+          return _buildInputItemTextField();
+        }
+        break;
+      case 'money':
+        {
+          return _buildInputItemTextField();
         }
         break;
     }
@@ -187,5 +434,78 @@ class _InputItemState extends State<InputItem> {
   @override
   Widget build(BuildContext context) {
     return _buildInputItemWidget();
+  }
+}
+
+// 手机号码格式器
+class TextInputPhoneFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final int newTextLength = newValue.text.length;
+    int selectionIndex = newValue.selection.end;
+    int usedSubstringIndex = 0;
+    final StringBuffer newText = new StringBuffer();
+    if (newValue.text.length > 11) {
+      newText.write(oldValue.text);
+      return new TextEditingValue(
+        text: newText.toString(),
+        selection: new TextSelection.collapsed(offset: 13),
+      );
+    }
+
+    if (newTextLength > 4) {
+      newText.write(newValue.text.substring(0, usedSubstringIndex = 3) + ' ');
+      if (newValue.selection.end >= 2) selectionIndex += 1;
+    }
+
+    if (newTextLength >= 8) {
+      newText.write(newValue.text.substring(3, usedSubstringIndex = 7) + ' ');
+      if (newValue.selection.end >= 2) selectionIndex += 1;
+    }
+
+    // Dump the rest.
+    if (newTextLength >= usedSubstringIndex)
+      newText.write(newValue.text.substring(usedSubstringIndex));
+    return new TextEditingValue(
+      text: newText.toString(),
+      selection: new TextSelection.collapsed(offset: selectionIndex),
+    );
+  }
+}
+
+// 银行卡格式化器
+class TextInputBankCardFormatter extends TextInputFormatter {
+  TextInputBankCardFormatter({this.maxLength, this.loop});
+  final int maxLength;
+  final int loop;
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final int newTextLength = newValue.text.length;
+    int selectionIndex = newValue.selection.end;
+    int usedSubstringIndex = 0;
+    final StringBuffer newText = new StringBuffer();
+    List<int> arr = [];
+    for (int i = 1; i <= 9999; i++) {
+      arr.add(i * 4 + 1);
+    }
+    for (int i = 0; i < arr.length; i++) {
+      if (newTextLength >= arr[i]) {
+        newText.write(newValue.text
+                .substring(arr[i] - 5, usedSubstringIndex = arr[i] - 1) +
+            ' ');
+        if (newValue.selection.end >= 2) selectionIndex += 1;
+      }
+    }
+    // Dump the rest.
+
+    if (newTextLength >= usedSubstringIndex)
+      newText.write(newValue.text.substring(usedSubstringIndex));
+    return new TextEditingValue(
+      text: newText.toString(),
+      selection: new TextSelection.collapsed(offset: selectionIndex),
+    );
   }
 }

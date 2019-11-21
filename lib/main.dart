@@ -28,6 +28,8 @@ import './pages/picker/picker.dart';
 import './pages/PickerView/pickerView.dart';
 import './pages/DatePicker/datePicker.dart';
 import './pages/DatePickerView/datePickerView.dart';
+import './pages/InputItem/inputItem.dart';
+import './pages/TextareaItem/textareaItem.dart';
 
 void main() => runApp(MyApp());
 
@@ -241,6 +243,23 @@ class _MyHomePageState extends State<MyHomePage> {
                       onTap: () {
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (_) {
+                          return PageInputItem();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'InputItem 文本输入',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
                           return PageCheckbox();
                         }));
                       },
@@ -310,6 +329,22 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       child: ListTile(
                         title: Text('SearchBar 搜索栏',
+                            style:
+                                TextStyle(fontSize: 14.0, color: Colors.grey)),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageTextareaItem();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text('TextareaItem 多行输入',
                             style:
                                 TextStyle(fontSize: 14.0, color: Colors.grey)),
                         trailing: Container(

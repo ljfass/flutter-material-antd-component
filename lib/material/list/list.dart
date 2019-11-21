@@ -280,7 +280,9 @@ class List<T> extends StatelessWidget {
             child: Container(
                 padding: this.multipleLine == true
                     ? EdgeInsets.fromLTRB(15.0, 12.5, 15, 12.5)
-                    : EdgeInsets.symmetric(horizontal: 15.0, vertical: 7.0),
+                    : this.brief != null
+                        ? EdgeInsets.symmetric(horizontal: 15.0, vertical: 7.0)
+                        : EdgeInsets.symmetric(horizontal: 15.0),
                 decoration: BoxDecoration(
                     color: Color(0xffffffff),
                     border: Border(
@@ -378,7 +380,10 @@ class List<T> extends StatelessWidget {
                 child: Container(
                   padding: this.multipleLine == true
                       ? EdgeInsets.fromLTRB(15.0, 12.5, 15, 12.5)
-                      : EdgeInsets.symmetric(horizontal: 15.0, vertical: 7.0),
+                      : this.brief != null
+                          ? EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 7.0)
+                          : EdgeInsets.symmetric(horizontal: 15.0),
                   decoration: BoxDecoration(
                       border: Border(
                           top: BorderSide(color: Color(0xffdddddd), width: 0.5),

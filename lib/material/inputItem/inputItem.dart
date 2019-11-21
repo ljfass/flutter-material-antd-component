@@ -195,8 +195,7 @@ class _InputItemState extends State<InputItem> {
             : Text(widget.label)
         : widget.label;
     return Container(
-      // width: 80.0,
-      constraints: BoxConstraints(minWidth: 80.0),
+      constraints: BoxConstraints(minWidth: 78.0),
       alignment: Alignment.topLeft,
       margin: EdgeInsets.only(right: 5.0),
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
@@ -232,7 +231,9 @@ class _InputItemState extends State<InputItem> {
         obscureText: isObscure,
         textInputAction: textInputAction,
         style: TextStyle(
-            color: widget.error == true ? Color(0xffff5500) : Colors.black),
+            color: widget.disabled == true
+                ? Color(0xffc4c4c4)
+                : widget.error == true ? Color(0xffff5500) : Colors.black),
         decoration: InputDecoration(
             counterText: '',
             hintText: _placeholder,

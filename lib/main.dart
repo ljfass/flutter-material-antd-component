@@ -30,6 +30,8 @@ import './pages/DatePicker/datePicker.dart';
 import './pages/DatePickerView/datePickerView.dart';
 import './pages/InputItem/inputItem.dart';
 import './pages/TextareaItem/textareaItem.dart';
+import './pages/ImagePicker/imagePicker.dart';
+import './pages/Listview/listview.dart';
 
 void main() => runApp(MyApp());
 
@@ -249,6 +251,23 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: ListTile(
                         title: Text(
                           'InputItem 文本输入',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageImagePicker();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'ImagePicker 图片选择器',
                           style: TextStyle(fontSize: 14.0, color: Colors.grey),
                         ),
                         trailing: Container(
@@ -644,6 +663,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 body: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return PageListview();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'Listview 长列表',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
                     InkWell(
                       onTap: () {
                         Navigator.of(context)

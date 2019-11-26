@@ -1,33 +1,36 @@
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 
 typedef RenderRow = Widget Function(int index);
 typedef SectionHeader = Widget Function(int index);
 
 class Listview extends StatefulWidget {
-  Listview({
-    Key key,
-    @required this.itemCount,
-    @required this.renderRow,
-    this.separator,
-    this.listviewHeader,
-    this.listviewFooter,
-    this.sectionHeader,
-    this.onEndReachedThreshold = 1000,
-    this.onEndReached,
-    this.onScroll,
-  })  : assert(itemCount > 0),
+  Listview(
+      {Key key,
+      @required this.itemCount,
+      @required this.renderRow,
+      this.listviewHeader,
+      this.listviewFooter,
+      this.sectionHeader,
+      this.onEndReachedThreshold = 1000,
+      this.stickyHeader = false,
+      this.onEndReached,
+      this.onScroll})
+      : assert(itemCount > 0),
+        assert(stickyHeader == false ||
+            (stickyHeader == true && sectionHeader != null)),
         super(key: key);
   final int itemCount;
-  final Widget separator;
   final Widget listviewHeader;
   final Widget listviewFooter;
   final SectionHeader sectionHeader;
   final RenderRow renderRow;
   final double onEndReachedThreshold;
+  final bool stickyHeader;
   final VoidCallback onScroll;
-  final VoidCallback onEndReached;
+  final Future Function() onEndReached;
 
   @override
   _ListviewState createState() => _ListviewState();
@@ -42,17 +45,19 @@ class _ListviewState extends State<Listview> {
     super.initState();
     _scrollPhysics = AlwaysScrollableScrollPhysics();
     _scrollController = ScrollController();
-    _scrollController.addListener(() {
-      if (widget.onScroll != null) widget.onScroll();
-
+    _scrollController.addListener(() async {
       if (_scrollController.position.extentAfter <
-          widget.onEndReachedThreshold) {
-        if (widget.onEndReached != null) {
-          // setState(() {
-          //   _scrollPhysics = NeverScrollableScrollPhysics();
-          // });
-          this._loading = true;
-          widget.onEndReached();
+              widget.onEndReachedThreshold &&
+          widget.onEndReached != null) {
+        if (!_loading) {
+          setState(() {
+            // 更新_scrollPhysics
+            this._loading = true;
+          });
+          await widget.onEndReached();
+          setState(() {
+            _loading = false;
+          });
         }
       }
     });
@@ -104,7 +109,6 @@ class _ListviewState extends State<Listview> {
             child: body,
           )
         : Container(
-            padding: EdgeInsets.only(left: 15.0),
             decoration: BoxDecoration(
                 border: Border(
                     bottom: index ==
@@ -117,7 +121,13 @@ class _ListviewState extends State<Listview> {
                         ? BorderSide(color: Color(0xffececed), width: 0.5)
                         : BorderSide.none)),
             child: Column(
-              children: <Widget>[_buildSectionHeader(index), body],
+              children: <Widget>[
+                _buildSectionHeader(index),
+                Padding(
+                  padding: EdgeInsets.only(left: 15.0),
+                  child: body,
+                )
+              ],
             ),
           );
   }
@@ -130,7 +140,7 @@ class _ListviewState extends State<Listview> {
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.only(left: 15.0),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.orange,
             border: Border(
                 bottom: BorderSide(color: Color(0xffdddddd), width: 0.5))),
         child: DefaultTextStyle(
@@ -143,36 +153,30 @@ class _ListviewState extends State<Listview> {
 
   @override
   Widget build(BuildContext context) {
-    // setState(() {
-    //   _scrollPhysics = AlwaysScrollableScrollPhysics();
-    // });
-
     return Material(
       color: Colors.white,
-      child: ListView.separated(
-        physics:
-            _loading == true ? NeverScrollableScrollPhysics() : _scrollPhysics,
-        controller: _scrollController,
-        itemCount: _getListCount(),
-        itemBuilder: (_, int index) {
-          if (index < getHeaderCount()) {
-            return _buildListviewHeader();
-          } else if (index + 1 == _getListCount() &&
-              widget.listviewFooter != null) {
-            return _buildListviewFooter();
-          } else {
-            return _buildListViewItem(
-                body: widget.renderRow(index), index: index);
-          }
-        },
-        separatorBuilder: (_, int index) {
-          if (index < getHeaderCount()) {
-            return Center();
-          } else {
-            return widget.separator;
-          }
-        },
-      ),
+      child: ListView.builder(
+          physics: _loading == true
+              ? NeverScrollableScrollPhysics()
+              : _scrollPhysics,
+          controller: _scrollController,
+          itemCount: _getListCount(),
+          itemBuilder: (_, int index) {
+            if (index < getHeaderCount()) {
+              return _buildListviewHeader();
+            } else if (index + 1 == _getListCount() &&
+                widget.listviewFooter != null) {
+              return _buildListviewFooter();
+            } else {
+              return widget.stickyHeader == true
+                  ? StickyHeader(
+                      header: _buildSectionHeader(index),
+                      content: widget.renderRow(index),
+                    )
+                  : _buildListViewItem(
+                      body: widget.renderRow(index), index: index);
+            }
+          }),
     );
   }
 }

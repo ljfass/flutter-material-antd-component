@@ -29,52 +29,80 @@ class _PageListviewState extends State<PageListview> {
             child: Listview(
               itemCount: i,
               renderRow: (int index) {
-                return Column(
-                  children: <Widget>[
-                    Text(
-                      'Eat the week',
-                      style:
-                          TextStyle(color: Color(0xff888888), fontSize: 18.0),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 15.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            width: 60.0,
-                            height: 60.0,
-                            child: Image.network(
-                                'https://zos.alipayobjects.com/rmsportal/hfVtzEhPzTUewPm.png'),
-                          ),
-                          Column(
-                            children: <Widget>[Text('不是所有的兼职'), Text('35')],
-                          )
-                        ],
+                List<Widget> _contents = [];
+                for (int j = 0; j < 5; j++) {
+                  _contents.add(Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(left: 15.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 5.0),
+                              child: Text(
+                                'Eat the week',
+                                style: TextStyle(
+                                    color: Color(0xff888888), fontSize: 18.0),
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(vertical: 15.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    width: 60.0,
+                                    height: 60.0,
+                                    child: Image.network(
+                                        'https://zos.alipayobjects.com/rmsportal/hfVtzEhPzTUewPm.png'),
+                                  ),
+                                  Column(
+                                    children: <Widget>[
+                                      Text('不是所有的兼职'),
+                                      Text('35')
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    )
-                  ],
+                      j == 4
+                          ? Center()
+                          : Container(
+                              height: 8.0,
+                              decoration: BoxDecoration(
+                                  color: Color(0xfff5f5f9),
+                                  border: Border(
+                                      top: BorderSide(color: Color(0xffececed)),
+                                      bottom: BorderSide(
+                                          color: Color(0xffececed)))),
+                            )
+                    ],
+                  ));
+                }
+
+                return Column(
+                  children: _contents,
                 );
               },
+              stickyHeader: true,
               sectionHeader: (int index) {
                 return Text('Task $index');
               },
-              separator: Container(
-                height: 8.0,
-                decoration: BoxDecoration(
-                    color: Color(0xfff5f5f9),
-                    border: Border(
-                        top: BorderSide(color: Color(0xffececed)),
-                        bottom: BorderSide(color: Color(0xffececed)))),
-              ),
-              // listviewHeader: Text('header'),
+              listviewHeader: Text('header'),
               listviewFooter: Text(footerContent),
               onEndReachedThreshold: 500,
               onEndReached: () {
                 if (this.mounted) {
                   setState(() {
                     this.footerContent = 'loading...';
-                    Future.delayed(Duration(milliseconds: 1500), () {
+                  });
+                  return Future.delayed(Duration(milliseconds: 1000), () {
+                    setState(() {
                       this.footerContent = 'loaded successfully!';
                       i = i + 10;
                     });

@@ -89,9 +89,22 @@ class _PageListviewState extends State<PageListview> {
                   children: _contents,
                 );
               },
-              stickyHeader: true,
+              stickyHeader: false,
               sectionHeader: (int index) {
-                return Text('Task $index');
+                return Container(
+                  constraints: BoxConstraints(minHeight: 40.0),
+                  alignment: Alignment.centerLeft,
+                  margin: EdgeInsets.only(left: 15.0),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(
+                          bottom: BorderSide(
+                              color: Color(0xffdddddd), width: 0.5))),
+                  child: DefaultTextStyle(
+                    style: TextStyle(color: Colors.black, fontSize: 14.0),
+                    child: Text('Task $index'),
+                  ),
+                );
               },
               listviewHeader: Container(
                 padding: EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 9.0),

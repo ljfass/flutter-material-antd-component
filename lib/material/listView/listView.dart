@@ -1,5 +1,6 @@
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
@@ -11,6 +12,8 @@ class Listview extends StatefulWidget {
       {Key key,
       @required this.itemCount,
       @required this.renderRow,
+      this.initialListSize,
+      this.scrollController,
       this.listviewHeader,
       this.listviewFooter,
       this.sectionHeader,
@@ -18,17 +21,18 @@ class Listview extends StatefulWidget {
       this.stickyHeader = false,
       this.onEndReached,
       this.onScroll})
-      : assert(itemCount > 0),
-        assert(stickyHeader == false ||
+      : assert(stickyHeader == false ||
             (stickyHeader == true && sectionHeader != null)),
         super(key: key);
   final int itemCount;
+  final int initialListSize;
   final Widget listviewHeader;
   final Widget listviewFooter;
   final SectionHeader sectionHeader;
   final RenderRow renderRow;
   final double onEndReachedThreshold;
   final bool stickyHeader;
+  final ScrollController scrollController;
   final VoidCallback onScroll;
   final Future Function() onEndReached;
 
@@ -40,15 +44,26 @@ class _ListviewState extends State<Listview> {
   ScrollController _scrollController;
   ScrollPhysics _scrollPhysics;
   bool _loading = false;
+  bool _isInitialListSize = false;
+  int _listSize;
+
   @override
   void initState() {
     super.initState();
+
     _scrollPhysics = AlwaysScrollableScrollPhysics();
-    _scrollController = ScrollController();
+    _scrollController = widget.scrollController ?? ScrollController();
     _scrollController.addListener(() async {
+      if (_isInitialListSize == true) {
+        setState(() {
+          _listSize = widget.itemCount;
+        });
+      }
       if (_scrollController.position.extentAfter <
               widget.onEndReachedThreshold &&
-          widget.onEndReached != null) {
+          widget.onEndReached != null &&
+          _scrollController.position.userScrollDirection ==
+              ScrollDirection.reverse) {
         if (!_loading) {
           setState(() {
             // 更新_scrollPhysics
@@ -65,17 +80,14 @@ class _ListviewState extends State<Listview> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    if (widget.scrollController == null) _scrollController.dispose();
     super.dispose();
   }
 
   Widget _buildListviewHeader() {
     return DefaultTextStyle(
       style: TextStyle(fontSize: 14.0, color: Color(0xff888888)),
-      child: Container(
-        padding: EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 9.0),
-        child: widget.listviewHeader,
-      ),
+      child: widget.listviewHeader,
     );
   }
 
@@ -90,7 +102,18 @@ class _ListviewState extends State<Listview> {
   }
 
   int _getListCount() {
-    return getHeaderCount() + widget.itemCount + getFooterCount();
+    if ((widget.initialListSize == null ||
+            widget.initialListSize == 0 ||
+            widget.itemCount <= widget.initialListSize) &&
+        _isInitialListSize == false) {
+      _listSize = widget.itemCount;
+    } else {
+      if (_isInitialListSize == false) {
+        _listSize = widget.initialListSize;
+        _isInitialListSize = true;
+      }
+    }
+    return getHeaderCount() + _listSize + getFooterCount();
   }
 
   int getHeaderCount() {
@@ -121,13 +144,7 @@ class _ListviewState extends State<Listview> {
                         ? BorderSide(color: Color(0xffececed), width: 0.5)
                         : BorderSide.none)),
             child: Column(
-              children: <Widget>[
-                _buildSectionHeader(index),
-                Padding(
-                  padding: EdgeInsets.only(left: 15.0),
-                  child: body,
-                )
-              ],
+              children: <Widget>[_buildSectionHeader(index), body],
             ),
           );
   }
@@ -135,18 +152,9 @@ class _ListviewState extends State<Listview> {
   Widget _buildSectionHeader(int index) {
     return FractionallySizedBox(
       widthFactor: 1.0,
-      child: Container(
-        constraints: BoxConstraints(minHeight: 40.0),
-        alignment: Alignment.centerLeft,
-        padding: EdgeInsets.only(left: 15.0),
-        decoration: BoxDecoration(
-            color: Colors.orange,
-            border: Border(
-                bottom: BorderSide(color: Color(0xffdddddd), width: 0.5))),
-        child: DefaultTextStyle(
-          style: TextStyle(color: Colors.black, fontSize: 14.0),
-          child: widget.sectionHeader(index),
-        ),
+      child: DefaultTextStyle(
+        style: TextStyle(color: Colors.black, fontSize: 14.0),
+        child: widget.sectionHeader(index),
       ),
     );
   }

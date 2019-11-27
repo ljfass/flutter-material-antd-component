@@ -93,7 +93,10 @@ class _PageListviewState extends State<PageListview> {
               sectionHeader: (int index) {
                 return Text('Task $index');
               },
-              listviewHeader: Text('header'),
+              listviewHeader: Container(
+                padding: EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 9.0),
+                child: Text('header'),
+              ),
               listviewFooter: Text(footerContent),
               onEndReachedThreshold: 500,
               onEndReached: () {

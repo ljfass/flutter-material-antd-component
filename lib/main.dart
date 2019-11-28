@@ -32,6 +32,7 @@ import './pages/InputItem/inputItem.dart';
 import './pages/TextareaItem/textareaItem.dart';
 import './pages/ImagePicker/imagePicker.dart';
 import './pages/Listview/listview.dart';
+import './pages/Listview/listviewIndexedList.dart';
 
 void main() => runApp(MyApp());
 
@@ -667,12 +668,31 @@ class _MyHomePageState extends State<MyHomePage> {
                       onTap: () {
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (_) {
+                          // return PageListview();
                           return PageListview();
                         }));
                       },
                       child: ListTile(
                         title: Text(
                           'Listview 长列表',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          child: Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          // return PageListview();
+                          return PageListviewIndexedList();
+                        }));
+                      },
+                      child: ListTile(
+                        title: Text(
+                          'ListviewIndexedList 城市列表',
                           style: TextStyle(fontSize: 14.0, color: Colors.grey),
                         ),
                         trailing: Container(

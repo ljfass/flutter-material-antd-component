@@ -58,7 +58,12 @@ class _PageListviewState extends State<PageListview> {
                                     child: Image.network(
                                         'https://zos.alipayobjects.com/rmsportal/hfVtzEhPzTUewPm.png'),
                                   ),
+                                  SizedBox(
+                                    width: 10.0,
+                                  ),
                                   Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text('不是所有的兼职'),
                                       Text('35')

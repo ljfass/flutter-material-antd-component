@@ -45,8 +45,12 @@ class _PageListviewIndexedListState extends State<PageListviewIndexedList> {
             child: ListviewIndexedList(
               initialListSize: 50,
               data: _data,
-              listviewHeader:
-                  _loading == true ? Text('loading...') : Text('header'),
+              listviewHeader: _loading == true
+                  ? Container(
+                      child: Text('loading...'),
+                      alignment: Alignment.center,
+                    )
+                  : Text('header'),
             ),
           ),
         ));

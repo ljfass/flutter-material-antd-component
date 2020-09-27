@@ -23,10 +23,15 @@ class SwipeAction extends StatefulWidget {
   final Color swipeoutColor;
   final VoidCallback onOpen;
   final VoidCallback onClose;
-  final SwipeActionController controller;
+  final SlidableController controller;
+
+  _SwipeActionState myState;
 
   @override
-  _SwipeActionState createState() => _SwipeActionState();
+  _SwipeActionState createState() {
+    myState = _SwipeActionState();
+    return myState;
+  }
 }
 
 class _SwipeActionState extends State<SwipeAction>
@@ -44,10 +49,12 @@ class _SwipeActionState extends State<SwipeAction>
   double distance = 0.0;
   bool isOpen = false;
 
+  Color _color = Colors.yellow;
+  Color get color => _color;
+
   @override
   void initState() {
     super.initState();
-    print(widget.controller.activeState);
     WidgetsBinding.instance.addPostFrameCallback(_onBuildCompleted);
     _animationController =
         AnimationController(duration: _duration, vsync: this);
@@ -159,6 +166,7 @@ class _SwipeActionState extends State<SwipeAction>
         isOpen = false;
       },
       onTapDown: (TapDownDetails details) {
+        widget.controller?._activeState = this;
         if (isOpen == true) {
           setState(() {
             _animationController.animateTo(.0);
@@ -167,6 +175,7 @@ class _SwipeActionState extends State<SwipeAction>
         }
       },
       onHorizontalDragStart: (DragStartDetails details) {
+        widget.controller?.activeState = this;
         initial = details.globalPosition.dx;
       },
       onHorizontalDragUpdate: (widget.left == null && widget.right == null)
@@ -276,15 +285,26 @@ class _SwipeActionState extends State<SwipeAction>
   }
 }
 
-class SwipeActionController {
-  SwipeActionController();
+class MyChildWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final SwipeAction widget = context.ancestorWidgetOfExactType(SwipeAction);
+    final _SwipeActionState state = widget?.myState;
+
+    return new Container(
+      width: 100.0,
+      height: 100.0,
+      color: state == null ? Colors.blue : state.color,
+    );
+  }
+}
+
+class SlidableController {
+  SlidableController();
 
   _SwipeActionState _activeState;
 
-  /// The state of the active [Slidable].
-  _SwipeActionState get activeState {
-    return _activeState;
-  }
+  _SwipeActionState get activeState => _activeState;
 
   set activeState(_SwipeActionState value) {
     _activeState = value;

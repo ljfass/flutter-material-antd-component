@@ -18,6 +18,11 @@ environment:
 
 dependencies:
   pulltorefresh_flutter: ^0.1.9
+  flutter_slidable: ^0.5.4
+  carousel_slider: ^1.3.1
+  image_picker: ^0.6.2
+  sticky_headers: ^0.1.8
+  lpinyin: ^1.0.7
   flutter:
     sdk: flutter
 
@@ -42,8 +47,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-
+  assets:
+    - assets/data/china.json
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

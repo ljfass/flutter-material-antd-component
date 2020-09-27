@@ -1,0 +1,33 @@
+{
+  "name": "multi_image_picker",
+  "version": "4.5.9",
+  "summary": "Multi image picker",
+  "description": "A new flutter plugin project.",
+  "homepage": "https://github.com/Sh1d0w/multi_image_picker",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "Radoslav Vitanov": "radoslav.vitanov@icloud.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "public_header_files": "Classes/**/*.h",
+  "dependencies": {
+    "Flutter": [
+
+    ],
+    "BSImagePicker": [
+      "~> 2.10.3"
+    ]
+  },
+  "pod_target_xcconfig": {
+    "DEFINES_MODULE": "YES"
+  },
+  "swift_version": "5.0",
+  "platforms": {
+    "ios": "9.0"
+  }
+}

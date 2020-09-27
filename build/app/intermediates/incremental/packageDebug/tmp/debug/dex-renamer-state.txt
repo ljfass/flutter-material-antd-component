@@ -1,4 +1,4 @@
-#Thu Oct 24 16:46:08 CST 2019
+#Thu Nov 28 09:05:41 CST 2019
 base.0=/Volumes/e/workspace/flutter/flutter-material-antd-component/build/app/intermediates/transforms/dexMerger/debug/0
 path.0=classes.dex
 renamed.0=classes.dex
